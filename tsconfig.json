@@ -1,0 +1,21 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "utils": ["./source/utils"],
+      "context": ["./source/context"],
+      "store": ["./source/store"],
+      "images": ["./assets/images"],
+      "modals": ["./source/modals"],
+      "navigator": ["./source/navigator"],
+      "rn-tailwind": ["./source/tailwind"],
+      "components": ["./source/components"],
+      "AppConstants": ["./source/appConstants"],
+      "globalStyles": ["./source/globalStyles"],
+      "bottomSheets": ["./source/bottomSheets"],
+      "service": ["./source/service"],
+      "types": ["./source/types"]
+    }
+  },
+  "compileOnSave": true
+}
