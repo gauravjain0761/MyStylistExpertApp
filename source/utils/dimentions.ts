@@ -1,4 +1,6 @@
-import {Dimensions, PixelRatio} from 'react-native';
+import {Dimensions, PixelRatio, Platform, TextStyle} from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 
 const w = (widthPercent: any) => {
   const screenWidth = Dimensions.get('window').width;
@@ -37,6 +39,46 @@ const f = scale => {
   } else {
     return FONT_SIZE;
   }
+};
+
+export const screen_width: number = Dimensions.get("window").width;
+export const screen_height: number = Dimensions.get("window").height;
+
+export const wp = (val: number) => {
+  return widthPercentageToDP((val * 100) / 375);
+};
+
+export const hp = (val: number) => {
+  return heightPercentageToDP((val * 100) / 812);
+};
+
+export const fontSize = (val: number) => RFValue(val, 812);
+
+export const isIos = Platform.OS === "ios";
+
+export function commonFontStyle(
+  fontFamily: string,
+  size: number,
+  color: string
+): TextStyle {
+  return {
+    fontFamily: fontFamily,
+    fontSize: fontSize(size),
+    color: color,
+    includeFontPadding: false,
+  };
+}
+
+export const fontFamily = {
+  regular: "Inter-Regular",
+  black: "Inter-Black",
+  bold: "Inter-Bold",
+  extra_bold: "Inter-ExtraBold",
+  extra_light: "Inter-ExtraLight",
+  light: "Inter-Light",
+  medium: "Inter-Medium",
+  semi_bold: "Inter-SemiBold",
+  thin: "Inter-Thin",
 };
 
 export {w, h, f};

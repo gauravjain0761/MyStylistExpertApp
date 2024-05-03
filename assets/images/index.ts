@@ -97,6 +97,31 @@ const images = {
   EditIcon: require('./edit.png'),
   Bookmark: require('./bookmark.png'),
   BookmarkFilled: require('./bookmarkFilled.png'),
+  
+  
+  loginbg:require('./loginbg.png'),
+  gradient_model:require('./gradient_model.png'),
+  gradient_input:require('./gradient_input.png'),
+  DownArrows:require('./chevDown.png'),
+  gradient_bg:require('./gradient_bg.png'),
+  Back:require('./backArrow.png'),
+  Address:require('./addressess.png'),
+  HomeBell:require('./homebell.png'),
+  avatar:require('./avatar.png'),
+  dropDown:require('./dropDown.png'),
+  homelocation:require('./homelocation.png'),
+  expert1:require('./expert1.png'),
+  expert2:require('./expert2.png'),
+  expert3:require('./expert3.png'),
+  expert4:require('./expert4.png'),
+  expert5:require('./expert5.png'),
+  expert6:require('./expert6.png'),
+  expert7:require('./expert7.png'),
+  expert8:require('./expert8.png'),
+  expert9:require('./expert9.png'),
+  locationpin:require('./locationpin.png'),
+  close:require('./close.png'),
+  success:require('./success.png')
 };
 
 export default images;

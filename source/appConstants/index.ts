@@ -17,6 +17,12 @@ const PACKAGE_NOT_EDITED = 'Once the package is created it can not be edited.';
 const DASHED =
   '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -';
 
+const TODAY_IS_NEW="Today is a new day. It’s your day. You shape it."
+const VERIFY_OTP='Verify OTP'
+const ENTER_THE_6_DIGIT='Enter the 6-digit OTP sent to you at';
+const DIDNT_RECEIVE_OTP='Didn’t receive OTP?';
+
+
 const HOME_SCREEN_TOP_MENU = [
   {
     icon: images.PercentageIcon,
@@ -55,9 +61,9 @@ const HOME_SCREEN_TOP_MENU = [
   },
   {
     icon: images.JobIcon,
-    boxTitle: 'Jobs',
-    boxColor: '#FFD4B2',
-    innerBoxColor: '#ffe1b8',
+    boxTitle: 'My Services',
+    boxColor: '#ffecd3',
+    innerBoxColor: '#fee1b9',
     route: 'Jobs',
   },
 ];
@@ -125,6 +131,66 @@ const AMENITIES = [
   },
 ];
 
+export const user_profile_images=[
+  {
+    id:1,
+    image:images.expert1
+  },
+  {
+    id:2,
+    image:images.expert2
+  },
+  {
+    id:3,
+    image:images.expert3
+  },{
+    id:4,
+    image:images.expert4
+  },
+  {
+    id:5,
+    image:images.expert5
+  },
+  {
+    id:6,
+    image:images.expert6
+  },
+  {
+    id:7,
+    image:images.expert7
+  },
+  {
+    id:8,
+    image:images.expert8
+  }
+  ,{
+    id:9,
+    image:images.expert9
+  }
+]
+
+export const AppointmentsData=[
+  {
+    id:1,
+    bookingNumber:'25',
+    customerName:'Nico Robin',
+    status:'Upcoming',
+    services:'Hair cut, beard trim, Waxing',
+    createdAt:Date.now(),
+    amount:500
+  }
+  ,
+  {
+    id:2,
+    bookingNumber:'25',
+    customerName:'Nico Robin',
+    status:'Upcoming',
+    services:'Hair cut, beard trim, Waxing',
+    createdAt:Date.now(),
+    amount:500
+  }
+]
+
 export {
   RESEND,
   DASHED,
@@ -142,4 +208,8 @@ export {
   SURE_CREATE_OFFER,
   PACKAGE_NOT_EDITED,
   SURE_CREATE_PROPOSAL,
+  TODAY_IS_NEW,
+  VERIFY_OTP,
+  ENTER_THE_6_DIGIT,
+  DIDNT_RECEIVE_OTP
 };
