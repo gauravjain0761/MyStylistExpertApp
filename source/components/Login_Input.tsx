@@ -27,7 +27,7 @@ interface input_props {
   labelStyle?: TextStyle;
 }
 
-const Login_Input = ({
+const Login_Input: FC<input_props> = ({
   placeholder = 'Enter Text...',
   input_style,
   placeholder_color = Color.GreyA4,
@@ -38,7 +38,7 @@ const Login_Input = ({
   keyboardType = 'phone-pad',
   label,
   labelStyle,
-}: input_props) => {
+}) => {
   return (
     <View style={[styles?.container, input_container_style]}>
       {label && <Text style={[styles?.label, labelStyle]}>{label}</Text>}

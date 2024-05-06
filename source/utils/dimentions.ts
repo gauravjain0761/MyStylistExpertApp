@@ -79,6 +79,15 @@ export const fontFamily = {
   medium: "Inter-Medium",
   semi_bold: "Inter-SemiBold",
   thin: "Inter-Thin",
+  RobotoRegular:'Roboto-Regular',
+  RobotoMedium:'Roboto-Medium',
+  RobotoBold:'Roboto-Bold',
+  RobotoLight:'Roboto-Light',
+  RobotoBlack:'Roboto-Black',
+  RobotoThin:'Roboto-Thin',
+  RobotoSemiBold:'Roboto-SemiBold',
+  RobotoExtraBold:'Roboto-ExtraBold',
+
 };
 
 export {w, h, f};

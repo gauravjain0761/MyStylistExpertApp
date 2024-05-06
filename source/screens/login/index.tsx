@@ -4,9 +4,10 @@ import {
   Platform,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, useContext, useState} from 'react';
 import images from 'images';
 import {
   commonFontStyle,
@@ -19,7 +20,6 @@ import {
   wp,
 } from '../../utils/dimentions';
 import Color from '../../../assets/color';
-import Login_Input from '../../components/Login_Input';
 import {TODAY_IS_NEW} from 'AppConstants';
 import {Dropdown} from 'react-native-element-dropdown';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -29,13 +29,8 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
-
-let data = [
-  {
-    id: 1,
-    city_name: 'Punjab',
-  },
-];
+import {Login_Input} from 'components';
+import {AppContext} from 'context';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -44,12 +39,12 @@ type Props = {
 
 const Login: FC<Props> = ({navigation}) => {
   const [name, setname] = useState('');
-  const [value, setValue] = useState(null);
-  const [city, setcity] = useState<any>(data);
-  const [phoneNum, setphoneNum] = useState<string>('');
+  const [passwords, setPasswords] = useState('');
 
-  const getotp = () => {
-    navigation.navigate('OtpVeirfy');
+  const {setLoading, setIsLogin} = useContext(AppContext);
+
+  const loginHandler = () => {
+    setIsLogin('true');
   };
   return (
     <View style={styles.container}>
@@ -64,59 +59,32 @@ const Login: FC<Props> = ({navigation}) => {
           <Text style={styles.description}>{TODAY_IS_NEW}</Text>
           <KeyboardAwareScrollView
             style={{flex: 1}}
-            enableOnAndroid
             keyboardShouldPersistTaps={'handled'}
             showsVerticalScrollIndicator={false}
-            // extraScrollHeight={isIos ? 20 : 300}
             enableAutomaticScroll>
             <Login_Input
               onTextChange={(e: string) => setname(e)}
               value={name}
               placeholder="Enter here"
-              label="Name"
+              label="Username"
               input_container_style={styles?.inputs}
             />
             <Login_Input
-              placeholder="City"
+              onTextChange={(e: string) => setPasswords(e)}
+              value={passwords}
+              placeholder="Enter here"
+              label="Password"
               input_container_style={styles?.inputs}
-              label="City"
-              custom_component={
-                <Dropdown
-                  style={styles.dropdown}
-                  placeholderStyle={styles.placeholderStyle}
-                  iconStyle={styles.iconStyle}
-                  data={city}
-                  maxHeight={300}
-                  labelField="city_name"
-                  valueField="city_name"
-                  placeholder="Please select"
-                  selectedTextStyle={styles.selectedTextStyle}
-                  itemTextStyle={styles.item_style}
-                  value={value}
-                  onChange={(item: any) => {
-                    setValue(item.city_name);
-                  }}
-                  renderRightIcon={() => (
-                    <Image
-                      source={images?.DownArrows}
-                      style={styles.iconStyle}
-                    />
-                  )}
-                />
-              }
-            />
-            <Login_Input
-              placeholder="9 9 9 9 9 9 9 9 9 9"
-              label="Mobile Number"
-              input_container_style={styles?.inputs}
-              onTextChange={setphoneNum}
             />
             <PrimaryButton
               containerStyle={styles.btncontainer}
-              label="Get OTP"
+              label="Login"
               containerLabelStyle={styles.btnTitle}
-              onPress={getotp}
+              onPress={loginHandler}
             />
+            <TouchableOpacity style={styles.signupBtn}>
+              <Text style={styles.signup}>{'Signup'}</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
         </View>
       </ImageBackground>
@@ -139,7 +107,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: screen_height * 0.66,
     position: 'absolute',
-    // top: screen_height * 0.41,
     borderTopLeftRadius: wp(40),
     borderTopRightRadius: wp(40),
     overflow: 'hidden',
@@ -196,7 +163,14 @@ const styles = StyleSheet.create({
   },
   btncontainer: {
     marginTop: hp(34),
-    marginBottom: hp(40),
+  },
+  signup: {
+    ...commonFontStyle(fontFamily.medium, 20, Color?.Grey70),
+  },
+  signupBtn: {
+    paddingVertical: hp(5),
+    marginTop: hp(25),
+    alignSelf: 'center',
   },
 });
 

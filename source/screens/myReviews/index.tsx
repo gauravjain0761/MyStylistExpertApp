@@ -4,7 +4,14 @@ import images from 'images';
 import {FlatList, Pressable, View} from 'react-native';
 import globalStyle from 'globalStyles';
 import {PLEASE_LOGIN, PHONE_NUMBER} from 'AppConstants';
-import {Image, Text, Container, Header, ReviewCard} from 'components';
+import {
+  Image,
+  Text,
+  Container,
+  Header,
+  ReviewCard,
+  BottomTab,
+} from 'components';
 import Stars from 'react-native-stars';
 
 const MyReviews: FC = () => {
@@ -61,6 +68,7 @@ const MyReviews: FC = () => {
           </View>
         </View>
       </View>
+      <BottomTab />
     </Container>
   );
 };

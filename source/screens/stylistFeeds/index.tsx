@@ -149,7 +149,6 @@ const StylistFeeds: FC<Props> = ({navigation}) => {
             />
           </Pressable>
         </View>
-        <BottomTab />
         {commentSheet ? (
           <CommentSheet
             visibility={commentSheet}

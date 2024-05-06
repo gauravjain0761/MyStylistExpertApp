@@ -23,6 +23,11 @@ import ChatUserCard from './chatUserCard';
 import JobCard from './jobCard';
 import StylistFeedCard from './stylistFeedCard';
 import ChatBubble from './chatBubble';
+import PrimaryButton from './PrimaryButton';
+import Modals from './Modals';
+import HomeHeader from './HomeHeader';
+import Login_Input from './Login_Input';
+import Locationmodal from './locationmodal';
 
 export {
   Text,
@@ -50,4 +55,9 @@ export {
   BottomTab,
   ChatUserCard,
   ChatBubble,
+  PrimaryButton,
+  Modals,
+  HomeHeader,
+  Login_Input,
+  Locationmodal
 };

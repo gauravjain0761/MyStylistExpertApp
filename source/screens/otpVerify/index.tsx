@@ -20,7 +20,6 @@ import {
 import images from 'images';
 import Color from '../../../assets/color';
 import {DIDNT_RECEIVE_OTP, ENTER_THE_6_DIGIT, VERIFY_OTP} from 'AppConstants';
-import Login_Input from '../../components/Login_Input';
 import {
   CodeField,
   Cursor,
@@ -31,6 +30,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp, useNavigation} from '@react-navigation/native';
 import {AppContext} from 'context';
+import {Login_Input} from 'components';
 
 const CELL_COUNT = 6;
 

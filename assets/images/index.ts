@@ -121,7 +121,15 @@ const images = {
   expert9:require('./expert9.png'),
   locationpin:require('./locationpin.png'),
   close:require('./close.png'),
-  success:require('./success.png')
+  success:require('./success.png'),
+  offerbanner:require('./offerbanner.png'),
+  locationAllow:require('./locationallow.png'),
+  bottomhome:require('./bottomhome.png'),
+  bottomappointment:require('./bottomappointment.png'),
+  bottomchat:require('./bottomchat.png'),
+  bottomprofile:require('./bottomprofile.png'),
+  headerSearch:require('./headerSearch.png'),
+  add:require('./add.png'),
 };
 
 export default images;

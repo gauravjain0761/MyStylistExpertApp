@@ -66,6 +66,11 @@ export default class Color {
   static Grey3B = '#3B3B3B';
   static GreyEB = '#EBEBEB';
   static Grey75 = '#757575';
+  static Grey70 = '#707070';
+  static Grey7A = '#7A7A7A';
+  static GreyD9 = '#D9D9D9';
+  static GreyB0 = '#B0B0B0';
+  static GreyDE = '#DEDEDE';
 
   static Green40 = '#40C9BF';
   static Green04 = '#043E39';

@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import React, {FC, useEffect, useState} from 'react';
 import Container from '../../components/container';
-import HomeHeader from '../../components/HomeHeader';
 import globalStyle from 'globalStyles';
 import {
   AppointmentsData,
@@ -19,20 +18,50 @@ import {
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
-import {AppointmentCard, BarChart, Image, Text} from 'components';
+import {
+  AppointmentCard,
+  BarChart,
+  BottomTab,
+  HomeHeader,
+  Image,
+  Locationmodal,
+} from 'components';
 import tw from 'rn-tailwind';
-import {commonFontStyle, fontFamily, hp, w, wp} from '../../utils/dimentions';
+import {
+  commonFontStyle,
+  fontFamily,
+  hp,
+  screen_height,
+  screen_width,
+  w,
+  wp,
+} from '../../utils/dimentions';
 import {StatusBar} from 'expo-status-bar';
 import Color from '../../../assets/color';
-import useHome from './hooks';
 import {ExpertWorkImage} from 'types';
 import images from 'images';
-import Modals from '../../components/Modals';
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+import FastImage from 'react-native-fast-image';
 
 type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
-  route: RouteProp<RootStackParamList, 'Login'>;
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
+  route: RouteProp<RootStackParamList, 'Home'>;
 };
+
+const banner = [
+  {
+    id: 1,
+    image: images?.offerbanner,
+  },
+  {
+    id: 2,
+    image: images?.offerbanner,
+  },
+  {
+    id: 3,
+    image: images?.offerbanner,
+  },
+];
 
 let graphData = [
   {avrage: '20%', color: '#FFAFA2', day: 'Mo'},
@@ -46,6 +75,7 @@ let graphData = [
 
 const Home: FC<Props> = ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     setVisible(!visible);
@@ -74,6 +104,9 @@ const Home: FC<Props> = ({navigation, route}) => {
 
   // const {user_profile_images, user_work_images, expert_profile_videos} =
   //   expertusers?.length ? expertusers[0] : {};
+  const onSnapToItem = (index: React.SetStateAction<number>) => {
+    setActiveIndex(index);
+  };
 
   return (
     <Container>
@@ -84,7 +117,32 @@ const Home: FC<Props> = ({navigation, route}) => {
           location={'Shop No. 4, Ansal Palm Grove, Mohali'}
         />
         <View style={styles?.mainView}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+            <View style={styles.carousel_container}>
+              <Carousel
+                layout={'default'}
+                data={banner}
+                sliderWidth={screen_width}
+                itemWidth={screen_width}
+                inactiveSlideScale={2}
+                renderItem={({item}: any) => {
+                  return (
+                    <Image source={item?.image} style={styles?.carousel_img} />
+                  );
+                }}
+                onSnapToItem={onSnapToItem}
+              />
+            </View>
+            <Pagination
+              // @ts-ignore
+              dotsLength={banner?.length}
+              activeDotIndex={activeIndex}
+              containerStyle={styles?.pagination_container}
+              dotStyle={styles?.dotStyle}
+              inactiveDotStyle={styles?.inactiveDotStyle}
+              inactiveDotScale={1}
+              dotContainerStyle={styles?.dotContainerStyle}
+            />
             <View style={[styles.topBoxsWrapper, styles.boxWrapperSub]}>
               {HOME_SCREEN_TOP_MENU.map((data, index) => {
                 const {route} = data;
@@ -170,18 +228,16 @@ const Home: FC<Props> = ({navigation, route}) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}: any) => {
                   return (
-                    <View style={styles.appointmentCard}>
-                      <AppointmentCard
-                        status="Upcoming"
-                        homeScreen={true}
-                        data={item}
-                        onPreeCard={(appointmentId: string) =>
-                          navigation.navigate('AppointmentDetail', {
-                            appointmentId,
-                          })
-                        }
-                      />
-                    </View>
+                    <AppointmentCard
+                      status="Upcoming"
+                      homeScreen={true}
+                      data={item}
+                      onPreeCard={(appointmentId: string) =>
+                        navigation.navigate('AppointmentDetail', {
+                          appointmentId,
+                        })
+                      }
+                    />
                   );
                 }}
               />
@@ -264,24 +320,9 @@ const Home: FC<Props> = ({navigation, route}) => {
               </View>
             </View>
           </ScrollView>
+          <BottomTab />
+          <Locationmodal visible={visible} setVisible={setVisible} />
         </View>
-        <Modals
-          visible={visible}
-          isIcon
-          close={setVisible}
-          contain={
-            <View>
-              <Image style={styles.success} source={images.success} />
-              <RNText style={styles.modaltitle}>{'Welcome'}</RNText>
-              <RNText style={styles.dummyData}>
-                {'This is the dummy data'}
-              </RNText>
-              <RNText style={styles.info}>
-                {'You can view real data, After you\nwill on-board...'}
-              </RNText>
-            </View>
-          }
-        />
       </>
     </Container>
   );
@@ -298,7 +339,7 @@ const styles = StyleSheet.create({
   innerIcon: tw`w-5 h-5`,
   topBoxsWrapper: {
     ...tw`w-full flex-row flex-wrap justify-between`,
-    paddingTop: hp(30),
+    paddingTop: hp(25),
     paddingBottom: hp(20),
   },
   boxWrapperSub: {paddingHorizontal: w(4)},
@@ -365,29 +406,39 @@ const styles = StyleSheet.create({
     elevation: 24,
     marginBottom: hp(15),
   },
-  success: {
-    width: wp(50),
-    height: wp(50),
+
+  carousel_container: {
+    width: '100%',
+    borderRadius: wp(12),
+    overflow: 'hidden',
+    backgroundColor: Color?.White,
+    height: screen_height * 0.3,
+    marginTop: 0,
+  },
+  carousel_img: {
+    width: screen_width,
+    height: screen_height * 0.3,
     resizeMode: 'cover',
-    alignSelf: 'center',
   },
-  modaltitle: {
-    ...commonFontStyle(fontFamily.bold, 26, Color?.Black),
+  pagination_container: {
+    justifyContent: 'center',
     alignSelf: 'center',
-    lineHeight: hp(26),
-    marginTop: hp(11),
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginTop: hp(13),
   },
-  dummyData: {
-    ...commonFontStyle(fontFamily.regular, 18, Color?.Grey66),
-    marginTop: hp(26),
-    alignSelf: 'center',
+  dotContainerStyle: {
+    margin: 0,
+    marginHorizontal: wp(4),
   },
-  info: {
-    marginTop: hp(5),
-    textAlign: 'center',
-    ...commonFontStyle(fontFamily.medium, 18, Color?.Grey66),
-    marginBottom: hp(22),
-    lineHeight: hp(28),
+  inactiveDotStyle: {
+    backgroundColor: Color?.GreyD9,
+  },
+  dotStyle: {
+    width: wp(6),
+    height: wp(6),
+    borderRadius: 5,
+    backgroundColor: Color?.Grey7A,
   },
 });
 

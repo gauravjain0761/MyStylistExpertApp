@@ -1,5 +1,5 @@
 //import liraries
-import React from 'react';
+import React, {FC} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -10,7 +10,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {commonFontStyle, hp, wp} from '../utils/dimentions';
+import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import Color from '../../assets/color';
 
@@ -22,13 +22,13 @@ type IconButtonProps = {
   disabled?: any;
 };
 
-const PrimaryButton = ({
+const PrimaryButton: FC<IconButtonProps> = ({
   label,
   onPress,
   containerStyle,
   containerLabelStyle,
   disabled,
-}: IconButtonProps) => {
+}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -44,13 +44,12 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
     alignItems: 'center',
-    flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: Color.Green,
     paddingVertical: hp(17),
   },
   labelTextStyle: {
-    ...commonFontStyle(20, Color.Grey44),
+    ...commonFontStyle(fontFamily?.medium, 20, Color.Grey44),
   },
 });
 

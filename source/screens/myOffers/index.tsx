@@ -1,6 +1,6 @@
 import React, {FC, useEffect} from 'react';
-import {Pressable, View, FlatList} from 'react-native';
-import {Container, Text, Header, Image, OffersCard} from 'components';
+import {Pressable, View, FlatList, StyleSheet, Text} from 'react-native';
+import {Container, Header, Image, OffersCard} from 'components';
 import globalStyle from 'globalStyles';
 import tw from 'rn-tailwind';
 import images from 'images';
@@ -8,6 +8,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
 import useMyOffers from './hooks';
+import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
+import Color from '../../../assets/color';
 
 const cardsColor = {
   1: '#F7F5EB',
@@ -21,12 +23,55 @@ type Props = {
   route: RouteProp<RootStackParamList, 'MyOffers'>;
 };
 
+const allMyOffers = [
+  {
+    _id: 1,
+    end_date: Date.now(),
+    service_name: [
+      {category_name: 'Services: Regular haircut,  Classic shaving'},
+    ],
+    offer_name: 'Offer name here',
+    number_of_offers: 10,
+    accepted_offers: 3,
+  },
+  {
+    _id: 2,
+    end_date: Date.now(),
+    service_name: [
+      {category_name: 'Services: Regular haircut, Classic shaving'},
+    ],
+    offer_name: 'Offer name here',
+    number_of_offers: 10,
+    accepted_offers: 3,
+  },
+  {
+    _id: 3,
+    end_date: Date.now(),
+    service_name: [
+      {category_name: 'Services: Regular haircut, Classic shaving'},
+    ],
+    offer_name: 'Offer name here',
+    number_of_offers: 10,
+    accepted_offers: 3,
+  },
+  {
+    _id: 4,
+    end_date: Date.now(),
+    service_name: [
+      {category_name: 'Services: Regular haircut, Classic shaving'},
+    ],
+    offer_name: 'Offer name here',
+    number_of_offers: 10,
+    accepted_offers: 3,
+  },
+];
+
 const MyOffers: FC<Props> = ({navigation}) => {
-  const {getMyOffers, allMyOffers} = useMyOffers();
+  // const {getMyOffers, allMyOffers} = useMyOffers();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getMyOffers();
+      // getMyOffers();
     });
 
     return unsubscribe;
@@ -42,16 +87,8 @@ const MyOffers: FC<Props> = ({navigation}) => {
               <Pressable
                 style={[styles.headerButton, globalStyle.bothContentCenter]}>
                 <Image
-                  style={styles.searchIcon}
-                  source={images.Search}
-                  resizeMode="contain"
-                />
-              </Pressable>
-              <Pressable
-                style={[styles.headerButton, globalStyle.bothContentCenter]}>
-                <Image
-                  style={styles.searchIcon}
-                  source={images.CalendarIcon}
+                  style={styles.headerIcon}
+                  source={images.headerSearch}
                   resizeMode="contain"
                 />
               </Pressable>
@@ -60,12 +97,10 @@ const MyOffers: FC<Props> = ({navigation}) => {
                 style={[styles.addNewButton, globalStyle.bothContentCenter]}>
                 <Image
                   style={styles.plusIcon}
-                  source={images.PlusIcon}
+                  source={images.add}
                   resizeMode="contain"
                 />
-                <Text size="sm" fontWeight="800" color="text-black">
-                  {'Add New'}
-                </Text>
+                <Text style={styles.btnTitle}>{'Add New'}</Text>
               </Pressable>
             </View>
           }
@@ -102,15 +137,148 @@ const MyOffers: FC<Props> = ({navigation}) => {
   );
 };
 
-const styles = {
-  headerRight: tw`flex-1 w-full h-full flex-row items-center justify-end`,
+const styles = StyleSheet.create({
+  headerRight: {
+    ...tw`flex-1 w-full h-full flex-row items-center justify-end`,
+    columnGap: wp(15),
+  },
   headerButton: tw`w-10 h-full`,
-  searchIcon: tw`w-6.5 h-6.5`,
-  plusIcon: tw`w-3.5 h-3.5 mr-1`,
-  addNewButton: tw`w-23 h-8 ml-1.5 flex-row rounded-full bg-primary`,
-  mainView: tw`flex-1 px-4 w-full bg-cultured`,
+  headerIcon: {
+    width: wp(28),
+    height: wp(28),
+  },
+  plusIcon: {
+    width: wp(18),
+    height: wp(18),
+  },
+  addNewButton: {
+    ...tw`w-23 h-8 flex-row rounded-1 bg-primary`,
+    borderRadius: 5,
+    columnGap: wp(2),
+  },
+  mainView: tw`flex-1 px-4 w-full  bg-cultured`,
   listView: tw`py-4`,
   listSeparator: tw`h-4 w-full`,
-};
+  btnTitle: {
+    ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
+  },
+});
 
 export default MyOffers;
+
+// import React, {FC, useEffect} from 'react';
+// import {Pressable, View, FlatList} from 'react-native';
+// import {Container, Text, Header, Image, OffersCard} from 'components';
+// import globalStyle from 'globalStyles';
+// import tw from 'rn-tailwind';
+// import images from 'images';
+// import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+// import {RootStackParamList} from '..';
+// import {RouteProp} from '@react-navigation/native';
+// import useMyOffers from './hooks';
+
+// const cardsColor = {
+//   1: '#F7F5EB',
+//   2: '#CCF0FF',
+//   3: '#FFE1E4',
+//   4: '#F7E6E6',
+// };
+
+// type Props = {
+//   navigation: NativeStackNavigationProp<RootStackParamList, 'MyOffers'>;
+//   route: RouteProp<RootStackParamList, 'MyOffers'>;
+// };
+
+// const MyOffers: FC<Props> = ({navigation}) => {
+//   const {getMyOffers, allMyOffers} = useMyOffers();
+
+//   useEffect(() => {
+//     const unsubscribe = navigation.addListener('focus', () => {
+//       getMyOffers();
+//     });
+
+//     return unsubscribe;
+//   }, [navigation]);
+
+//   return (
+//     <Container>
+//       <View style={globalStyle.container}>
+//         <Header
+//           title={`Offers (${allMyOffers?.length || '0'})`}
+//           rightView={
+//             <View style={styles.headerRight}>
+//               <Pressable
+//                 style={[styles.headerButton, globalStyle.bothContentCenter]}>
+//                 <Image
+//                   style={styles.searchIcon}
+//                   source={images.Search}
+//                   resizeMode="contain"
+//                 />
+//               </Pressable>
+//               <Pressable
+//                 style={[styles.headerButton, globalStyle.bothContentCenter]}>
+//                 <Image
+//                   style={styles.searchIcon}
+//                   source={images.CalendarIcon}
+//                   resizeMode="contain"
+//                 />
+//               </Pressable>
+//               <Pressable
+//                 onPress={() => navigation.navigate('CreateOffer')}
+//                 style={[styles.addNewButton, globalStyle.bothContentCenter]}>
+//                 <Image
+//                   style={styles.plusIcon}
+//                   source={images.PlusIcon}
+//                   resizeMode="contain"
+//                 />
+//                 <Text size="sm" fontWeight="800" color="text-black">
+//                   {'Add New'}
+//                 </Text>
+//               </Pressable>
+//             </View>
+//           }
+//         />
+//         <View style={styles.mainView}>
+//           <FlatList
+//             data={allMyOffers}
+//             showsVerticalScrollIndicator={false}
+//             contentContainerStyle={styles.listView}
+//             keyExtractor={(item, index) => index.toString()}
+//             ListEmptyComponent={
+//               <Text size="base" style={tw`self-center mt-70`}>
+//                 {'No Offer found'}
+//               </Text>
+//             }
+//             ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
+//             renderItem={({item, index}) => {
+//               const colorIndex: number = (index % 4) + 1;
+//               return (
+//                 <OffersCard
+//                   key={index}
+//                   data={item}
+//                   onPressCard={(offerId: string) =>
+//                     navigation.navigate('OfferDetail', {offerId})
+//                   }
+//                   cardColor={cardsColor[colorIndex]}
+//                 />
+//               );
+//             }}
+//           />
+//         </View>
+//       </View>
+//     </Container>
+//   );
+// };
+
+// const styles = {
+//   headerRight: tw`flex-1 w-full h-full flex-row items-center justify-end`,
+//   headerButton: tw`w-10 h-full`,
+//   searchIcon: tw`w-6.5 h-6.5`,
+//   plusIcon: tw`w-3.5 h-3.5 mr-1`,
+//   addNewButton: tw`w-23 h-8 ml-1.5 flex-row rounded-full bg-primary`,
+//   mainView: tw`flex-1 px-4 w-full bg-cultured`,
+//   listView: tw`py-4`,
+//   listSeparator: tw`h-4 w-full`,
+// };
+
+// export default MyOffers;

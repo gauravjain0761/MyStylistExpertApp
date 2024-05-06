@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,12 +22,12 @@ type HomeProps = {
   containerStyle?: ViewStyle;
 };
 
-const HomeHeader = ({
+const HomeHeader: FC<HomeProps> = ({
   onPresslocation,
   onPressProfile,
   location = null,
   containerStyle,
-}: HomeProps) => {
+}) => {
   const {navigate} = useNavigation();
   //   const {profileData} = useAppSelector(state => state.profile);
   //   const {cartCount} = useAppSelector(state => state.cart);
@@ -40,6 +40,9 @@ const HomeHeader = ({
   return (
     <View style={{...styles.container, ...containerStyle}}>
       <View style={styles.rowStyle}>
+        <TouchableOpacity>
+          <Image source={images?.avatar} style={styles?.avatar} />
+        </TouchableOpacity>
         <Image
           resizeMode="contain"
           source={images.homelocation}
@@ -68,9 +71,6 @@ const HomeHeader = ({
           <Image source={images?.HomeBell} style={styles?.icons} />
           <View style={styles?.badge}></View>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Image source={images?.avatar} style={styles?.avatar} />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -81,7 +81,7 @@ export default HomeHeader;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Color?.White,
-    paddingVertical: hp(10),
+    paddingVertical: hp(12),
     paddingHorizontal: wp(20),
     flexDirection: 'row',
     alignItems: 'center',
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     width: wp(38),
     height: wp(38),
     borderRadius: wp(100),
+    marginRight: wp(11),
   },
   badge: {
     width: wp(9),
@@ -137,6 +138,6 @@ const styles = StyleSheet.create({
     borderRadius: wp(100),
     backgroundColor: Color.Green40,
     position: 'absolute',
-    left: 0,
+    left: 2,
   },
 });

@@ -7,11 +7,11 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React from 'react';
+import React, {FC} from 'react';
 import Modal from 'react-native-modal';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Color from '../../assets/color';
-import {hp, wp} from '../utils/dimentions';
+import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
 import images from 'images';
 
 type props = {
@@ -23,9 +23,11 @@ type props = {
   containerStyle?: ViewStyle;
   isIcon?: boolean;
   IsBackdropPress?: boolean;
+  title?: string;
+  header?: boolean;
 };
 
-const Modals = ({
+const Modals: FC<props> = ({
   visible = false,
   transparent = true,
   contain,
@@ -34,7 +36,9 @@ const Modals = ({
   containerStyle,
   IsBackdropPress = true,
   isIcon,
-}: props) => {
+  title,
+  header,
+}) => {
   return (
     <Modal
       isVisible={visible}
@@ -44,13 +48,16 @@ const Modals = ({
       backdropColor="#000000CC">
       <>
         <View style={[styles.contain, containStyle]}>
-          {isIcon && (
-            <TouchableOpacity
-              style={styles?.close}
-              onPress={() => close(false)}>
-              <Image source={images.close} style={styles.close} />
-            </TouchableOpacity>
-          )}
+          <View style={styles.header}>
+            {title ? <Text style={styles.title}>{title}</Text> : <View></View>}
+            {isIcon && (
+              <TouchableOpacity
+                style={styles?.close}
+                onPress={() => close(false)}>
+                <Image source={images.close} style={styles.close} />
+              </TouchableOpacity>
+            )}
+          </View>
           {contain}
         </View>
       </>
@@ -69,19 +76,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 0,
-    borderRadius: wp(10),
+    borderTopLeftRadius: wp(20),
+    borderTopRightRadius: wp(20),
   },
   container_style: {
     width: '100%',
     alignItems: 'center',
     padding: 0,
     margin: 0,
-    justifyContent: 'center',
-    paddingHorizontal: hp(20),
+    justifyContent: 'flex-end',
   },
   close: {
     width: wp(24),
     height: wp(24),
-    alignSelf: 'flex-end',
+    resizeMode: 'cover',
+  },
+  title: {
+    ...commonFontStyle(fontFamily.semi_bold, 18, Color?.Black),
+    alignSelf: 'center',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
 });

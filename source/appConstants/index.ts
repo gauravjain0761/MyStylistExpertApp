@@ -13,6 +13,7 @@ const OFFER_NOT_EDITED = 'Once the offer is created it can not be edited.';
 const SURE_CREATE_PROPOSAL =
   'Are you sure that you want to\nsubmit this proposal?';
 const PACKAGE_NOT_EDITED = 'Once the package is created it can not be edited.';
+const ALLOW_US='Allow us to access your location'
 
 const DASHED =
   '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -';
@@ -211,5 +212,6 @@ export {
   TODAY_IS_NEW,
   VERIFY_OTP,
   ENTER_THE_6_DIGIT,
-  DIDNT_RECEIVE_OTP
+  DIDNT_RECEIVE_OTP,
+  ALLOW_US
 };
