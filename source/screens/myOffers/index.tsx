@@ -140,7 +140,7 @@ const MyOffers: FC<Props> = ({navigation}) => {
 const styles = StyleSheet.create({
   headerRight: {
     ...tw`flex-1 w-full h-full flex-row items-center justify-end`,
-    columnGap: wp(15),
+    columnGap: wp(10),
   },
   headerButton: tw`w-10 h-full`,
   headerIcon: {
@@ -152,15 +152,20 @@ const styles = StyleSheet.create({
     height: wp(18),
   },
   addNewButton: {
-    ...tw`w-23 h-8 flex-row rounded-1 bg-primary`,
     borderRadius: 5,
     columnGap: wp(2),
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Color?.Green,
+    paddingHorizontal: hp(16.5),
   },
-  mainView: tw`flex-1 px-4 w-full  bg-cultured`,
+  mainView: tw`flex-1 px-4 w-full bg-cultured`,
   listView: tw`py-4`,
   listSeparator: tw`h-4 w-full`,
   btnTitle: {
     ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
+    lineHeight: hp(22),
+    paddingVertical: hp(7),
   },
 });
 

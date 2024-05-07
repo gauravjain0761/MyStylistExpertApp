@@ -72,7 +72,7 @@ const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
 };
 
 const styles = StyleSheet.create({
-  cardContainer: tw`w-full h-50 rounded-lg`,
+  cardContainer: tw`w-full rounded-lg`,
   cardDetail: tw`flex-row`,
   priceView: {...tw`w-27`},
   dots: tw`flex-1 w-full border-dashed border`,
@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     marginTop: hp(10),
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: hp(21),
   },
   dashed: {
     ...commonFontStyle(fontFamily.regular, 16, Color?.GreyB0),

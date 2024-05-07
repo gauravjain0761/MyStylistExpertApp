@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     paddingVertical: hp(17),
   },
   labelTextStyle: {
-    ...commonFontStyle(fontFamily?.medium, 20, Color.Grey44),
+    ...commonFontStyle(fontFamily?.semi_bold, 18, Color.Grey44),
   },
 });
 

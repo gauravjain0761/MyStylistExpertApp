@@ -4,7 +4,7 @@ import tw from 'rn-tailwind';
 import {Image} from 'components';
 import images from 'images';
 import {useNavigation} from '@react-navigation/native';
-import {commonFontStyle, fontFamily, wp} from '../utils/dimentions';
+import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
 import Color from '../../assets/color';
 
 interface Props {
@@ -36,14 +36,16 @@ const Header: FC<Props> = ({title, rightView}) => {
 
 const styles = StyleSheet.create({
   backIcon: tw`w-5 h-5`,
-  container: tw`w-full h-14 bg-white px-4 flex-row items-center`,
+  container: {
+    ...tw`w-full h-14 bg-white px-4 flex-row items-center`,
+  },
   leftView: {
     ...tw`h-full justify-center`,
     marginRight: wp(20),
   },
   rightView: tw`flex-1 w-full h-full justify-center `,
   title: {
-    ...commonFontStyle(fontFamily.RobotoBold, 18, Color?.Black),
+    ...commonFontStyle(fontFamily.semi_bold, 18, Color?.Black),
   },
 });
 

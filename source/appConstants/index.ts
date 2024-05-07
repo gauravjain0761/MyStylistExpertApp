@@ -170,6 +170,180 @@ export const user_profile_images=[
   }
 ]
 
+export const offerData = [
+  {
+    id: 1,
+    discount: '5%',
+  },
+  {
+    id: 2,
+    discount: '10%',
+  },
+  {
+    id: 3,
+    discount: '15%',
+  },
+  {
+    id: 4,
+    discount: '20%',
+  },
+  {
+    id: 5,
+    discount: '25%',
+  },
+  {
+    id: 6,
+    discount: '30%',
+  },
+  {
+    id: 7,
+    discount: '35%',
+  },
+  {
+    id: 8,
+    discount: '40%',
+  },
+  {
+    id: 9,
+    discount: '45%',
+  },
+  {
+    id: 10,
+    discount: '50%',
+  },
+  {
+    id: 11,
+    discount: '55%',
+  },
+  {
+    id: 12,
+    discount: '55%',
+  },
+  {
+    id: 13,
+    discount: '60%',
+  },
+  {
+    id: 14,
+    discount: '65%',
+  },
+  {
+    id: 15,
+    discount: '70%',
+  },
+  {
+    id: 16,
+    discount: '75%',
+  },
+  {
+    id: 17,
+    discount: '80%',
+  },
+  {
+    id: 18,
+    discount: '85%',
+  },
+  {
+    id: 19,
+    discount: '90%',
+  },
+  {
+    id: 20,
+    discount: '95%',
+  },
+  {
+    id: 21,
+    discount: '100%',
+  },
+];
+
+export const Purchase = [
+  {
+    id: 1,
+    purchase: '5',
+  },
+  {
+    id: 2,
+    purchase: '10',
+  },
+  {
+    id: 3,
+    purchase: '15',
+  },
+  {
+    id: 4,
+    purchase: '20',
+  },
+  {
+    id: 5,
+    purchase: '25',
+  },
+  {
+    id: 6,
+    purchase: '30',
+  },
+  {
+    id: 7,
+    purchase: '35',
+  },
+  {
+    id: 8,
+    purchase: '40',
+  },
+  {
+    id: 9,
+    purchase: '45',
+  },
+  {
+    id: 10,
+    purchase: '50',
+  },
+  {
+    id: 11,
+    purchase: '55',
+  },
+  {
+    id: 12,
+    purchase: '55',
+  },
+  {
+    id: 13,
+    purchase: '60',
+  },
+  {
+    id: 14,
+    purchase: '65',
+  },
+  {
+    id: 15,
+    purchase: '70',
+  },
+  {
+    id: 16,
+    purchase: '75',
+  },
+  {
+    id: 17,
+    purchase: '80',
+  },
+  {
+    id: 18,
+    purchase: '85',
+  },
+  {
+    id: 19,
+    purchase: '90',
+  },
+  {
+    id: 20,
+    purchase: '95',
+  },
+  {
+    id: 21,
+    purchase: '100',
+  },
+];
+
 export const AppointmentsData=[
   {
     id:1,

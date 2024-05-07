@@ -130,6 +130,10 @@ const images = {
   bottomprofile:require('./bottomprofile.png'),
   headerSearch:require('./headerSearch.png'),
   add:require('./add.png'),
+  datepicker:require('./datepicker.png'),
+  upload:require('./upload.png'),
+  packagebanner:require('./packagebanner.png'),
+  badgebg:require('./badgebg.png'),
 };
 
 export default images;

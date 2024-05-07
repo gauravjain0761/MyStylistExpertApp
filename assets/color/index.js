@@ -74,4 +74,6 @@ export default class Color {
 
   static Green40 = '#40C9BF';
   static Green04 = '#043E39';
+  static Green35 = '#359B9B';
+  static GreenF7 = '#F7FDFD';
 }
