@@ -37,7 +37,8 @@ const Header: FC<Props> = ({title, rightView}) => {
 const styles = StyleSheet.create({
   backIcon: tw`w-5 h-5`,
   container: {
-    ...tw`w-full h-14 bg-white px-4 flex-row items-center`,
+    ...tw`w-full h-14 bg-white flex-row items-center`,
+    paddingHorizontal: wp(20),
   },
   leftView: {
     ...tw`h-full justify-center`,
@@ -46,6 +47,10 @@ const styles = StyleSheet.create({
   rightView: tw`flex-1 w-full h-full justify-center `,
   title: {
     ...commonFontStyle(fontFamily.semi_bold, 18, Color?.Black),
+  },
+  headercontainer: {
+    overflow: 'hidden',
+    paddingBottom: hp(10),
   },
 });
 

@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {Pressable, StyleSheet, View, Text as RNText} from 'react-native';
 import {Text} from 'components';
 import tw from 'rn-tailwind';
-import {DASHED} from 'AppConstants';
+import {DASHED, NewDASHED} from 'AppConstants';
 import {Offer} from 'types';
 import moment from 'moment';
 import {commonFontStyle, fontFamily, hp} from '../utils/dimentions';
@@ -57,7 +57,7 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
       </View>
       <View style={styles.ellipseView}>
         <View style={styles.leftEllipse}></View>
-        <RNText style={styles.dashed}>{DASHED}</RNText>
+        <RNText style={styles.dashed}>{NewDASHED}</RNText>
         <View style={styles.rightEllipse}></View>
       </View>
       <View style={styles.expiryView}>
@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   cardDetail: tw`flex-row`,
   priceView: {...tw`w-27`},
   dots: tw`flex-1 w-full border-dashed border`,
-  leftEllipse: tw`h-5 w-5 bg-cultured rounded-full left--2.5`,
-  rightEllipse: tw`h-5 w-5 bg-cultured rounded-full right--2.5`,
+  leftEllipse: {...tw`h-5 w-5 bg-white rounded-full left--2.5`},
+  rightEllipse: {...tw`h-5 w-5 bg-white rounded-full right--2.5`},
   ellipseView: {
     ...tw`w-full flex-row justify-between h-5 items-center mt-0 overflow-hidden`,
   },
@@ -87,8 +87,9 @@ const styles = StyleSheet.create({
     marginBottom: hp(21),
   },
   dashed: {
-    ...commonFontStyle(fontFamily.regular, 16, Color?.GreyB0),
-    width: '90%',
+    ...commonFontStyle(fontFamily.regular, 17, Color?.GreyB0),
+    width: '89%',
+    left: 4,
   },
   offername: {
     ...commonFontStyle(fontFamily.RobotoBold, 16, Color?.Black),

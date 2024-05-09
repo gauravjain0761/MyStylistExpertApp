@@ -408,17 +408,17 @@ const styles = StyleSheet.create({
   },
 
   carousel_container: {
-    width: '100%',
+    width: screen_width,
     borderRadius: wp(12),
     overflow: 'hidden',
     backgroundColor: Color?.White,
-    height: screen_height * 0.3,
+    height: hp(screen_height * 0.3),
     marginTop: 0,
   },
   carousel_img: {
-    width: screen_width,
-    height: screen_height * 0.3,
-    resizeMode: 'cover',
+    width: screen_width * 1,
+    height: screen_height * 0.29,
+    resizeMode: 'stretch',
   },
   pagination_container: {
     justifyContent: 'center',

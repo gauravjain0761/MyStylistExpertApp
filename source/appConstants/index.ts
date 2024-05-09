@@ -23,6 +23,10 @@ const VERIFY_OTP='Verify OTP'
 const ENTER_THE_6_DIGIT='Enter the 6-digit OTP sent to you at';
 const DIDNT_RECEIVE_OTP='Didn’t receive OTP?';
 
+const NewDASHED =
+  '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -';
+
+
 
 const HOME_SCREEN_TOP_MENU = [
   {
@@ -387,5 +391,6 @@ export {
   VERIFY_OTP,
   ENTER_THE_6_DIGIT,
   DIDNT_RECEIVE_OTP,
-  ALLOW_US
+  ALLOW_US,
+  NewDASHED
 };

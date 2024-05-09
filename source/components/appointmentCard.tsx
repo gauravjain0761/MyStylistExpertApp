@@ -1,13 +1,27 @@
 import React, {FC} from 'react';
-import {Pressable, StyleSheet, View, Text as RNText, Image} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text as RNText,
+  Image as RnImage,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import tw from 'rn-tailwind';
-import {Text} from 'components';
+import {Image, Text} from 'components';
 import images from 'images';
 import globalStyle from 'globalStyles';
 import {DASHED} from 'AppConstants';
 import {Appointment} from 'types';
 import moment from 'moment';
-import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
+import {
+  commonFontStyle,
+  fontFamily,
+  hp,
+  screen_width,
+  wp,
+} from '../utils/dimentions';
 import Color from '../../assets/color';
 
 interface Props {
@@ -32,117 +46,151 @@ const AppointmentCard: FC<Props> = ({
     services,
     createdAt,
     amount,
+    featured_image,
   } = data;
   const date = moment(createdAt).format('DD MMMM YYYY, hh:mm');
   return (
     <Pressable
-      onPress={() => {
-        onPreeCard && onPreeCard(appointmentId);
-      }}
-      style={[styles.upcomingItemContainer, fullWidth && styles.cardFullWidth]}>
-      <View style={[styles.upcomingItemHeader, !homeScreen && styles[status]]}>
-        <RNText style={styles.bookingId}>
-          {`Booking ID: #${bookingNumber}`}
-        </RNText>
-        <RNText style={styles.bookingId}>
-          {status === 'booked' ? 'Upcoming' : status}
-        </RNText>
-      </View>
-      <View style={styles.upcomingItemName}>
-        <RNText style={styles.customerName}>{customerName}</RNText>
-        <RNText style={styles.amount}>
-          {'₹'}
-          {amount}
-        </RNText>
-      </View>
-      <View style={styles.upcomingDetails}>
-        <Image
-          resizeMode="stretch"
-          style={styles.locationIcon}
-          source={images.locationpin}
+      onPress={() => onPreeCard && onPreeCard(data?._id)}
+      style={styles.appointmentcard}>
+      <View style={styles.cardProfileView}>
+        <RnImage
+          resizeMode="contain"
+          style={styles.cardProfile}
+          source={featured_image}
         />
-        <RNText style={styles.label}>{'America, Las Vagas'}</RNText>
+        <View style={styles.nameView}>
+          <RNText style={styles.title}>{customerName}</RNText>
+          <RNText style={styles.date}>{date}</RNText>
+          <RNText style={styles.service}>
+            {services.length > 30
+              ? `${services.substring(0, 22)}...`
+              : services}
+          </RNText>
+          <View style={styles.functionalityconatiner}>
+            <TouchableOpacity style={styles.buttons}>
+              <Image style={styles.iconstyle} source={images.chaticon} />
+              <RNText style={styles.label}>Chat</RNText>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttons}>
+              <Image style={[styles.callIconstyle]} source={images.callicon} />
+              <RNText style={styles.label}>Call</RNText>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-      <View style={styles.upcomingDetails}>
-        <Image
-          resizeMode="stretch"
-          style={styles.locationIcon}
-          source={images.CalendarIcon}
-        />
-        <RNText style={styles.label}>{date}</RNText>
+      <View style={styles.ellipseView}>
+        <View style={styles.leftEllipse}></View>
+        <RNText style={styles.dashed}>{DASHED}</RNText>
+        <View style={styles.rightEllipse}></View>
       </View>
-      <View style={styles.dotWrap}>
-        <RNText numberOfLines={1} ellipsizeMode="clip" style={styles.desed}>
-          {DASHED}
-        </RNText>
+      <View style={styles.cardDetailRow}>
+        <RNText style={styles.amount}>{`Booking ID: ${bookingNumber}`}</RNText>
+        <RNText style={styles.amount}>{`₹${amount}`}</RNText>
       </View>
-      <RNText style={styles.services}>
-        {services}
-        <RNText style={styles.others}>{' +2 others'}</RNText>
-      </RNText>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  booked: tw`bg-bubbles`,
-  Completed: tw`bg-brightGray`,
-  Cancelled: tw`bg-antiFlashWhite`,
-  cardFullWidth: tw`w-full m-0 h-48`,
-  upcomingItemContainer: {
-    ...tw`w-72 h-52 ml-4 bg-white rounded-lg overflow-hidden`,
-    borderRadius: wp(12),
+  appointmentcard: {
+    flex: 1,
+    marginBottom: wp(26),
+    elevation: 3,
+    overflow: 'hidden',
+    borderRadius: 8,
+    shadowColor: '#000000',
+    backgroundColor: Color?.White,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2.62,
+    marginHorizontal: wp(25),
   },
-  upcomingItemHeader: {
-    ...tw`px-4 w-full h-10 bg-mistyRose flex-row items-center justify-between items-center`,
-    borderTopLeftRadius: wp(12),
-    borderTopRightRadius: wp(12),
-    borderBottomLeftRadius: wp(7),
-    borderBottomRightRadius: wp(7),
+  cardProfileView: {
+    flexDirection: 'row',
+    paddingTop: hp(17),
+    marginBottom: hp(15),
+    paddingHorizontal: wp(18),
   },
-  upcomingItemName: tw`flex-row w-full justify-between items-center px-4 mt-3`,
-  upcomingDetails: {
-    ...tw`flex-row w-full pt-1 pb-1 px-3`,
-    alignItems: 'center',
+  cardProfile: {
+    width: wp(111),
+    height: wp(110),
+    borderRadius: 10,
   },
-  locationIcon: {
-    ...tw`w-4 h-4`,
-    tintColor: Color?.Grey66,
-    width: wp(18),
-    height: wp(18),
-    marginRight: hp(4),
+  nameView: {
+    paddingLeft: wp(20),
   },
-  dashedView: tw`w-full`,
-  dotWrap: tw`w-full px-4`,
-  dashedViewBorder: {
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: 'grey',
-  },
-  customerName: {
-    ...commonFontStyle(fontFamily.bold, 18, Color?.Grey3B),
-    lineHeight: hp(22),
-  },
-  bookingId: {
-    ...commonFontStyle(fontFamily.semi_bold, 15, Color?.Black),
-  },
-  amount: {
-    ...commonFontStyle(fontFamily.extra_bold, 22, Color?.Black),
-  },
-  label: {
-    ...commonFontStyle(fontFamily.regular, 16, Color?.Grey66),
-    lineHeight: hp(16),
-  },
-  services: {
-    ...tw`px-4`,
-    ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
+  cardDetailRow: {
+    ...tw`w-full flex-row`,
+    paddingHorizontal: wp(20),
+    flex: 1,
+    justifyContent: 'space-between',
+    marginBottom: hp(15),
     marginTop: hp(10),
   },
-  desed: {
-    ...commonFontStyle(fontFamily.semi_bold, 18, Color?.GreyEB),
+  cardDetail: tw`flex-1 w-full`,
+  activeView: tw`w-18 mt-2 h-8 rounded-full bg-aeroBlue absolute right-13`,
+  cardbg: {
+    width: 'auto',
+    height: 'auto',
+    resizeMode: 'contain',
+    margin: wp(20),
+    elevation: 1,
+    overflow: 'hidden',
+    borderRadius: 8,
+    shadowColor: '#00000040',
+    backgroundColor: Color?.White,
   },
-  others: {
-    ...commonFontStyle(fontFamily.bold, 14, Color?.Black),
+  title: {
+    ...commonFontStyle(fontFamily.semi_bold, 24, Color?.Black),
+    lineHeight: hp(29.05),
+  },
+  service: {
+    ...commonFontStyle(fontFamily.medium, 15, Color?.Black),
+    marginTop: hp(8),
+  },
+  dots: tw`flex-1 w-full border-dashed border`,
+  leftEllipse: tw`h-5 w-5 bg-cultured rounded-full left--2.5`,
+  rightEllipse: tw`h-5 w-5 bg-cultured rounded-full right--2.5`,
+  ellipseView: {
+    ...tw`w-full flex-row justify-between h-5 items-center overflow-hidden`,
+  },
+  dashed: {
+    ...commonFontStyle(fontFamily.regular, 16, Color?.GreyB0),
+    width: screen_width * 0.75,
+    left: 2,
+  },
+  date: {
+    ...commonFontStyle(fontFamily.RobotoMedium, 15, Color?.Grey2E),
+    lineHeight: hp(18),
+    marginTop: hp(8),
+  },
+  iconstyle: {
+    width: wp(24),
+    height: wp(24),
+  },
+  functionalityconatiner: {
+    flexDirection: 'row',
+    marginTop: hp(10),
+    gap: wp(40),
+  },
+  buttons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(3),
+  },
+  label: {
+    ...commonFontStyle(fontFamily.medium, 15, Color?.Black),
+  },
+  callIconstyle: {
+    width: wp(20),
+    height: wp(20),
+  },
+  amount: {
+    ...commonFontStyle(fontFamily.medium, 16, Color?.Black),
   },
 });
 

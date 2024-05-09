@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     width: 'auto',
   },
-  mainView: tw`flex-1 px-4 w-full bg-cultured`,
+  mainView: tw`flex-1 px-4 w-full bg-white`,
   listView: tw`py-4`,
   listSeparator: tw`h-4 w-full`,
   headerIcon: {

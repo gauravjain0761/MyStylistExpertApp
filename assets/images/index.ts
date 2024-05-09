@@ -134,6 +134,11 @@ const images = {
   upload:require('./upload.png'),
   packagebanner:require('./packagebanner.png'),
   badgebg:require('./badgebg.png'),
+  cardbg:require('./cardbg.png'),
+  wom1:require('./wom1.png'),
+  wom2:require('./wom2.png'),
+  chaticon:require('./chaticon.png'),
+  callicon:require('./callicon.png'),
 };
 
 export default images;
