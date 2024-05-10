@@ -19,6 +19,7 @@ import {
   screen_width,
   wp,
 } from '../../utils/dimentions';
+import {toGammaSpace} from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
 const initialLayout = {
   height: 0,
@@ -304,9 +305,10 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.White,
     width: screen_width,
     height: screen_height,
+    flex: 1,
   },
   viewPager: {...tw`flex-1 w-full h-full`, paddingHorizontal: wp(0)},
-  separator: tw`w-full h-4`,
+  separator: {...tw`w-full`, height: hp(26)},
   tabStyle: {
     backgroundColor: Color?.White,
     overflow: 'hidden',
@@ -323,7 +325,10 @@ const styles = StyleSheet.create({
     paddingVertical: hp(12),
     paddingHorizontal: hp(30),
   },
-  listContainer: tw`py-4`,
+  listContainer: {
+    paddingBottom: hp(24),
+    paddingTop: hp(10),
+  },
   listSeparator: tw`w-full h-4`,
   contentContainer: {
     backgroundColor: Color?.GreenE8,

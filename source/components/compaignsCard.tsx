@@ -106,7 +106,7 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
             onPress={() => {}}
             lable={cardType}
             labelFontWeight="700"
-            style={tw`flex-1 w-full bg-primary`}
+            style={tw`flex-1 w-full bg-borderDarkGrey`}
           />
         )}
       </View>
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: wp(26),
     marginHorizontal: wp(26),
     elevation: 3,
     overflow: 'hidden',

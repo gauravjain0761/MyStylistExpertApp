@@ -83,7 +83,7 @@ const MyPackages: FC<Props> = ({navigation}) => {
     <Container>
       <View style={globalStyle.container}>
         <Header
-          title={`Packages (${myPackages?.length || '0'})`}
+          title={`Packages (${allpackeges?.length || '0'})`}
           rightView={
             <View style={styles.headerRight}>
               <Pressable
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     width: 'auto',
   },
-  mainView: tw`flex-1 px-4 w-full bg-white`,
+  mainView: tw`flex-1 px-4 w-full bg-cultured`,
   listView: tw`py-4`,
   listSeparator: tw`h-4 w-full`,
   headerIcon: {

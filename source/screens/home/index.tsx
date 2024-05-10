@@ -22,6 +22,7 @@ import {
   AppointmentCard,
   BarChart,
   BottomTab,
+  HomeAppointmentCard,
   HomeHeader,
   Image,
   Locationmodal,
@@ -127,7 +128,11 @@ const Home: FC<Props> = ({navigation, route}) => {
                 inactiveSlideScale={2}
                 renderItem={({item}: any) => {
                   return (
-                    <Image source={item?.image} style={styles?.carousel_img} />
+                    <Image
+                      resizeMode="stretch"
+                      source={item?.image}
+                      style={styles?.carousel_img}
+                    />
                   );
                 }}
                 onSnapToItem={onSnapToItem}
@@ -186,23 +191,21 @@ const Home: FC<Props> = ({navigation, route}) => {
 
               <View style={styles.gridImageView}>
                 {user_profile_images?.length ? (
-                  user_profile_images.map(
-                    (data: ExpertWorkImage, index: number) => {
-                      // const {image_medium} = data;
-                      // const url = `${user_profile_images_url}${image_medium}`;
+                  <FlatList
+                    numColumns={3}
+                    columnWrapperStyle={{gap: wp(11)}}
+                    data={user_profile_images}
+                    renderItem={({item, index}) => {
                       return (
                         <Image
                           key={index}
-                          // source={{
-                          //   uri: url,
-                          // }}
-                          source={data?.image}
+                          source={item?.image}
                           resizeMode="cover"
                           style={[styles.gridImage, styles.gridImageBottom]}
                         />
                       );
-                    },
-                  )
+                    }}
+                  />
                 ) : (
                   <View />
                 )}
@@ -223,12 +226,13 @@ const Home: FC<Props> = ({navigation, route}) => {
               <FlatList
                 horizontal={true}
                 data={AppointmentsData}
+                ListHeaderComponent={<View style={styles.listcontainer}></View>}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.horizontalList}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}: any) => {
                   return (
-                    <AppointmentCard
+                    <HomeAppointmentCard
                       status="Upcoming"
                       homeScreen={true}
                       data={item}
@@ -263,6 +267,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                 horizontal={true}
                 contentContainerStyle={styles.horizontalList}
                 showsHorizontalScrollIndicator={false}
+                ListHeaderComponent={<View style={styles.seprator}></View>}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => {
                   return (
@@ -306,6 +311,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.horizontalList}
+                  ListHeaderComponent={<View style={styles.seprator}></View>}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({item, index}) => {
                     return (
@@ -331,7 +337,7 @@ const Home: FC<Props> = ({navigation, route}) => {
 export default Home;
 
 const styles = StyleSheet.create({
-  mainView: tw`flex-1 w-full bg-cultured`,
+  mainView: tw`flex-1 w-full bg-yellow`,
   topBoxWrapper: tw`rounded-lg mb-4 pl-3 pt-3 pr-2`,
   topBoxWrappeSub: {width: w(28), height: w(28)},
   innerBox: tw` rounded-lg`,
@@ -340,27 +346,38 @@ const styles = StyleSheet.create({
   topBoxsWrapper: {
     ...tw`w-full flex-row flex-wrap justify-between`,
     paddingTop: hp(25),
-    paddingBottom: hp(20),
+    paddingBottom: hp(10),
   },
   boxWrapperSub: {paddingHorizontal: w(4)},
   containertitle: {
     ...commonFontStyle(fontFamily.semi_bold, 15, Color?.Black),
     marginTop: hp(15),
   },
-  gridView: {...tw`w-full  bg-aliceBlue`, paddingBottom: hp(24)},
+  gridView: {
+    ...tw`w-full  bg-aliceBlue`,
+    paddingBottom: hp(24),
+  },
   gridViewHeader: {
-    ...tw`w-full flex-row items-center justify-between px-4`,
-    marginTop: hp(26),
+    ...tw`w-full flex-row items-center justify-between`,
+    paddingHorizontal: hp(20),
+    paddingTop: hp(26),
   },
   gridImage: tw`mb-4`,
-  gridImageBottom: {marginLeft: w(4), width: w(28), height: w(28)},
-  gridImageView: {...tw`flex-row flex-wrap`, marginTop: hp(15)},
-  grapView: tw`w-full h-103 bg-white`,
+  gridImageBottom: {width: w(28), height: w(28)},
+  gridImageView: {
+    ...tw`flex-row flex-wrap`,
+    marginTop: hp(15),
+    paddingHorizontal: hp(20),
+  },
+  grapView: tw`w-full bg-white`,
   ViewTitle: {
     ...commonFontStyle(fontFamily.semi_bold, 18, Color?.Black),
   },
-  upcomingAppView: tw`w-full h-71 bg-oldLace`,
-  upcomingHeader: tw`w-full h-14 flex-row justify-between items-center px-4`,
+  upcomingAppView: {...tw`w-full bg-oldLace`, paddingBottom: hp(35)},
+  upcomingHeader: {
+    ...tw`w-full h-14 flex-row justify-between items-center px-4`,
+    paddingLeft: wp(20),
+  },
   topServicesView: tw`w-full h-58 bg-white`,
   viewAll: {
     ...commonFontStyle(fontFamily.medium, 14, Color?.Grey66),
@@ -368,8 +385,15 @@ const styles = StyleSheet.create({
     lineHeight: hp(17),
   },
   horizontalList: tw`mr-4`,
-  topServiceHeader: tw`w-full h-19 flex-row justify-between items-center px-4`,
-  topServiceItemContainer: tw`w-37 h-32 ml-4 pl-4 rounded-lg `,
+  topServiceHeader: {
+    ...tw`w-full h-19 flex-row justify-between items-center`,
+    paddingLeft: wp(20),
+    paddingRight: wp(14),
+  },
+  topServiceItemContainer: {
+    ...tw`w-37 h-32 pl-4 rounded-lg `,
+    marginRight: wp(16),
+  },
   dropdownArrow: tw`w-3.5 h-3.5 ml-1`,
   serviceDropdownView: tw`flex-row px-3 h-9 rounded-lg bg-aliceBlue`,
   dropdownTitle: {
@@ -395,7 +419,7 @@ const styles = StyleSheet.create({
     marginTop: hp(3),
   },
   chartcontainer: {
-    ...tw`w-88 h-76 bg-white ml-4 rounded-lg`,
+    ...tw`w-88 h-76 bg-white rounded-lg`,
     shadowColor: '#ababab',
     shadowOffset: {
       width: 0,
@@ -404,7 +428,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 20.0,
     elevation: 24,
-    marginBottom: hp(15),
+    marginBottom: hp(42),
   },
 
   carousel_container: {
@@ -412,13 +436,12 @@ const styles = StyleSheet.create({
     borderRadius: wp(12),
     overflow: 'hidden',
     backgroundColor: Color?.White,
-    height: hp(screen_height * 0.3),
+    height: hp(256),
     marginTop: 0,
   },
   carousel_img: {
-    width: screen_width * 1,
-    height: screen_height * 0.29,
-    resizeMode: 'stretch',
+    width: '100%',
+    height: hp(256),
   },
   pagination_container: {
     justifyContent: 'center',
@@ -439,6 +462,14 @@ const styles = StyleSheet.create({
     height: wp(6),
     borderRadius: 5,
     backgroundColor: Color?.Grey7A,
+  },
+  listcontainer: {
+    width: wp(20),
+    height: wp(20),
+  },
+  seprator: {
+    width: wp(20),
+    height: wp(20),
   },
 });
 

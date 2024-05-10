@@ -4,6 +4,7 @@ import CommentSheet from './commentSheet';
 import CreatePackageSheet from './createPackageSheet';
 import SubmitProposalSheet from './submitProposalSheet';
 import MultiSelectPickerSheet from './multiSelectPickerSheet';
+import OrderplaceSheet from './orderplaceSheet';
 
 export {
   ServiceSheet,
@@ -12,4 +13,5 @@ export {
   CreatePackageSheet,
   SubmitProposalSheet,
   MultiSelectPickerSheet,
+  OrderplaceSheet,
 };

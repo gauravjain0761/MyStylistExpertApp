@@ -30,6 +30,7 @@ import Login_Input from './Login_Input';
 import Locationmodal from './locationmodal';
 import DropDown from './dropdown';
 import ImagePicker from './imagepicker';
+import HomeAppointmentCard from './homeappointmentCard';
 
 export {
   Text,
@@ -63,5 +64,6 @@ export {
   Login_Input,
   Locationmodal,
   DropDown,
-  ImagePicker
+  ImagePicker,
+  HomeAppointmentCard
 };

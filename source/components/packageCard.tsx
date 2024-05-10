@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   cardDetail: tw`flex-row`,
   priceView: {...tw`w-27`},
   dots: tw`flex-1 w-full border-dashed border`,
-  leftEllipse: {...tw`h-5 w-5 bg-white rounded-full left--2.5`},
-  rightEllipse: {...tw`h-5 w-5 bg-white rounded-full right--2.5`},
+  leftEllipse: {...tw`h-5 w-5 bg-cultured rounded-full left--2.5`},
+  rightEllipse: {...tw`h-5 w-5 bg-cultured rounded-full right--2.5`},
   ellipseView: {
     ...tw`w-full flex-row justify-between h-5 items-center mt-0 overflow-hidden`,
   },

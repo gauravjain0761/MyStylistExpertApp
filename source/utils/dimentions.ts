@@ -1,4 +1,4 @@
-import {Dimensions, PixelRatio, Platform, TextStyle} from 'react-native';
+import {Dimensions, PixelRatio, Platform, TextStyle, useWindowDimensions} from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 
@@ -41,8 +41,8 @@ const f = scale => {
   }
 };
 
-export const screen_width: number = Dimensions.get("window").width;
-export const screen_height: number = Dimensions.get("window").height;
+export const screen_width: number = Dimensions.get('window').width;
+export const screen_height: number = Dimensions.get('window').height;
 
 export const wp = (val: number) => {
   return widthPercentageToDP((val * 100) / 375);

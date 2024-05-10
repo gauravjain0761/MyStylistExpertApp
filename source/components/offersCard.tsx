@@ -6,7 +6,12 @@ import tw from 'rn-tailwind';
 import {DASHED} from 'AppConstants';
 import {Offer} from 'types';
 import moment from 'moment';
-import {commonFontStyle, fontFamily, hp} from '../utils/dimentions';
+import {
+  commonFontStyle,
+  fontFamily,
+  hp,
+  screen_width,
+} from '../utils/dimentions';
 import Color from '../../assets/color';
 
 interface Props {
@@ -76,8 +81,8 @@ const styles = StyleSheet.create({
   cardDetail: tw`flex-row`,
   priceView: {...tw`w-27`},
   dots: tw`flex-1 w-full border-dashed border`,
-  leftEllipse: tw`h-5 w-5 bg-cultured rounded-full left--2.5`,
-  rightEllipse: tw`h-5 w-5 bg-cultured rounded-full right--2.5`,
+  leftEllipse: tw`h-5 w-5 bg-white bg-cultured rounded-full left--2.5`,
+  rightEllipse: tw`h-5 w-5 bg-white bg-cultured rounded-full right--2.5`,
   ellipseView: {
     ...tw`w-full flex-row justify-between h-5 items-center mt-0 overflow-hidden`,
   },
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
   },
   dashed: {
     ...commonFontStyle(fontFamily.regular, 16, Color?.GreyB0),
-    width: '90%',
+    width: screen_width * 0.8,
   },
   offername: {
     ...commonFontStyle(fontFamily.RobotoBold, 16, Color?.Black),

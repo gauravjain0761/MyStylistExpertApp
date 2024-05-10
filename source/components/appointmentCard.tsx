@@ -11,7 +11,6 @@ import {
 import tw from 'rn-tailwind';
 import {Image, Text} from 'components';
 import images from 'images';
-import globalStyle from 'globalStyles';
 import {DASHED} from 'AppConstants';
 import {Appointment} from 'types';
 import moment from 'moment';

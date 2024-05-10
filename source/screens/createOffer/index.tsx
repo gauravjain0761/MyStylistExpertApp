@@ -4,7 +4,7 @@ import images from 'images';
 import moment from 'moment';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
-import {CreateOfferSheet, ServiceSheet} from 'bottomSheets';
+import {CreateOfferSheet, OrderplaceSheet, ServiceSheet} from 'bottomSheets';
 import DatePicker from 'react-native-date-picker';
 import {RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -57,6 +57,7 @@ const banner = [
 
 const CreateOffer: FC<Props> = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [visible, setVisible] = useState(false);
   const {
     endDate,
     startDate,
@@ -290,24 +291,33 @@ const CreateOffer: FC<Props> = () => {
           <PrimaryButton
             label="Create Offer"
             onPress={() => {
-              if (!offerName) {
-                NativeToast('Please enter offer name');
-              } else if (!selectedServices.length) {
-                NativeToast('Please select service for this offer');
-              } else if (!selectedSubServices.length) {
-                NativeToast('Please select sub service for this offer');
-              } else if (!startDate) {
-                NativeToast('Please select start date');
-              } else if (!endDate) {
-                NativeToast('Please select end date');
-              } else if (!selectedImage?.fileName) {
-                NativeToast('Please add offer image');
-              } else {
-                setCreateOfferSheet(true);
-              }
+              setVisible(!visible);
+              // if (!offerName) {
+              //   NativeToast('Please enter offer name');
+              // } else if (!selectedServices.length) {
+              //   NativeToast('Please select service for this offer');
+              // } else if (!selectedSubServices.length) {
+              //   NativeToast('Please select sub service for this offer');
+              // } else if (!startDate) {
+              //   NativeToast('Please select start date');
+              // } else if (!endDate) {
+              //   NativeToast('Please select end date');
+              // } else if (!selectedImage?.fileName) {
+              //   NativeToast('Please add offer image');
+              // } else {
+              //   setCreateOfferSheet(true);
+              // }
             }}
           />
         </View>
+        {visible && (
+          <OrderplaceSheet
+            title="Creating your Offer"
+            discription="We need access to your location to show you relevant Stylists, Offers and Packages"
+            visibility={visible}
+            setVisibility={setVisible}
+          />
+        )}
         {createOfferSheet ? (
           <CreateOfferSheet
             endDate={endDate}
