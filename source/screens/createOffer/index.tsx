@@ -291,22 +291,22 @@ const CreateOffer: FC<Props> = () => {
           <PrimaryButton
             label="Create Offer"
             onPress={() => {
-              setVisible(!visible);
-              // if (!offerName) {
-              //   NativeToast('Please enter offer name');
-              // } else if (!selectedServices.length) {
-              //   NativeToast('Please select service for this offer');
-              // } else if (!selectedSubServices.length) {
-              //   NativeToast('Please select sub service for this offer');
-              // } else if (!startDate) {
-              //   NativeToast('Please select start date');
-              // } else if (!endDate) {
-              //   NativeToast('Please select end date');
-              // } else if (!selectedImage?.fileName) {
-              //   NativeToast('Please add offer image');
-              // } else {
-              //   setCreateOfferSheet(true);
-              // }
+              // setVisible(!visible);
+              if (!offerName) {
+                NativeToast('Please enter offer name');
+              } else if (!selectedServices.length) {
+                NativeToast('Please select service for this offer');
+              } else if (!selectedSubServices.length) {
+                NativeToast('Please select sub service for this offer');
+              } else if (!startDate) {
+                NativeToast('Please select start date');
+              } else if (!endDate) {
+                NativeToast('Please select end date');
+              } else if (!selectedImage?.fileName) {
+                NativeToast('Please add offer image');
+              } else {
+                setCreateOfferSheet(true);
+              }
             }}
           />
         </View>

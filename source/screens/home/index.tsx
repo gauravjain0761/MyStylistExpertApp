@@ -337,7 +337,7 @@ const Home: FC<Props> = ({navigation, route}) => {
 export default Home;
 
 const styles = StyleSheet.create({
-  mainView: tw`flex-1 w-full bg-yellow`,
+  mainView: tw`flex-1 w-full bg-white`,
   topBoxWrapper: tw`rounded-lg mb-4 pl-3 pt-3 pr-2`,
   topBoxWrappeSub: {width: w(28), height: w(28)},
   innerBox: tw` rounded-lg`,
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     marginTop: hp(15),
   },
   gridView: {
-    ...tw`w-full  bg-aliceBlue`,
+    ...tw`w-full bg-aliceBlue`,
     paddingBottom: hp(24),
   },
   gridViewHeader: {
@@ -375,8 +375,10 @@ const styles = StyleSheet.create({
   },
   upcomingAppView: {...tw`w-full bg-oldLace`, paddingBottom: hp(35)},
   upcomingHeader: {
-    ...tw`w-full h-14 flex-row justify-between items-center px-4`,
+    ...tw`w-full flex-row justify-between items-center px-4`,
     paddingLeft: wp(20),
+    paddingTop: hp(29),
+    paddingBottom: hp(20),
   },
   topServicesView: tw`w-full h-58 bg-white`,
   viewAll: {
