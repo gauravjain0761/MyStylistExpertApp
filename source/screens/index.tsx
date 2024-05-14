@@ -32,6 +32,9 @@ import Jobs from './jobs';
 import JobDetail from './jobDetail';
 import SubmitProposal from './submitProposal';
 import VideoPlayer from './videoPlayer';
+import BusyMode from './busymode';
+import MyServices from './myServices';
+import ServiceUpload from './uploadService';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -59,6 +62,7 @@ export type RootStackParamList = {
   Followings: undefined;
   WritePost: undefined;
   Jobs: undefined;
+  BusyMode: undefined;
   JobDetail: {jobId: string};
   SetAvailability: undefined;
   Availability: undefined;
@@ -73,6 +77,10 @@ export type RootStackParamList = {
   OtpVeirfy: {mobileNumber: string};
   NotificationSetting: undefined;
   VideoPlayer: {videoUrl: string};
+  MyServices: {
+    data: Object;
+  };
+  ServiceUpload: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -125,6 +133,9 @@ function AppStackNavigator() {
         name="NotificationSetting"
         component={NotificationSetting}
       />
+      <Stack.Screen name="BusyMode" component={BusyMode} />
+      <Stack.Screen name="MyServices" component={MyServices} />
+      <Stack.Screen name="ServiceUpload" component={ServiceUpload} />
     </Stack.Navigator>
   );
 }

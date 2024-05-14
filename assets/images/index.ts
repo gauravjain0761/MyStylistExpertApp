@@ -139,6 +139,17 @@ const images = {
   wom2:require('./wom2.png'),
   chaticon:require('./chaticon.png'),
   callicon:require('./callicon.png'),
+  lefticon:require('./leftArrow.png'),
+  righticon:require('./righticon.png'),
+  clockicon:require('./clockicon.png'),
+  collapseArrow:require('./collapseArrow.png'),
+  services:require('./services.png'),
+  buttonbg:require('./buttonbg.png'),
+  uploadicon:require('./uploadicon.png'),
+  floatarrow:require('./floatarrow.png'),
+  dashbroadbutton:require('./dashbroadbutton.png'),
+  cameraicon:require('./cameraicon.png'),
+  trash:require('./trash.png'),
 };
 
 export default images;

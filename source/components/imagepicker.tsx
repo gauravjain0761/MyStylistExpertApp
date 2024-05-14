@@ -1,5 +1,6 @@
 import {
   Image,
+  ImageBackground,
   StyleSheet,
   Text,
   TextStyle,
@@ -36,10 +37,11 @@ const ImagePicker: FC<piker> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
-      <TouchableOpacity
-        onPress={onPress}
-        style={[styles.innercontainer, innercontainer]}>
-        <View style={styles.imgConainer}>
+      <TouchableOpacity onPress={onPress}>
+        <ImageBackground
+          style={[styles.innercontainer, innercontainer]}
+          resizeMode="stretch"
+          source={images?.dashbroadbutton}>
           <Image
             resizeMode="stretch"
             source={placeholderIcon ? placeholderIcon : images.upload}
@@ -48,7 +50,7 @@ const ImagePicker: FC<piker> = ({
           <Text style={[styles.title, titleStyle]}>
             {placeholderTitle ? placeholderTitle : 'Upload image here..'}
           </Text>
-        </View>
+        </ImageBackground>
       </TouchableOpacity>
     </View>
   );
@@ -61,29 +63,20 @@ const styles = StyleSheet.create({
     marginTop: hp(25),
   },
   innercontainer: {
-    borderWidth: 1.2,
-    borderColor: Color?.Green35,
     marginTop: hp(20),
-    borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: hp(5),
     paddingVertical: hp(18),
-    borderRadius: wp(10),
-    backgroundColor: Color?.GreenF7,
+    flexDirection: 'row',
+    gap: wp(20),
   },
   uploadIcon: {
     width: wp(24),
     height: wp(24),
   },
   title: {
-    ...commonFontStyle(fontFamily.semi_bold, 12, Color.Green35),
+    ...commonFontStyle(fontFamily.RobotoMedium, 12, Color.Green35),
     lineHeight: hp(14),
-  },
-  imgConainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(20),
   },
   label: {
     ...commonFontStyle(fontFamily.semi_bold, 16, Color?.Black),

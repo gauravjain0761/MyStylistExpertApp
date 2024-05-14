@@ -42,7 +42,7 @@ const PrimaryButton: FC<IconButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    borderRadius: 10,
+    borderRadius: wp(10),
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.Green,

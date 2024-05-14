@@ -6,7 +6,7 @@ import {StatusBar} from 'expo-status-bar';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface Props {
-  children: JSX.Element;
+  children: JSX.Element | React.ReactNode;
   enableScroll?: boolean;
 }
 

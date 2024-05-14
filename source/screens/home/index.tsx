@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   },
 
   carousel_container: {
-    width: screen_width,
+    width: '100%',
     borderRadius: wp(12),
     overflow: 'hidden',
     backgroundColor: Color?.White,
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   },
   carousel_img: {
     width: '100%',
-    height: hp(256),
+    height: hp(257),
   },
   pagination_container: {
     justifyContent: 'center',

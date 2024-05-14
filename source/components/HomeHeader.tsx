@@ -34,7 +34,7 @@ const HomeHeader: FC<HomeProps> = ({
 
   const onPressBell = () => {
     // @ts-ignore
-    navigate(screenName.Notifications);
+    navigate('Notifications');
   };
 
   return (

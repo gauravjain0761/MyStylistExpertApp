@@ -130,7 +130,11 @@ const CreateOffer: FC<Props> = () => {
               inactiveSlideScale={2}
               renderItem={({item}: any) => {
                 return (
-                  <Image source={item?.image} style={styles?.carousel_img} />
+                  <Image
+                    resizeMode="cover"
+                    source={item?.image}
+                    style={styles?.carousel_img}
+                  />
                 );
               }}
               onSnapToItem={onSnapToItem}
@@ -411,13 +415,12 @@ const styles = StyleSheet.create({
     borderRadius: wp(12),
     overflow: 'hidden',
     backgroundColor: Color?.White,
-    height: screen_height * 0.3,
+    height: hp(256),
     marginTop: 0,
   },
   carousel_img: {
-    width: screen_width,
-    height: screen_height * 0.3,
-    resizeMode: 'cover',
+    width: '100%',
+    height: hp(257),
   },
   pagination_container: {
     justifyContent: 'center',

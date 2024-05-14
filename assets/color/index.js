@@ -73,6 +73,10 @@ export default class Color {
   static GreyDE = '#DEDEDE';
   static Grey6B = '#6B6B6B';
   static Grey2E = '#2E2E2E';
+  static Grey21 = '#212121';
+  static GreyEE = '#EEEEEE';
+  static Grey61 = '#616161';
+  static Grey5F = '#5F5F5F';
 
   static Green40 = '#40C9BF';
   static Green04 = '#043E39';
@@ -81,4 +85,10 @@ export default class Color {
   static GreenE8 = '#E8F9F7';
   static GreenCC = '#CCF0EE';
   static Green2F = '#2F7973';
+  static GreenEC = '#ECF9FF';
+  static GreenEF = '#EFFBFA';
+
+  static BlueA0 = '#A0C3D2';
+  static Blue4C = '#4C91B1';
+  static Blue74 = '#74AAC3';
 }

@@ -69,7 +69,7 @@ const HOME_SCREEN_TOP_MENU = [
     boxTitle: 'My Services',
     boxColor: '#ffecd3',
     innerBoxColor: '#fee1b9',
-    route: 'Jobs',
+    route: 'MyServices',
   },
 ];
 
@@ -347,6 +347,71 @@ export const Purchase = [
     purchase: '100',
   },
 ];
+
+export const Services = [
+  {
+    id: 1,
+    name: 'Hair Wash Normal',
+    price: 150,
+    images: images?.services,
+  },
+  {
+    id: 2,
+    name: 'Hair Wash Normal',
+    price: 150,
+    images: images?.services,
+  },
+  {
+    id: 3,
+    name: 'Head Massage',
+    price: 450,
+    images: images?.services,
+  },
+  {
+    id: 4,
+    name: 'Beard & Shave',
+    price: 150,
+    images: images?.services,
+  },
+  {
+    id: 5,
+    name: 'Farman Se Beard',
+    price: 200,
+    images: images?.services,
+  },
+  {
+    id: 6,
+    name: 'Color Normal',
+    price: 1000,
+    images: images?.services,
+  },
+  {
+    id: 7,
+    name: 'INOA Color',
+    price: 1100,
+    images: images?.services,
+  },
+  {
+    id: 8,
+    name: 'INOA Color',
+    price: 1100,
+    images: images?.services,
+  },
+  {
+    id: 9,
+    name: 'Beard Color Normal',
+    price: 750,
+    images: images?.services,
+  },
+  {
+    id: 10,
+    name: 'Baby Boy Cut',
+    price: 250,
+    images: images?.services,
+  },
+];
+
+
 
 export const AppointmentsData=[
   {

@@ -31,6 +31,8 @@ import Locationmodal from './locationmodal';
 import DropDown from './dropdown';
 import ImagePicker from './imagepicker';
 import HomeAppointmentCard from './homeappointmentCard';
+import Collapse from './collapse';
+import ServiceCard from './servicecard';
 
 export {
   Text,
@@ -65,5 +67,7 @@ export {
   Locationmodal,
   DropDown,
   ImagePicker,
-  HomeAppointmentCard
+  HomeAppointmentCard,
+  Collapse,
+  ServiceCard
 };
