@@ -186,7 +186,7 @@ function BusyMode() {
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.calenderView}>
               <Text style={styles.title}>Date</Text>
-              <CalendarPicker minDate={minDate} />
+              {/* <CalendarPicker minDate={minDate} /> */}
               {/* <Calendar
                 minDate={minDate}
                 theme={{

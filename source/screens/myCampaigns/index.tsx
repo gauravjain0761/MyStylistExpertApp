@@ -294,9 +294,9 @@ const styles = StyleSheet.create({
   tabContainer: {
     backgroundColor: Color?.Green,
     borderRadius: 4,
-    width: 'auto',
     alignItems: 'center',
     justifyContent: 'center',
+    flex: 1,
   },
   headerRight: tw`flex-1 w-full h-full flex-row items-center justify-end`,
   headerButton: tw`w-10 h-full items-end justify-center`,
@@ -318,12 +318,9 @@ const styles = StyleSheet.create({
   focusedLabel: {
     ...commonFontStyle(fontFamily?.semi_bold, 14, Color?.Black),
     paddingVertical: hp(12),
-    paddingHorizontal: hp(30),
   },
   tabLabel: {
     ...commonFontStyle(fontFamily?.medium, 14, Color?.Black),
-    paddingVertical: hp(12),
-    paddingHorizontal: hp(30),
   },
   listContainer: {
     paddingBottom: hp(24),

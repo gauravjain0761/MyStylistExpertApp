@@ -109,6 +109,10 @@ const Home: FC<Props> = ({navigation, route}) => {
     setActiveIndex(index);
   };
 
+  const onPressProfile = () => {
+    navigation.openDrawer();
+  };
+
   return (
     <Container>
       <>
@@ -116,6 +120,7 @@ const Home: FC<Props> = ({navigation, route}) => {
         <HomeHeader
           onPresslocation={() => setVisible(!visible)}
           location={'Shop No. 4, Ansal Palm Grove, Mohali'}
+          onPressProfile={onPressProfile}
         />
         <View style={styles?.mainView}>
           <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>

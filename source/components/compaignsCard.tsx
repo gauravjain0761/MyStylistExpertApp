@@ -12,7 +12,13 @@ import {
 } from 'react-native';
 import {CampaignList} from 'types';
 import moment from 'moment';
-import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
+import {
+  commonFontStyle,
+  fontFamily,
+  hp,
+  screen_width,
+  wp,
+} from '../utils/dimentions';
 import Color from '../../assets/color';
 import images from 'images';
 import {DASHED} from 'AppConstants';
@@ -44,72 +50,75 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
     <Pressable
       onPress={() => onPressCard && onPressCard(_id)}
       style={styles.compaingnsCard}>
-      <View style={styles.cardProfileView}>
-        <RnImage
-          resizeMode="contain"
-          style={styles.cardProfile}
-          source={featured_image}
-        />
-        <View style={styles.nameView}>
-          <RNText style={styles?.title}>{title}</RNText>
-          <RNText style={styles.code}>{`Code: ${campaignCode}`}</RNText>
-          <RNText style={styles.price}>{`Price: ₹${price}`}</RNText>
-        </View>
-      </View>
-      <View style={styles.cardDetailRow}>
-        <View style={styles.cardDetail}>
-          <RNText style={styles.servicelabel}>Services</RNText>
-          <RNText style={styles.service}>{services.join(',')}</RNText>
-        </View>
-      </View>
-      <View style={styles.daterow}>
-        <View style={styles.timecontainer}>
-          <Image style={styles.iconstyle} source={images?.CalendarIcon} />
-          <View>
-            <RNText style={styles?.timelabel}>Start Date</RNText>
-            <RNText style={styles.time}>{sDate}</RNText>
+      <ImageBackground
+        resizeMode="stretch"
+        source={images?.cardbg}
+        style={styles.cardbg}>
+        <View style={styles.cardProfileView}>
+          <RnImage
+            resizeMode="contain"
+            style={styles.cardProfile}
+            source={featured_image}
+          />
+          <View style={styles.nameView}>
+            <RNText style={styles?.title}>{title}</RNText>
+            <RNText style={styles.code}>{`Code: ${campaignCode}`}</RNText>
+            <RNText style={styles.price}>{`Price: ₹${price}`}</RNText>
           </View>
         </View>
-        <View style={styles.timecontainer}>
-          <Image style={styles.iconstyle} source={images?.CalendarIcon} />
-          <View>
-            <RNText style={styles?.timelabel}>End Date</RNText>
-            <RNText style={styles.time}>{eDate}</RNText>
+        <View style={styles.cardDetailRow}>
+          <View style={styles.cardDetail}>
+            <RNText style={styles.servicelabel}>Services</RNText>
+            <RNText style={styles.service}>{services.join(',')}</RNText>
           </View>
         </View>
-      </View>
-      <View style={styles.ellipseView}>
-        <View style={styles.leftEllipse}></View>
-        <RNText style={styles.dashed}>{DASHED}</RNText>
-        <View style={styles.rightEllipse}></View>
-      </View>
-      <View style={[styles.cardDetailRow, styles.btncontainer]}>
-        {(cardType === 'Pending' || cardType === 'Active') && (
-          <Button
-            onPress={() => {}}
-            lable={cardType === 'Active' ? 'Accepted' : 'Decline'}
-            labelFontWeight="700"
-            labelColor="text-darkGrey"
-            style={tw`flex-1 w-full bg-borderDarkGrey`}
-          />
-        )}
-        {cardType === 'Pending' && (
-          <Button
-            onPress={() => {}}
-            lable={'Accept'}
-            labelFontWeight="700"
-            style={tw`flex-1 w-full bg-primary`}
-          />
-        )}
-        {(cardType === 'Accepted' || cardType === 'Decline') && (
-          <Button
-            onPress={() => {}}
-            lable={cardType}
-            labelFontWeight="700"
-            style={tw`flex-1 w-full bg-borderDarkGrey`}
-          />
-        )}
-      </View>
+        <View style={styles.daterow}>
+          <View style={styles.timecontainer}>
+            <Image style={styles.iconstyle} source={images?.CalendarIcon} />
+            <View>
+              <RNText style={styles?.timelabel}>Start Date</RNText>
+              <RNText style={styles.time}>{sDate}</RNText>
+            </View>
+          </View>
+          <View style={styles.timecontainer}>
+            <Image style={styles.iconstyle} source={images?.CalendarIcon} />
+            <View>
+              <RNText style={styles?.timelabel}>End Date</RNText>
+              <RNText style={styles.time}>{eDate}</RNText>
+            </View>
+          </View>
+        </View>
+        <View style={styles.ellipseView}>
+          <RNText style={styles.dashed}>{DASHED}</RNText>
+        </View>
+        <View style={[styles.cardDetailRow, styles.btncontainer]}>
+          {(cardType === 'Pending' || cardType === 'Active') && (
+            <Button
+              onPress={() => {}}
+              lable={cardType === 'Active' ? 'Accepted' : 'Decline'}
+              labelFontWeight="700"
+              labelColor="text-darkGrey"
+              style={tw`flex-1 w-full bg-borderDarkGrey`}
+            />
+          )}
+          {cardType === 'Pending' && (
+            <Button
+              onPress={() => {}}
+              lable={'Accept'}
+              labelFontWeight="700"
+              style={tw`flex-1 w-full bg-primary`}
+            />
+          )}
+          {(cardType === 'Accepted' || cardType === 'Decline') && (
+            <Button
+              onPress={() => {}}
+              lable={cardType}
+              labelFontWeight="700"
+              style={tw`flex-1 w-full bg-borderDarkGrey`}
+            />
+          )}
+        </View>
+      </ImageBackground>
     </Pressable>
   );
 };
@@ -120,17 +129,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: wp(26),
-    elevation: 3,
-    overflow: 'hidden',
-    borderRadius: 8,
-    shadowColor: '#000000',
-    backgroundColor: Color?.White,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 2.62,
+    // elevation: 3,
+    // overflow: 'hidden',
+    // borderRadius: 8,
+    // shadowColor: '#000000',
+    // backgroundColor: Color?.White,
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 0,
+    // },
+    // shadowOpacity: 1,
+    // shadowRadius: 2.62,
   },
   cardProfileView: {
     flexDirection: 'row',
@@ -154,11 +163,8 @@ const styles = StyleSheet.create({
     width: 'auto',
     height: 'auto',
     resizeMode: 'contain',
-    margin: wp(20),
-    elevation: 1,
     overflow: 'hidden',
     borderRadius: 8,
-    shadowColor: '#00000040',
     backgroundColor: Color?.White,
   },
   title: {
@@ -188,17 +194,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(16),
   },
   dots: tw`flex-1 w-full border-dashed border`,
-  leftEllipse: tw`h-5 w-5 bg-cultured rounded-full left--2.5`,
-  rightEllipse: tw`h-5 w-5 bg-cultured rounded-full right--2.5`,
   ellipseView: {
-    ...tw`w-full flex-row justify-between h-5 items-center mt-0 overflow-hidden`,
+    justifyContent: 'center',
+    height: hp(10),
   },
   btncontainer: {
     marginBottom: hp(20),
   },
   dashed: {
     ...commonFontStyle(fontFamily.regular, 16, Color?.GreyB0),
-    width: '88%',
+    width: wp(screen_width * 0.75),
     alignSelf: 'center',
   },
   timelabel: {

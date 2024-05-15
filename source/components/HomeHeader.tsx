@@ -40,7 +40,7 @@ const HomeHeader: FC<HomeProps> = ({
   return (
     <View style={{...styles.container, ...containerStyle}}>
       <View style={styles.rowStyle}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPressProfile}>
           <Image source={images?.avatar} style={styles?.avatar} />
         </TouchableOpacity>
         <Image

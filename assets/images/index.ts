@@ -150,6 +150,18 @@ const images = {
   dashbroadbutton:require('./dashbroadbutton.png'),
   cameraicon:require('./cameraicon.png'),
   trash:require('./trash.png'),
+  UpArrows:require('./chevUp.png'),
+  profileimg:require('./profileimg.png'),
+  locationicon:require('./locationicon.png'),
+  walleticon:require('./walleticon.png'),
+  notificationicon:require('./notificationicon.png'),
+  outlinestaricon:require('./outlinestaricon.png'),
+  faqicon:require('./faq.png'),
+  termsicon:require('./termsicon.png'),
+  privacyicon:require('./privacyicon.png'),
+  reviewicon:require('./outlinestaricon.png'),
+  trashicon:require('./trashicon.png'),
+  contactus:require('./contactus.png')
 };
 
 export default images;

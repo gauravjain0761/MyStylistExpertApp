@@ -32,9 +32,12 @@ const Collapse: FC<Props> = ({children, style, title = 'Title'}) => {
         <View
           style={{
             ...styles.arrow,
-            transform: [{rotate: expanded ? '0deg' : '60deg'}],
+            // transform: [{rotate: expanded ? '0deg' : '60deg'}],
           }}>
-          <Image source={images?.collapseArrow} style={styles.arrow} />
+          <Image
+            source={expanded ? images?.UpArrows : images?.DownArrows}
+            style={styles.arrow}
+          />
         </View>
       </TouchableOpacity>
       {expanded ? children : null}
@@ -58,7 +61,7 @@ const styles = StyleSheet.create({
   },
   arrow: {
     width: wp(12),
-    height: wp(9),
+    height: wp(12),
     right: wp(4),
   },
   maincontainer: {},

@@ -49,10 +49,14 @@ const Login: FC<Props> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.bgcontainer}>
-        <Image style={styles?.bgimage} source={images?.loginbg}></Image>
+        <Image
+          resizeMode="cover"
+          style={styles?.bgimage}
+          source={images?.loginbg}></Image>
       </View>
       <ImageBackground
         source={images?.gradient_model}
+        resizeMode="cover"
         style={styles.gradientmodal}>
         <View style={styles?.detailsContainer}>
           <Text style={styles.title}>{'Welcome 👋'}</Text>
@@ -100,17 +104,15 @@ const styles = StyleSheet.create({
   },
   bgimage: {
     width: '100%',
-    height: screen_height * 0.5,
-    resizeMode: 'cover',
+    height: hp(screen_height * 0.5),
   },
   gradientmodal: {
     width: '100%',
-    height: screen_height * 0.66,
+    height: hp(screen_height * 0.66),
     position: 'absolute',
     borderTopLeftRadius: wp(40),
     borderTopRightRadius: wp(40),
     overflow: 'hidden',
-    resizeMode: 'cover',
     flex: 1,
     bottom: 0,
   },

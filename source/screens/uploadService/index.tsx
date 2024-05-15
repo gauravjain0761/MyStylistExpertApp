@@ -12,7 +12,13 @@ import React, {FC, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import Container from '../../components/container';
 import Header from '../../components/header';
-import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
+import {
+  commonFontStyle,
+  fontFamily,
+  hp,
+  screen_width,
+  wp,
+} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import ImagePicker from '../../components/imagepicker';
 import images from 'images';
@@ -78,7 +84,9 @@ const ServiceUpload: FC = () => {
           <View style={styles?.imagecontainer}>
             <FlatList
               data={selectedImage}
-              columnWrapperStyle={{gap: wp(11)}}
+              columnWrapperStyle={{
+                gap: wp(11),
+              }}
               numColumns={3}
               renderItem={({item, index}) => {
                 return (
@@ -86,7 +94,7 @@ const ServiceUpload: FC = () => {
                     onPress={() => setMain(index)}
                     style={styles?.photo}>
                     <Image
-                      resizeMode="stretch"
+                      resizeMode="cover"
                       style={styles?.image}
                       source={{uri: item?.uri}}
                     />
@@ -181,8 +189,8 @@ const styles = StyleSheet.create({
     lineHeight: hp(22),
   },
   photo: {
-    width: wp(100),
-    height: hp(110),
+    width: wp(105),
+    height: hp(105),
     marginBottom: hp(11),
     position: 'relative',
   },
@@ -192,8 +200,8 @@ const styles = StyleSheet.create({
   },
   imagecontainer: {
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: wp(20),
+    alignItems: 'flex-start',
+    marginHorizontal: wp(24),
     marginTop: hp(13),
   },
   trashIcon: {

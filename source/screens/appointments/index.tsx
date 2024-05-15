@@ -16,7 +16,6 @@ import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
 import useAppointment from './hooks';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
-import {Shadow} from 'react-native-shadow-2';
 import Color from '../../../assets/color';
 
 type Props = {
@@ -58,33 +57,27 @@ const Appointments: FC<Props> = ({navigation}) => {
   return (
     <Container>
       <View style={globalStyle.container}>
-        <Shadow
-          style={{shadowRadius: 18.6, shadowOpacity: 0.58}}
-          distance={9}
-          startColor="#FAFAFA"
-          offset={[0, 7]}>
-          <Header
-            title="Appointments"
-            rightView={
-              <View style={styles.headerRight}>
-                <Pressable style={[styles.headerButton]}>
-                  <Image
-                    style={styles.searchIcon}
-                    source={images.CalendarIcon}
-                    resizeMode="contain"
-                  />
-                </Pressable>
-                <Pressable style={[styles.headerButton]}>
-                  <Image
-                    style={styles.searchIcon}
-                    source={images.headerSearch}
-                    resizeMode="contain"
-                  />
-                </Pressable>
-              </View>
-            }
-          />
-        </Shadow>
+        <Header
+          title="Appointments"
+          rightView={
+            <View style={styles.headerRight}>
+              <Pressable style={[styles.headerButton]}>
+                <Image
+                  style={styles.searchIcon}
+                  source={images.CalendarIcon}
+                  resizeMode="contain"
+                />
+              </Pressable>
+              <Pressable style={[styles.headerButton]}>
+                <Image
+                  style={styles.searchIcon}
+                  source={images.headerSearch}
+                  resizeMode="contain"
+                />
+              </Pressable>
+            </View>
+          }
+        />
         <View style={styles.mainView}>
           <View style={styles.topButtons}>
             <View style={[styles.buttonWrapper, globalStyle.bothContentCenter]}>

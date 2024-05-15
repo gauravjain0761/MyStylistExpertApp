@@ -26,7 +26,6 @@ import {
 } from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {DASHED} from 'AppConstants';
-import {Shadow} from 'react-native-shadow-2';
 
 type Props = {
   navigation: NativeStackNavigationProp<

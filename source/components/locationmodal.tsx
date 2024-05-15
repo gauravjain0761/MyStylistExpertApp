@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
     ...commonFontStyle(fontFamily?.semi_bold, 23, Color?.Black),
     lineHeight: hp(24),
     marginTop: hp(33),
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   container: {
     justifyContent: 'center',

@@ -47,7 +47,7 @@ const Chats: FC<Props> = ({navigation}) => {
                 style={[
                   tw`bg-${
                     activeTab === 'All' ? 'primary' : 'transparent'
-                  } flex-1 h-10`,
+                  } flex-1`,
                   styles.buttoncontainer,
                 ]}>
                 <RNText
@@ -64,7 +64,7 @@ const Chats: FC<Props> = ({navigation}) => {
                 style={[
                   tw`bg-${
                     activeTab === 'Unread Messages' ? 'primary' : 'transparent'
-                  } flex-1 h-10`,
+                  } flex-1`,
                   styles.buttoncontainer,
                   {flexDirection: 'row', gap: wp(3)},
                 ]}>
@@ -140,11 +140,9 @@ const Chats: FC<Props> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  chatHeader: tw`w-full bg-white pt-4 pl-4`,
+  chatHeader: {...tw`w-full bg-white pt-4`, paddingHorizontal: wp(20)},
   mainView: tw`w-full h-full flex-1 bg-white`,
   headerButtonView: tw`w-full flex-row mt-4`,
-  allButton: tw`w-15 h-10 rounded-full bg-primary`,
-  unreadButton: tw`px-4 h-10 rounded-full bg-gray-100 flex-row ml-4`,
   messageCount: {
     width: wp(19),
     height: wp(19),
@@ -162,7 +160,10 @@ const styles = StyleSheet.create({
     marginBottom: hp(21),
   },
 
-  buttonWrapper: tw`w-full px-3 h-17 rounded-lg bg-aliceBlue flex-row`,
+  buttonWrapper: {
+    ...tw`w-full rounded-lg bg-aliceBlue flex-row`,
+    padding: wp(10),
+  },
   buttoncontainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -171,9 +172,11 @@ const styles = StyleSheet.create({
   focuselabel: {
     ...commonFontStyle(fontFamily.semi_bold, 14, Color?.Black),
     lineHeight: hp(17),
+    paddingVertical: hp(12),
   },
   label: {
     ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
+    paddingVertical: hp(12),
   },
   countTitle: {
     ...commonFontStyle(fontFamily.semi_bold, 10, Color?.Black),
