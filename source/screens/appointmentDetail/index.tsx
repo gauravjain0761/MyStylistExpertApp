@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Text as RNText,
   StyleSheet,
+  ImageBackground,
 } from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useAppointmentDetails from './hooks';
@@ -81,7 +82,10 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
           }
         />
         <View style={styles.mainView}>
-          <View style={styles.appointmentcard}>
+          <ImageBackground
+            resizeMode="stretch"
+            style={styles.cardbg}
+            source={images.cardbg3}>
             <View style={styles.cardProfileView}>
               <RnImage
                 resizeMode="contain"
@@ -107,11 +111,6 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                 </View>
               </View>
             </View>
-            <View style={styles.ellipseView}>
-              <View style={styles.leftEllipse}></View>
-              <RNText style={styles.dashed}>{DASHED}</RNText>
-              <View style={styles.rightEllipse}></View>
-            </View>
             <View style={styles.cardDetailRow}>
               <RNText style={styles.amount}>{`Total (INR)`}</RNText>
               <RNText style={styles.amount}>{`₹400.00`}</RNText>
@@ -126,7 +125,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
               <RowItemValue title="Beard Styling" value="₹100.00" />
               <RowItemValue title="Face Massage" value="₹100.00" />
             </View>
-          </View>
+          </ImageBackground>
           <View style={styles.otpcontainer}>
             <View style={styles.leftpart}>
               <RNText style={styles.otptitle}>
@@ -174,7 +173,7 @@ const styles = StyleSheet.create({
   },
   cardProfileView: {
     flexDirection: 'row',
-    paddingTop: hp(17),
+    paddingTop: hp(26),
     marginBottom: hp(15),
     paddingHorizontal: wp(18),
   },
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(20),
     justifyContent: 'space-between',
     marginBottom: hp(5),
-    marginTop: hp(5),
+    marginTop: hp(15),
   },
   cardDetail: tw`flex-1 w-full`,
   activeView: tw`w-18 mt-2 h-8 rounded-full bg-aeroBlue absolute right-13`,
@@ -199,12 +198,9 @@ const styles = StyleSheet.create({
     width: 'auto',
     height: 'auto',
     resizeMode: 'contain',
-    margin: wp(20),
-    elevation: 1,
     overflow: 'hidden',
-    borderRadius: 8,
-    shadowColor: '#00000040',
-    backgroundColor: Color?.White,
+    marginHorizontal: wp(20),
+    marginTop: hp(21),
   },
   title: {
     ...commonFontStyle(fontFamily.semi_bold, 24, Color?.Black),

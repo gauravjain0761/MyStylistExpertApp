@@ -19,6 +19,7 @@ import {
   fontFamily,
   h,
   hp,
+  screen_width,
   w,
   wp,
 } from '../../utils/dimentions';
@@ -79,6 +80,7 @@ function BusyMode() {
   const [selectedId, setSelectedId] = useState('');
   const [selectedValue, setSelectedValue] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
+  const [selectDate, setSelectDate] = useState('');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const {userId} = useSelector(state => {
     return state.user;
@@ -178,6 +180,10 @@ function BusyMode() {
       });
   };
 
+  const onDateChange = (data: any) => {
+    console.log('datatatatatatattta', data);
+  };
+
   return (
     <Container>
       <View style={globalStyle.container}>
@@ -186,7 +192,20 @@ function BusyMode() {
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.calenderView}>
               <Text style={styles.title}>Date</Text>
-              {/* <CalendarPicker minDate={minDate} /> */}
+              <CalendarPicker
+                width={wp(screen_width * 0.85)}
+                onDateChange={onDateChange}
+                allowRangeSelection
+                selectedRangeStartStyle={{
+                  backgroundColor: Color?.Green,
+                  borderRadius: wp(50),
+                  padding: 0,
+                }}
+                selectedRangeEndStyle={{
+                  backgroundColor: Color?.Green,
+                  borderRadius: wp(10),
+                }}
+              />
               {/* <Calendar
                 minDate={minDate}
                 theme={{
@@ -751,7 +770,7 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 1,
   },
   calenderView: {
-    marginTop: h(1),
+    marginTop: hp(10),
     backgroundColor: Color?.White,
     borderRadius: wp(8),
     overflow: 'hidden',
@@ -767,6 +786,9 @@ const styles = StyleSheet.create({
     height: wp(28),
     marginHorizontal: wp(10),
     marginVertical: hp(10),
+  },
+  calander: {
+    paddingHorizontal: wp(40),
   },
 });
 

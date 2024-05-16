@@ -74,7 +74,7 @@ const MyReviews: FC = () => {
 };
 
 const styles = {
-  mainView: tw`flex-1 w-full h-full bg-cultured`,
+  mainView: tw`flex-1 w-full h-full bg-white`,
   rightView: tw`flex-1 w-full h-full items-end justify-center pb-4`,
   rightIconButton: tw`w-10 h-10 items-end justify-end`,
   rightIcon: tw`w-6.5 h-6.5`,

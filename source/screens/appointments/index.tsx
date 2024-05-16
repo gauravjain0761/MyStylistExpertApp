@@ -155,7 +155,9 @@ const styles = StyleSheet.create({
   topButtons: {...tw`w-full items-center`, paddingHorizontal: wp(25)},
   buttonWrapper: tw`w-full px-3 h-17 rounded-lg bg-aliceBlue flex-row`,
   listContainer: tw`py-5`,
-  listSeparator: tw`w-full h-4`,
+  listSeparator: {
+    height: hp(25),
+  },
   buttoncontainer: {
     justifyContent: 'center',
     alignItems: 'center',

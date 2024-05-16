@@ -88,9 +88,6 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
             </View>
           </View>
         </View>
-        <View style={styles.ellipseView}>
-          <RNText style={styles.dashed}>{DASHED}</RNText>
-        </View>
         <View style={[styles.cardDetailRow, styles.btncontainer]}>
           {(cardType === 'Pending' || cardType === 'Active') && (
             <Button
@@ -129,17 +126,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: wp(26),
-    // elevation: 3,
-    // overflow: 'hidden',
-    // borderRadius: 8,
-    // shadowColor: '#000000',
-    // backgroundColor: Color?.White,
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 0,
-    // },
-    // shadowOpacity: 1,
-    // shadowRadius: 2.62,
   },
   cardProfileView: {
     flexDirection: 'row',
@@ -156,7 +142,11 @@ const styles = StyleSheet.create({
     marginLeft: wp(19),
     justifyContent: 'space-between',
   },
-  cardDetailRow: {...tw`w-full flex-row mt-4 gap-4`, paddingHorizontal: wp(20)},
+  cardDetailRow: {
+    ...tw`w-full flex-row gap-4`,
+    paddingHorizontal: wp(20),
+    marginTop: hp(20),
+  },
   cardDetail: tw`flex-1 w-full`,
   activeView: tw`w-18 mt-2 h-8 rounded-full bg-aeroBlue absolute right-13`,
   cardbg: {
@@ -165,7 +155,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     overflow: 'hidden',
     borderRadius: 8,
-    backgroundColor: Color?.White,
   },
   title: {
     ...commonFontStyle(fontFamily.semi_bold, 24, Color?.Black),
@@ -190,8 +179,8 @@ const styles = StyleSheet.create({
     marginTop: hp(10),
     marginBottom: hp(20),
     width: '100%',
-    justifyContent: 'space-between',
-    paddingHorizontal: wp(16),
+    marginHorizontal: wp(16),
+    gap: wp(44),
   },
   dots: tw`flex-1 w-full border-dashed border`,
   ellipseView: {

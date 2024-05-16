@@ -7,11 +7,12 @@ import {
   Image as RnImage,
   Button,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import tw from 'rn-tailwind';
 import {Image, Text} from 'components';
 import images from 'images';
-import {DASHED} from 'AppConstants';
+import {DASHED, NewDASHED} from 'AppConstants';
 import {Appointment} from 'types';
 import moment from 'moment';
 import {
@@ -52,41 +53,45 @@ const AppointmentCard: FC<Props> = ({
     <Pressable
       onPress={() => onPreeCard && onPreeCard(data?._id)}
       style={styles.appointmentcard}>
-      <View style={styles.cardProfileView}>
-        <RnImage
-          resizeMode="contain"
-          style={styles.cardProfile}
-          source={featured_image}
-        />
-        <View style={styles.nameView}>
-          <RNText style={styles.title}>{customerName}</RNText>
-          <RNText style={styles.date}>{date}</RNText>
-          <RNText style={styles.service}>
-            {services.length > 30
-              ? `${services.substring(0, 22)}...`
-              : services}
-          </RNText>
-          <View style={styles.functionalityconatiner}>
-            <TouchableOpacity style={styles.buttons}>
-              <Image style={styles.iconstyle} source={images.chaticon} />
-              <RNText style={styles.label}>Chat</RNText>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttons}>
-              <Image style={[styles.callIconstyle]} source={images.callicon} />
-              <RNText style={styles.label}>Call</RNText>
-            </TouchableOpacity>
+      <ImageBackground
+        resizeMode="stretch"
+        style={styles.cardbg}
+        source={images.cardbg2}>
+        <View style={styles.cardProfileView}>
+          <RnImage
+            resizeMode="contain"
+            style={styles.cardProfile}
+            source={featured_image}
+          />
+          <View style={styles.nameView}>
+            <RNText style={styles.title}>{customerName}</RNText>
+            <RNText style={styles.date}>{date}</RNText>
+            <RNText style={styles.service}>
+              {services.length > 30
+                ? `${services.substring(0, 22)}...`
+                : services}
+            </RNText>
+            <View style={styles.functionalityconatiner}>
+              <TouchableOpacity style={styles.buttons}>
+                <Image style={styles.iconstyle} source={images.chaticon} />
+                <RNText style={styles.label}>Chat</RNText>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.buttons}>
+                <Image
+                  style={[styles.callIconstyle]}
+                  source={images.callicon}
+                />
+                <RNText style={styles.label}>Call</RNText>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.ellipseView}>
-        <View style={styles.leftEllipse}></View>
-        <RNText style={styles.dashed}>{DASHED}</RNText>
-        <View style={styles.rightEllipse}></View>
-      </View>
-      <View style={styles.cardDetailRow}>
-        <RNText style={styles.amount}>{`Booking ID: ${bookingNumber}`}</RNText>
-        <RNText style={styles.amount}>{`₹${amount}`}</RNText>
-      </View>
+        <View style={styles.cardDetailRow}>
+          <RNText
+            style={styles.amount}>{`Booking ID: ${bookingNumber}`}</RNText>
+          <RNText style={styles.amount}>{`₹${amount}`}</RNText>
+        </View>
+      </ImageBackground>
     </Pressable>
   );
 };
@@ -94,30 +99,20 @@ const AppointmentCard: FC<Props> = ({
 const styles = StyleSheet.create({
   appointmentcard: {
     flex: 1,
-    marginBottom: wp(26),
-    elevation: 3,
+    // marginBottom: wp(26),
     overflow: 'hidden',
-    borderRadius: 8,
-    shadowColor: '#000000',
-    backgroundColor: Color?.White,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 2.62,
     marginHorizontal: wp(25),
   },
   cardProfileView: {
     flexDirection: 'row',
     paddingTop: hp(17),
-    marginBottom: hp(15),
+    marginBottom: hp(23),
     paddingHorizontal: wp(18),
   },
   cardProfile: {
     width: wp(111),
     height: wp(110),
-    borderRadius: 10,
+    borderRadius: wp(10),
   },
   nameView: {
     paddingLeft: wp(20),
@@ -127,22 +122,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(20),
     flex: 1,
     justifyContent: 'space-between',
-    marginBottom: hp(15),
     marginTop: hp(10),
+    paddingBottom: hp(20),
   },
   cardDetail: tw`flex-1 w-full`,
   activeView: tw`w-18 mt-2 h-8 rounded-full bg-aeroBlue absolute right-13`,
-  cardbg: {
-    width: 'auto',
-    height: 'auto',
-    resizeMode: 'contain',
-    margin: wp(20),
-    elevation: 1,
-    overflow: 'hidden',
-    borderRadius: 8,
-    shadowColor: '#00000040',
-    backgroundColor: Color?.White,
-  },
   title: {
     ...commonFontStyle(fontFamily.semi_bold, 24, Color?.Black),
     lineHeight: hp(29.05),
@@ -152,16 +136,6 @@ const styles = StyleSheet.create({
     marginTop: hp(8),
   },
   dots: tw`flex-1 w-full border-dashed border`,
-  leftEllipse: tw`h-5 w-5 bg-cultured rounded-full left--2.5`,
-  rightEllipse: tw`h-5 w-5 bg-cultured rounded-full right--2.5`,
-  ellipseView: {
-    ...tw`w-full flex-row justify-between h-5 items-center overflow-hidden`,
-  },
-  dashed: {
-    ...commonFontStyle(fontFamily.regular, 16, Color?.GreyB0),
-    width: screen_width * 0.75,
-    left: 2,
-  },
   date: {
     ...commonFontStyle(fontFamily.RobotoMedium, 15, Color?.Grey2E),
     lineHeight: hp(18),
@@ -190,6 +164,13 @@ const styles = StyleSheet.create({
   },
   amount: {
     ...commonFontStyle(fontFamily.medium, 16, Color?.Black),
+    lineHeight: hp(20),
+  },
+  cardbg: {
+    width: 'auto',
+    height: 'auto',
+    resizeMode: 'contain',
+    overflow: 'hidden',
   },
 });
 

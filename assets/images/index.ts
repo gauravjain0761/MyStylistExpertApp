@@ -161,7 +161,13 @@ const images = {
   privacyicon:require('./privacyicon.png'),
   reviewicon:require('./outlinestaricon.png'),
   trashicon:require('./trashicon.png'),
-  contactus:require('./contactus.png')
+  contactus:require('./contactus.png'),
+  verifybadge:require('./verifybadge.png'),
+  facebook:require('./facebook.png'),
+  instagram:require('./instagram.png'),
+  locationmarker:require('./locationmarker.png'),
+  cardbg2:require('./cardbg2.png'),
+  cardbg3:require('./cardbg3.png'),
 };
 
 export default images;

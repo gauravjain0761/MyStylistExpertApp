@@ -24,7 +24,7 @@ const ENTER_THE_6_DIGIT='Enter the 6-digit OTP sent to you at';
 const DIDNT_RECEIVE_OTP='Didn’t receive OTP?';
 
 const NewDASHED =
-  '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -';
+  '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -';
 
 
 

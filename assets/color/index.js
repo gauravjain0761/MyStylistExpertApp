@@ -80,6 +80,7 @@ export default class Color {
   static Grey94 = '#949494';
   static GreyC1 = '#C1C1C1';
   static Grey6E = '#6E6E6E';
+  static Grey6F = '#6F6F6F';
 
   static Green40 = '#40C9BF';
   static Green04 = '#043E39';
@@ -98,4 +99,6 @@ export default class Color {
   static BlueD5 = '#D5E3E8';
 
   static Red = '#F11818';
+  static CreamFF = '#FFE6E0';
+  static CreamFA = '#FAF1EC';
 }
