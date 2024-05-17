@@ -2155,6 +2155,14 @@
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.11.tgz"
   integrity sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==
 
+"@types/react-native-calendar-picker@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.npmjs.org/@types/react-native-calendar-picker/-/react-native-calendar-picker-8.0.0.tgz"
+  integrity sha512-Mymc+MxHx2ue+YoTdF6nnu9V7r2Sxn2eecFZ5qX3B+87MAMBAd7+/jaJzfUVEkIeb8rQKhWiYI1QvvN+hCglXw==
+  dependencies:
+    "@types/react" "*"
+    react-native "*"
+
 "@types/react-native-snap-carousel@^3.8.11":
   version "3.8.11"
   resolved "https://registry.npmjs.org/@types/react-native-snap-carousel/-/react-native-snap-carousel-3.8.11.tgz"
@@ -3005,11 +3013,6 @@ color@^4.2.3:
     color-convert "^2.0.1"
     color-string "^1.9.0"
 
-colord@2.9.2:
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/colord/-/colord-2.9.2.tgz#25e2bacbbaa65991422c07ea209e2089428effb1"
-  integrity sha512-Uqbg+J445nc1TKn4FoDPS6ZZqAvEDnwrH42yo8B40JSOgSLxMZ/gt3h4nmCtPLQeXhjJJkqBx7SCY35WnIixaQ==
-
 colorette@^1.0.7:
   version "1.4.0"
   resolved "https://registry.npmjs.org/colorette/-/colorette-1.4.0.tgz"
@@ -3149,7 +3152,7 @@ css-select@^5.1.0:
 
 css-tree@^1.1.3:
   version "1.1.3"
-  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.1.3.tgz#eb4870fb6fd7707327ec95c2ff2ab09b5e8db91d"
+  resolved "https://registry.npmjs.org/css-tree/-/css-tree-1.1.3.tgz"
   integrity sha512-tRpdppF7TRazZrjJ6v3stzv93qxRcSsFmW6cX0Zm2NVKpxE1WV1HblnghVv9TreireHkqI/VDEsfolRF1p6y7Q==
   dependencies:
     mdn-data "2.0.14"
@@ -3169,6 +3172,11 @@ csstype@^3.0.2:
   version "3.1.3"
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
+
+date-fns@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.npmjs.org/date-fns/-/date-fns-3.6.0.tgz"
+  integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
 
 dayjs@^1.8.15:
   version "1.11.10"
@@ -5411,7 +5419,7 @@ marky@^1.2.2:
 
 mdn-data@2.0.14:
   version "2.0.14"
-  resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.14.tgz#7113fc4281917d63ce29b43446f701e68c25ba50"
+  resolved "https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.14.tgz"
   integrity sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==
 
 memoize-one@^5.0.0, memoize-one@^5.2.1:
@@ -6434,7 +6442,7 @@ react-native-date-picker@^4.3.4:
 
 react-native-element-dropdown@^2.12.0:
   version "2.12.0"
-  resolved "https://registry.yarnpkg.com/react-native-element-dropdown/-/react-native-element-dropdown-2.12.0.tgz#6d1f47384fe3924a435d482449d430b53bc4cd4c"
+  resolved "https://registry.npmjs.org/react-native-element-dropdown/-/react-native-element-dropdown-2.12.0.tgz"
   integrity sha512-Zi9a4vGPztXVdvogg5c2a7xLZDB30YqsXH5EqbeHw6WAnoj5dkj4o/HjfZtxu2DHuT/ipBXDBo5gLG0gDMm5Nw==
   dependencies:
     lodash "^4.17.21"
@@ -6521,12 +6529,10 @@ react-native-screens@^3.29.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-shadow-2@^7.0.8:
-  version "7.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-shadow-2/-/react-native-shadow-2-7.0.8.tgz#df365ba1d8d22b7c63f1afc66d75308c3d6af4e1"
-  integrity sha512-6QlmbJvHCmDGa85jwtfrVxhro1oGm/ezTlciom0A+i0UFAzxlvmRiMHyKXg1hEB2PQkKPoG6ZpANju4mpqPqGA==
-  dependencies:
-    colord "2.9.2"
+react-native-shadow@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/react-native-shadow/-/react-native-shadow-1.2.2.tgz"
+  integrity sha512-kwTmqRKmPEML9KbJi0uvvKd+67rOJQcr3IyNp9bg+qi/H+Wnwev/Mr8sUiUZlYEJ433ii2iNwpjc1ERMjHtMWw==
 
 react-native-simple-toast@^3.1.0:
   version "3.1.0"
@@ -6548,7 +6554,7 @@ react-native-stars@^1.2.2:
 
 react-native-svg@^15.2.0:
   version "15.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-15.2.0.tgz#9561a6b3bd6b44689f437ba13182afee33bd5557"
+  resolved "https://registry.npmjs.org/react-native-svg/-/react-native-svg-15.2.0.tgz"
   integrity sha512-R0E6IhcJfVLsL0lRmnUSm72QO+mTqcAOM5Jb8FVGxJqX3NfJMlMP0YyvcajZiaRR8CqQUpEoqrY25eyZb006kw==
   dependencies:
     css-select "^5.1.0"

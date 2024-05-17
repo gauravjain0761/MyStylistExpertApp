@@ -8,7 +8,7 @@ import {
   Image,
   FlatList,
   ScrollView,
-  Switch,
+  // Switch,
   Platform,
 } from 'react-native';
 import {useSelector} from 'react-redux';
@@ -17,6 +17,7 @@ import {
   commonFontStyle,
   f,
   fontFamily,
+  fontSize,
   h,
   hp,
   screen_width,
@@ -30,9 +31,9 @@ import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import globalStyle from 'globalStyles';
-import {Container, Header} from 'components';
+import {Container, Header, ToggleSwitch} from 'components';
 import {NativeToast} from '../../utils/toast';
-import CalendarPicker from 'react-native-calendar-picker';
+import images from 'images';
 
 const {getAllDatesOFUser, markAsBusy, markAsUnBusy} = endPoints;
 
@@ -80,7 +81,11 @@ function BusyMode() {
   const [selectedId, setSelectedId] = useState('');
   const [selectedValue, setSelectedValue] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
-  const [selectDate, setSelectDate] = useState('');
+
+  const [markedDates, setMarkedDates] = useState({});
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const {userId} = useSelector(state => {
     return state.user;
@@ -180,10 +185,77 @@ function BusyMode() {
       });
   };
 
-  const onDateChange = (data: any) => {
-    console.log('datatatatatatattta', data);
+  const onDayPress = day => {
+    if (!startDate) {
+      setStartDate(day.dateString);
+      setEndDate(null);
+      setMarkedDates({
+        [day.dateString]: {
+          startingDay: true,
+          color: '#89E3DC',
+          textColor: 'black',
+          borderRadius: 100,
+        },
+      });
+    } else if (!endDate) {
+      if (moment(day.dateString).isBefore(startDate)) {
+        setStartDate(day.dateString);
+        setMarkedDates({
+          [day.dateString]: {
+            startingDay: true,
+            color: '#89E3DC',
+            textColor: 'black',
+            customStyles: {
+              container: {
+                borderRadius: 100,
+              },
+            },
+          },
+        });
+      } else {
+        setEndDate(day.dateString);
+        const range = getDateRange(startDate, day.dateString);
+        const rangeMarkedDates = range.reduce((acc, date) => {
+          acc[date] = {
+            color: '#E8F9F7',
+            textColor: 'black',
+          };
+          return acc;
+        }, {});
+        rangeMarkedDates[startDate] = {
+          startingDay: true,
+          color: '#89E3DC',
+          textColor: 'black',
+        };
+        rangeMarkedDates[day.dateString] = {
+          endingDay: true,
+          color: '#89E3DC',
+          textColor: 'black',
+        };
+        setMarkedDates(rangeMarkedDates);
+      }
+    } else {
+      setStartDate(day.dateString);
+      setEndDate(null);
+      setMarkedDates({
+        [day.dateString]: {
+          startingDay: true,
+          color: '#89E3DC',
+          textColor: 'black',
+        },
+      });
+    }
   };
 
+  const getDateRange = (start, end) => {
+    const range = [];
+    let currentDate = moment(start).add(1, 'day');
+    while (currentDate.isBefore(end)) {
+      range.push(currentDate.format('YYYY-MM-DD'));
+      currentDate = currentDate.add(1, 'day');
+    }
+    return range;
+  };
   return (
     <Container>
       <View style={globalStyle.container}>
@@ -192,18 +264,70 @@ function BusyMode() {
           <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.calenderView}>
               <Text style={styles.title}>Date</Text>
-              <CalendarPicker
-                width={wp(screen_width * 0.85)}
-                onDateChange={onDateChange}
-                allowRangeSelection
-                selectedRangeStartStyle={{
-                  backgroundColor: Color?.Green,
-                  borderRadius: wp(50),
-                  padding: 0,
+              <Calendar
+                minDate={minDate}
+                renderArrow={direction =>
+                  direction == 'left' ? (
+                    <View style={styles.arrow}>
+                      <Image
+                        resizeMode="contain"
+                        source={images?.Back}
+                        style={styles.backicon}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.arrow}>
+                      <Image
+                        resizeMode="contain"
+                        source={images?.Back}
+                        style={[
+                          styles.backicon,
+                          {transform: [{rotate: '180deg'}]},
+                        ]}
+                      />
+                    </View>
+                  )
+                }
+                onDayPress={onDayPress}
+                markingType={'period'}
+                markedDates={markedDates}
+                theme={{
+                  'stylesheet.calendar.header': {
+                    week: {
+                      flexDirection: 'row',
+                      marginHorizontal: wp(10),
+                      justifyContent: 'space-between',
+                      marginTop: hp(30),
+                    },
+                    header: {
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                      paddingHorizontal: wp(0),
+                      alignItems: 'center',
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                    },
+                    arrow: {
+                      margin: hp(0),
+                    },
+                    dayHeader: {
+                      fontFamily: fontFamily.medium,
+                      color: Color?.Grey75,
+                      fontSize: fontSize(16),
+                    },
+                    monthText: {
+                      fontFamily: fontFamily.medium,
+                      color: Color?.Grey3B,
+                      fontSize: fontSize(16),
+                    },
+                  },
+                  dayTextColor: 'black',
+                  selectedDayTextColor: 'black',
+                  todayTextColor: '#2F7973',
                 }}
-                selectedRangeEndStyle={{
-                  backgroundColor: Color?.Green,
-                  borderRadius: wp(10),
+                style={{
+                  paddingLeft: 0,
+                  paddingRight: 0,
                 }}
               />
               {/* <Calendar
@@ -271,7 +395,10 @@ function BusyMode() {
                 backgroundColor: Color.White,
                 marginTop: h(2),
                 borderRadius: 8,
-                padding: 10,
+                // padding: 10,
+                paddingLeft: wp(20),
+                paddingRight: wp(8),
+                paddingVertical: hp(20),
               }}>
               <View
                 style={{
@@ -285,31 +412,29 @@ function BusyMode() {
                     fontWeight: '700',
                     fontSize: f(1.6),
                   }}>
-                  Select Available Time
+                  Select available Time
                 </Text>
                 <View
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    gap: wp(7),
                   }}>
-                  <Text>All Day</Text>
-                  <Switch
-                    trackColor={{false: '#767577', true: Color.Green}}
-                    thumbColor={isEnabled ? '#FFFFFF' : '#f4f3f4'}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                  />
+                  <Text
+                    style={{
+                      ...commonFontStyle(fontFamily.regular, 13, Color?.Black),
+                    }}>
+                    All Day
+                  </Text>
+                  <ToggleSwitch active={true} />
                 </View>
               </View>
               {getMorningDates && getMorningDates.length ? (
                 <View style={{width: '100%', marginTop: h(2)}}>
                   <Text
                     style={{
-                      color: Color.Black,
-                      fontFamily: 'Font-Bold',
-                      fontSize: f(1.4),
+                      ...commonFontStyle(fontFamily.medium, 16, Color?.Black),
                     }}>
                     Morning
                   </Text>
@@ -322,6 +447,9 @@ function BusyMode() {
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
                   keyExtractor={(item, index) => index.toString()}
+                  ItemSeparatorComponent={() => (
+                    <View style={{width: wp(12)}} />
+                  )}
                   renderItem={({item, index}) => {
                     return (
                       <OfferItems
@@ -358,6 +486,9 @@ function BusyMode() {
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
                   keyExtractor={(item, index) => index.toString()}
+                  ItemSeparatorComponent={() => (
+                    <View style={{width: wp(12)}} />
+                  )}
                   renderItem={({item, index}) => {
                     return (
                       <OfferItems
@@ -394,6 +525,9 @@ function BusyMode() {
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
                   keyExtractor={(item, index) => index.toString()}
+                  ItemSeparatorComponent={() => (
+                    <View style={{width: wp(12)}} />
+                  )}
                   renderItem={({item, index}) => {
                     return (
                       <OfferItems
@@ -764,8 +898,8 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   itemContainer: {
-    padding: 5,
-    marginTop: 10,
+    // padding: 5,
+    marginTop: hp(15),
     // borderColor: Color.LightGrey,
     // borderBottomWidth: 1,
   },
@@ -780,6 +914,7 @@ const styles = StyleSheet.create({
   title: {
     ...commonFontStyle(fontFamily.medium, 18, Color?.Black),
     paddingTop: hp(20),
+    marginBottom: hp(14),
   },
   backicon: {
     width: wp(28),

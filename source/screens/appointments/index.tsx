@@ -17,6 +17,7 @@ import {RouteProp} from '@react-navigation/native';
 import useAppointment from './hooks';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
+import FilterSheet from '../../bottomSheets/filterSheet';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Appointments'>;
@@ -49,10 +50,15 @@ const Allappointment = [
 const Appointments: FC<Props> = ({navigation}) => {
   const {appointments, getAllAppointments} = useAppointment();
   const [activeTab, setActiveTab] = useState<string>('Upcoming');
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     getAllAppointments();
   }, []);
+
+  const onPressFilter = () => {
+    setVisible(!visible);
+  };
 
   return (
     <Container>
@@ -61,7 +67,7 @@ const Appointments: FC<Props> = ({navigation}) => {
           title="Appointments"
           rightView={
             <View style={styles.headerRight}>
-              <Pressable style={[styles.headerButton]}>
+              <Pressable onPress={onPressFilter} style={[styles.headerButton]}>
                 <Image
                   style={styles.searchIcon}
                   source={images.CalendarIcon}
@@ -142,6 +148,7 @@ const Appointments: FC<Props> = ({navigation}) => {
             }}
           />
         </View>
+        <FilterSheet visible={visible} setVisibility={setVisible} />
       </View>
     </Container>
   );

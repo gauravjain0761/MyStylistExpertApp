@@ -81,6 +81,8 @@ export default class Color {
   static GreyC1 = '#C1C1C1';
   static Grey6E = '#6E6E6E';
   static Grey6F = '#6F6F6F';
+  static Grey37 = '#373737';
+  static Grey4A = '#4A4A4A';
 
   static Green40 = '#40C9BF';
   static Green04 = '#043E39';
