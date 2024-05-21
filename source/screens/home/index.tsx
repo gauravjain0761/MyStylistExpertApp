@@ -6,7 +6,7 @@ import {
   Text as RNText,
   View,
 } from 'react-native';
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import Container from '../../components/container';
 import globalStyle from 'globalStyles';
 import {
@@ -43,26 +43,34 @@ import {ExpertWorkImage} from 'types';
 import images from 'images';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import FastImage from 'react-native-fast-image';
+import {useAppDispatch, useAppSelector} from 'store';
+import {NativeToast} from '../../utils/toast';
+import {appConfig, endPoints} from '../../../config';
+import useHome from './hooks';
+import {AppContext} from 'context';
+import {getAllBanner} from '../../Actions/homeAction';
+import {getUpcomingAppointment} from '../../Actions/appointment';
+import {TopService} from '../../Actions/services';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
   route: RouteProp<RootStackParamList, 'Home'>;
 };
 
-const banner = [
-  {
-    id: 1,
-    image: images?.offerbanner,
-  },
-  {
-    id: 2,
-    image: images?.offerbanner,
-  },
-  {
-    id: 3,
-    image: images?.offerbanner,
-  },
-];
+// const banner = [
+//   {
+//     id: 1,
+//     image: images?.offerbanner,
+//   },
+//   {
+//     id: 2,
+//     image: images?.offerbanner,
+//   },
+//   {
+//     id: 3,
+//     image: images?.offerbanner,
+//   },
+// ];
 
 let graphData = [
   {avrage: '20%', color: '#FFAFA2', day: 'Mo'},
@@ -77,13 +85,26 @@ let graphData = [
 const Home: FC<Props> = ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [banner, setBanner] = useState([]);
+  const {appointment} = useAppSelector(state => state.home);
+  const {topServices} = useAppSelector(state => state?.service);
+
+  const dispatch = useAppDispatch();
+  const {setLoading, userDetails} = useContext(AppContext);
+  const {IMG_URL} = appConfig;
 
   useEffect(() => {
     setVisible(!visible);
+    let clean = setTimeout(() => {
+      getBanners();
+      getAppointment();
+      getTopServices();
+    }, 1000);
+    return () => clearInterval(clean);
   }, []);
 
   // const {
-  //   expertMedia,
+  //   // expertMedia,
   //   appointments,
   //   getAllExpertMedia,
   //   getExpertDetails,
@@ -103,6 +124,8 @@ const Home: FC<Props> = ({navigation, route}) => {
   //   expert_profile_video_url,
   // } = expertMedia || {};
 
+  // console.log('okokokok', appointments);
+
   // const {user_profile_images, user_work_images, expert_profile_videos} =
   //   expertusers?.length ? expertusers[0] : {};
   const onSnapToItem = (index: React.SetStateAction<number>) => {
@@ -111,6 +134,58 @@ const Home: FC<Props> = ({navigation, route}) => {
 
   const onPressProfile = () => {
     navigation.openDrawer();
+  };
+
+  const getBanners = () => {
+    let obj = {
+      onSuccess: (res: any) => {
+        setLoading(false);
+        setBanner(res?.banners);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    setLoading(true);
+    dispatch(getAllBanner(obj));
+  };
+
+  const getAppointment = () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        expertId: userDetails?.userId,
+        limit: 10,
+        page: 1,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    dispatch(getUpcomingAppointment(obj));
+  };
+
+  const getTopServices = () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        limit: 10,
+        page: 1,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    dispatch(TopService(obj));
   };
 
   return (
@@ -133,10 +208,13 @@ const Home: FC<Props> = ({navigation, route}) => {
                 inactiveSlideScale={2}
                 renderItem={({item}: any) => {
                   return (
-                    <Image
-                      resizeMode="stretch"
-                      source={item?.image}
+                    <FastImage
+                      source={{
+                        uri: `${IMG_URL}/${item?.fileName}`,
+                        priority: FastImage.priority.high,
+                      }}
                       style={styles?.carousel_img}
+                      resizeMode="stretch"
                     />
                   );
                 }}
@@ -144,7 +222,6 @@ const Home: FC<Props> = ({navigation, route}) => {
               />
             </View>
             <Pagination
-              // @ts-ignore
               dotsLength={banner?.length}
               activeDotIndex={activeIndex}
               containerStyle={styles?.pagination_container}
@@ -230,7 +307,7 @@ const Home: FC<Props> = ({navigation, route}) => {
               </View>
               <FlatList
                 horizontal={true}
-                data={AppointmentsData}
+                data={appointment}
                 ListHeaderComponent={<View style={styles.listcontainer}></View>}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.horizontalList}
@@ -268,7 +345,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                 </View>
               </View>
               <FlatList
-                data={SERVIE_ARR}
+                data={topServices}
                 horizontal={true}
                 contentContainerStyle={styles.horizontalList}
                 showsHorizontalScrollIndicator={false}

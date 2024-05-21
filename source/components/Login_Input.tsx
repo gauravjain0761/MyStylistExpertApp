@@ -35,7 +35,7 @@ const Login_Input: FC<input_props> = ({
   input_container_style,
   custom_component = null,
   onTextChange,
-  keyboardType = 'phone-pad',
+  keyboardType = 'default',
   label,
   labelStyle,
 }) => {

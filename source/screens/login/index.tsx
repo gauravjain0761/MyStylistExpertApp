@@ -31,6 +31,10 @@ import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
 import {Login_Input} from 'components';
 import {AppContext} from 'context';
+import {useAppDispatch} from 'store';
+import {expertLogin} from '../../Actions/authAction';
+import {NativeToast} from '../../utils/toast';
+import DataAccess from '../../dataAccess';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -40,11 +44,38 @@ type Props = {
 const Login: FC<Props> = ({navigation}) => {
   const [name, setname] = useState('');
   const [passwords, setPasswords] = useState('');
+  const dispatch = useAppDispatch();
 
-  const {setLoading, setIsLogin} = useContext(AppContext);
+  const {setLoading, setIsLogin, setUserDetails} = useContext(AppContext);
+  const {setUserLoginToStorage, setUserDetailsToStorage} = DataAccess();
 
-  const loginHandler = () => {
-    setIsLogin('true');
+  const onLoginPress = () => {
+    const obj = {
+      data: {
+        username: name.trim(),
+        password: passwords.trim(),
+      },
+      onSuccess: (res: any) => {
+        setUserDetails(res);
+        setUserDetailsToStorage(res);
+        setLoading(false);
+        setUserLoginToStorage('true');
+        setIsLogin('true');
+        NativeToast('Login success');
+      },
+      onFailure: (Err: any) => {
+        NativeToast(Err?.data?.message);
+        setLoading(false);
+      },
+    };
+    if (name.trim().length == 0) {
+      NativeToast('Enter Valid Name');
+    } else if (passwords.trim().length == 0) {
+      NativeToast('Enter Valid Password');
+    } else {
+      setLoading(true);
+      dispatch(expertLogin(obj));
+    }
   };
   return (
     <View style={styles.container}>
@@ -84,7 +115,7 @@ const Login: FC<Props> = ({navigation}) => {
               containerStyle={styles.btncontainer}
               label="Login"
               containerLabelStyle={styles.btnTitle}
-              onPress={loginHandler}
+              onPress={onLoginPress}
             />
             <TouchableOpacity style={styles.signupBtn}>
               <Text style={styles.signup}>{'Signup'}</Text>

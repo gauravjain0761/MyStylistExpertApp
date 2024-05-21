@@ -1,6 +1,8 @@
 export const appConfig = {
   mainDomain: 'https://api.mystylist.in/',
+  IMG_URL:"https://mystylist-media.s3.amazonaws.com"
 };
+
 
 export const endPoints = {
   expertLogin: `user/expert-login`,
@@ -43,4 +45,13 @@ export const endPoints = {
   jobApply: `JobApplication/applyJobApplication`,
   getJobDetails: 'salonJob/getJobsDetails',
   getProductListItems: `/product/getAlllProductName`,
+
+  getAllBanner:`banner/getAllBannerForExpert/Top/Stylist`,
+  getUpcomingAppointments:`appointment/getUpcomingAppointments`,
+  getPastAppointments:`appointment/getPastAppointments`,
+  topService:`appointment/getTopServices`
+
 };
+
+export const POST = "POST";
+export const GET = "GET";

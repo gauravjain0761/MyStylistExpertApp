@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import globalStyle from 'globalStyles';
@@ -15,9 +15,22 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
 import useAppointment from './hooks';
-import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
+import {
+  commonFontStyle,
+  fontFamily,
+  hp,
+  screen_height,
+  wp,
+} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import FilterSheet from '../../bottomSheets/filterSheet';
+import {useAppDispatch, useAppSelector} from 'store';
+import {AppContext} from 'context';
+import {NativeToast} from '../../utils/toast';
+import {
+  getPastAppointment,
+  getUpcomingAppointment,
+} from '../../Actions/appointment';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Appointments'>;
@@ -48,17 +61,60 @@ const Allappointment = [
 ];
 
 const Appointments: FC<Props> = ({navigation}) => {
-  const {appointments, getAllAppointments} = useAppointment();
+  const {appointment} = useAppSelector(state => state?.home);
+  const {past_appointment} = useAppSelector(state => state?.appointment);
   const [activeTab, setActiveTab] = useState<string>('Upcoming');
   const [visible, setVisible] = useState(false);
+  const [upcomingAppointment, setUpcomingAppointment] = useState(appointment);
+  const [pastAppointment, setPastAppointment] = useState(past_appointment);
+
+  const dispatch = useAppDispatch();
+  const {setLoading, userDetails} = useContext(AppContext);
 
   useEffect(() => {
-    getAllAppointments();
+    getAllPastAppointments(true);
   }, []);
 
   const onPressFilter = () => {
     setVisible(!visible);
   };
+
+  const getAllUpcommingAppointments = useCallback((isLogin: boolean) => {
+    let obj = {
+      data: {
+        expertId: userDetails?.userId,
+        limit: 10,
+        page: 1,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    dispatch(getUpcomingAppointment(obj));
+  }, []);
+
+  const getAllPastAppointments = useCallback((isLogin: boolean) => {
+    setLoading(isLogin);
+    let obj = {
+      data: {
+        expertId: userDetails?.userId,
+        limit: 10,
+        page: 1,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    dispatch(getPastAppointment(obj));
+  }, []);
 
   return (
     <Container>
@@ -125,28 +181,67 @@ const Appointments: FC<Props> = ({navigation}) => {
               </Pressable>
             </View>
           </View>
-          <FlatList
-            data={Allappointment || appointments}
-            showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => {
-              return <View style={styles.listSeparator} />;
-            }}
-            contentContainerStyle={styles.listContainer}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item, index}) => {
-              return (
-                <AppointmentCard
-                  data={item}
-                  key={index}
-                  fullWidth={true}
-                  onPreeCard={(appointmentId: string) =>
-                    navigation.navigate('AppointmentDetail', {appointmentId})
-                  }
-                  status={activeTab === 'Upcoming' ? 'Upcoming' : 'Completed'}
-                />
-              );
-            }}
-          />
+          {activeTab == 'Upcoming' ? (
+            <FlatList
+              data={upcomingAppointment}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => {
+                return <View style={styles.listSeparator} />;
+              }}
+              ListEmptyComponent={
+                <View style={styles?.empty}>
+                  <Text style={styles?.emptyTitle}>
+                    No Upcoming Appointments found
+                  </Text>
+                </View>
+              }
+              contentContainerStyle={styles.listContainer}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item, index}) => {
+                return (
+                  <AppointmentCard
+                    data={item}
+                    key={index}
+                    fullWidth={true}
+                    onPreeCard={(appointmentId: string) =>
+                      navigation.navigate('AppointmentDetail', {appointmentId})
+                    }
+                    status={activeTab === 'Upcoming' ? 'Upcoming' : 'Past'}
+                  />
+                );
+              }}
+            />
+          ) : (
+            <FlatList
+              data={pastAppointment}
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={
+                <View style={styles?.empty}>
+                  <Text style={styles?.emptyTitle}>
+                    No Past Appointments found
+                  </Text>
+                </View>
+              }
+              ItemSeparatorComponent={() => {
+                return <View style={styles.listSeparator} />;
+              }}
+              contentContainerStyle={styles.listContainer}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item, index}) => {
+                return (
+                  <AppointmentCard
+                    data={item}
+                    key={index}
+                    fullWidth={true}
+                    onPreeCard={(appointmentId: string) =>
+                      navigation.navigate('AppointmentDetail', {appointmentId})
+                    }
+                    status={activeTab === 'Upcoming' ? 'Upcoming' : 'Past'}
+                  />
+                );
+              }}
+            />
+          )}
         </View>
         <FilterSheet visible={visible} setVisibility={setVisible} />
       </View>
@@ -175,6 +270,14 @@ const styles = StyleSheet.create({
     lineHeight: hp(17),
   },
   label: {
+    ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
+  },
+  empty: {
+    height: hp(screen_height * 0.8),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyTitle: {
     ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
   },
 });
