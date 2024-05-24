@@ -13,6 +13,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import images from 'images';
 import Color from '../../assets/color';
 import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
+import {useAppSelector} from 'store';
+import FastImage from 'react-native-fast-image';
+import {appConfig} from '../../config';
 
 type HomeProps = {
   onPresslocation?: () => void;
@@ -29,6 +32,11 @@ const HomeHeader: FC<HomeProps> = ({
   containerStyle,
 }) => {
   const {navigate} = useNavigation();
+  const {userinfo} = useAppSelector(state => state?.common);
+  const {IMG_URL} = appConfig;
+  const [profileImage, setProfileImage] = useState('');
+  // console.log(IMG_URL);
+
   //   const {profileData} = useAppSelector(state => state.profile);
   //   const {cartCount} = useAppSelector(state => state.cart);
 
@@ -37,11 +45,24 @@ const HomeHeader: FC<HomeProps> = ({
     navigate('Notifications');
   };
 
+  useEffect(() => {
+    if (Object.values(userinfo)?.length > 0) {
+      const {image} = userinfo?.user?.user_profile_images[0];
+      setProfileImage(image);
+    }
+  }, [userinfo]);
+
   return (
     <View style={{...styles.container, ...containerStyle}}>
       <View style={styles.rowStyle}>
         <TouchableOpacity onPress={onPressProfile}>
-          <Image source={images?.avatar} style={styles?.avatar} />
+          <FastImage
+            source={{
+              uri: `${IMG_URL}/${profileImage}`,
+              priority: FastImage?.priority?.high,
+            }}
+            style={styles?.avatar}
+          />
         </TouchableOpacity>
         <Image
           resizeMode="contain"

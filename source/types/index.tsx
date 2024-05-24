@@ -1,6 +1,6 @@
 interface UserDetail {
   token: string;
-  userId: string;
+  _id: string;
 }
 
 interface UserProfileImage {
@@ -104,7 +104,7 @@ interface Offer {
   number_of_offers: number;
   offer_name: string;
   rate: string;
-  service_name: {
+  sub_services: {
     category_id: string;
     category_name: string;
   }[];

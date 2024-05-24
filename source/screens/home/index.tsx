@@ -48,29 +48,14 @@ import {NativeToast} from '../../utils/toast';
 import {appConfig, endPoints} from '../../../config';
 import useHome from './hooks';
 import {AppContext} from 'context';
-import {getAllBanner} from '../../Actions/homeAction';
-import {getUpcomingAppointment} from '../../Actions/appointment';
-import {TopService} from '../../Actions/services';
+import {getAllBanner, getUserDetails} from '../../Actions/homeAction';
+import {getUpcomingAppointment} from '../../Actions/appointmentAction';
+import {TopService} from '../../Actions/servicesAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
   route: RouteProp<RootStackParamList, 'Home'>;
 };
-
-// const banner = [
-//   {
-//     id: 1,
-//     image: images?.offerbanner,
-//   },
-//   {
-//     id: 2,
-//     image: images?.offerbanner,
-//   },
-//   {
-//     id: 3,
-//     image: images?.offerbanner,
-//   },
-// ];
 
 let graphData = [
   {avrage: '20%', color: '#FFAFA2', day: 'Mo'},
@@ -83,9 +68,11 @@ let graphData = [
 ];
 
 const Home: FC<Props> = ({navigation, route}) => {
+  const {bannerImage} = useAppSelector(state => state?.home);
   const [visible, setVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [banner, setBanner] = useState([]);
+  const [banner, setBanner] = useState(bannerImage);
+  const {userinfo} = useAppSelector(state => state?.common);
   const {appointment} = useAppSelector(state => state.home);
   const {topServices} = useAppSelector(state => state?.service);
 
@@ -96,6 +83,7 @@ const Home: FC<Props> = ({navigation, route}) => {
   useEffect(() => {
     setVisible(!visible);
     let clean = setTimeout(() => {
+      getUserDetail();
       getBanners();
       getAppointment();
       getTopServices();
@@ -103,31 +91,33 @@ const Home: FC<Props> = ({navigation, route}) => {
     return () => clearInterval(clean);
   }, []);
 
-  // const {
-  //   // expertMedia,
-  //   appointments,
-  //   getAllExpertMedia,
-  //   getExpertDetails,
-  //   getLatestAppointments,
-  // } = useHome();
+  useEffect(() => {
+    setBanner(bannerImage);
+  }, [bannerImage]);
+
+  const {
+    expertMedia,
+    appointments,
+    getAllExpertMedia,
+    getExpertDetails,
+    getLatestAppointments,
+  } = useHome();
 
   useEffect(() => {
     // getExpertDetails();
-    // getAllExpertMedia();
+    getAllExpertMedia();
     // getLatestAppointments();
   }, []);
 
-  // const {
-  //   expertusers,
-  //   user_work_images_url,
-  //   user_profile_images_url,
-  //   expert_profile_video_url,
-  // } = expertMedia || {};
+  const {
+    expertusers,
+    user_work_images_url,
+    user_profile_images_url,
+    expert_profile_video_url,
+  } = expertMedia || {};
 
-  // console.log('okokokok', appointments);
-
-  // const {user_profile_images, user_work_images, expert_profile_videos} =
-  //   expertusers?.length ? expertusers[0] : {};
+  const {user_profile_images, user_work_images, expert_profile_videos} =
+    expertusers?.length ? expertusers[0] : {};
   const onSnapToItem = (index: React.SetStateAction<number>) => {
     setActiveIndex(index);
   };
@@ -140,7 +130,6 @@ const Home: FC<Props> = ({navigation, route}) => {
     let obj = {
       onSuccess: (res: any) => {
         setLoading(false);
-        setBanner(res?.banners);
       },
       onFailure: (Err: any) => {
         setLoading(false);
@@ -155,7 +144,7 @@ const Home: FC<Props> = ({navigation, route}) => {
     setLoading(true);
     let obj = {
       data: {
-        expertId: userDetails?.userId,
+        expertId: userDetails?._id,
         limit: 10,
         page: 1,
       },
@@ -168,6 +157,23 @@ const Home: FC<Props> = ({navigation, route}) => {
       },
     };
     dispatch(getUpcomingAppointment(obj));
+  };
+
+  const getUserDetail = () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        userid: userDetails?._id,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    dispatch(getUserDetails(obj));
   };
 
   const getTopServices = () => {
@@ -272,18 +278,21 @@ const Home: FC<Props> = ({navigation, route}) => {
               </View>
 
               <View style={styles.gridImageView}>
-                {user_profile_images?.length ? (
+                {expertMedia?.expertusers?.length ? (
                   <FlatList
                     numColumns={3}
                     columnWrapperStyle={{gap: wp(11)}}
-                    data={user_profile_images}
+                    data={user_work_images}
                     renderItem={({item, index}) => {
                       return (
-                        <Image
+                        <FastImage
                           key={index}
-                          source={item?.image}
                           resizeMode="cover"
                           style={[styles.gridImage, styles.gridImageBottom]}
+                          source={{
+                            uri: `${user_work_images_url}${item?.image}`,
+                            priority: FastImage?.priority?.high,
+                          }}
                         />
                       );
                     }}
@@ -359,7 +368,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                         {backgroundColor: item.bgColor},
                       ]}>
                       <RNText style={styles.servicetitle}>
-                        {'Haircutting'}
+                        {item?.serviceDetails?.sub_service_name}
                       </RNText>
                       <RNText style={styles.service}>{'Service'}</RNText>
                       <RNText style={styles.soldtitle}>{'456'}</RNText>

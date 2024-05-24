@@ -7,12 +7,19 @@ import moment from 'moment';
 import {Asset} from 'react-native-image-picker';
 import {NativeToast} from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from 'store';
+import { generateOffer } from '../../Actions/offersAction';
 const {getExpertServices, getExpertSeubServices, createExpertOffer} = endPoints;
 
 const useCreateOffer = () => {
   const navigation = useNavigation();
+  const {userinfo}=useAppSelector(state=>state?.common)
+  const {state,district,city}=userinfo?.user
+  
+  
   const {userDetails, setLoading} = useContext(AppContext);
-  const {userId} = userDetails;
+  const {_id} = userDetails;
+  const userId=_id
   const [endDate, setEndDate] = useState<any>();
   const [startDate, setStartDate] = useState<Date>();
   const [selectedImage, setSelectedImage] = useState<Asset>();
@@ -31,6 +38,9 @@ const useCreateOffer = () => {
   const [purchaseLimit, setPurchaseLimit] = useState<number>(10);
   const [additionalInfo, setAdditionalInfo] = useState<string>('');
   const [offerName, setOfferName] = useState<string>('');
+
+  const dispatch = useAppDispatch()
+  
 
   const getAllServicesForMobile = async () => {
     setLoading(true);
@@ -79,34 +89,34 @@ const useCreateOffer = () => {
 
   const createOffer = async () => {
     setLoading(true);
+    console.log('doscount',discount);
+    
     try {
       const services = selectedServices.map(service => {
         const {service_name, _id} = service;
-        let subServicesList: Services[] = [];
-        selectedSubServices.forEach(element => {
-          const obj = {
-            sub_service_id: element._id,
-            sub_service_name: element.sub_service_name,
-          };
-          if (element.serviceId === _id) {
-            subServicesList.push(obj);
-          }
-        });
         const item = {
           service_id: _id,
           service_name: service_name,
-          sub_services: subServicesList,
         };
         return item;
       });
+      const subServices=selectedSubServices.map(element => {
+        const obj = {
+          sub_service_id: element._id,
+          sub_service_name: element.sub_service_name,
+        };
+        return obj
+        });
+
       const sNamwe = JSON.stringify(services);
+      const subservice=JSON.stringify(subServices)
       const sDate = moment(startDate).format('DD-MM-YYYY');
       const eDate = moment(endDate).format('DD-MM-YYYY');
 
       const body = new FormData();
       body.append('expert_id', userId);
       body.append('offer_name', offerName);
-      body.append('service_name', sNamwe);
+      body.append('service', sNamwe);
       body.append('number_of_offers', purchaseLimit);
       body.append('start_date', sDate);
       body.append('end_date', eDate);
@@ -118,17 +128,35 @@ const useCreateOffer = () => {
         name: selectedImage?.fileName,
         type: selectedImage?.type,
       });
-      const resopnse = await APICaller.post(createExpertOffer, body, {
-        headers: {'Content-Type': 'multipart/form-data'},
-      });
-      const {data} = resopnse;
-      const {status} = data;
-      if (status === 200) {
-        NativeToast('Offer created successfully');
-        navigation.goBack();
-      }
+      body.append('state',JSON.stringify(state));
+      body.append('city',JSON.stringify(city));
+      body.append('district',JSON.stringify(district));
+      body.append('sub_services',subservice)
 
-      console.log('response of create offer', resopnse);
+      let obj={
+        data:body,
+        onSuccess:(res:any)=>{
+          console.log('resssssss',res);
+          
+        },
+        onFailure:(Err:any)=>{
+          NativeToast(Err?.data?.message)
+          console.log('REEEEEEEEERRRRRRRR',Err); 
+        }
+      }
+      
+
+      // const resopnse = await APICaller.post(createExpertOffer, body, {
+      //   headers: {'Content-Type': 'multipart/form-data'},
+      // });
+      // const {data} = resopnse;
+      // const {status} = data;
+      // if (status === 200) {
+      //   NativeToast('Offer created successfully');
+      //   navigation.goBack();
+      // }
+
+      dispatch(generateOffer(obj))
     } catch (error) {
       console.log('error of create offer', error);
     } finally {

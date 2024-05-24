@@ -1,6 +1,8 @@
 export const appConfig = {
   mainDomain: 'https://api.mystylist.in/',
-  IMG_URL:"https://mystylist-media.s3.amazonaws.com"
+  IMG_URL:"https://mystylist-media.s3.amazonaws.com",
+  user_work_images_url:'https://api.mystylist.in/uploads/user_work_images/resized/'
+
 };
 
 

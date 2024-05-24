@@ -21,27 +21,17 @@ interface Props {
 }
 
 const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
-  const {
-    _id: offerId,
-    end_date,
-    service_name,
-    offer_name,
-    number_of_offers,
-    accepted_offers,
-  } = data;
-
-  const categoryNames = service_name.map(category => category.category_name);
-  const commaSeparatedNames = categoryNames.join(', ');
+  const {_id, end_date, sub_services, offer_name, number_of_offers} = data;
   const expiryDate = moment(end_date).format('DD MMM, YYYY');
   return (
     <Pressable
       onPress={() => {
-        onPressCard && onPressCard(offerId);
+        onPressCard && onPressCard(_id);
       }}
       style={[styles.cardContainer, {backgroundColor: cardColor}]}>
       <View style={styles.cardDetailWrapper}>
         <RNText style={styles.offername}>{offer_name}</RNText>
-        <RNText style={styles.servicelabel}>{commaSeparatedNames}</RNText>
+        <RNText style={styles.servicelabel}>{sub_services?.price}</RNText>
         <View style={styles.cardDetail}>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Offer price</RNText>
@@ -52,13 +42,13 @@ const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Bookings</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {`${accepted_offers}/${number_of_offers}`}
+              {`23/${number_of_offers}`}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Availed</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {`${number_of_offers - accepted_offers}/${number_of_offers}`}
+              {`15/${number_of_offers}`}
             </Text>
           </View>
         </View>

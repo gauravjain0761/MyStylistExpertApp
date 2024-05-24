@@ -11,7 +11,7 @@ const useHome = () => {
   const [expertMedia, setExpertMedia] = useState<ExpertMedia>();
   const [appointments, setAppointments] = useState<Array<Appointment>>([]);
 
-  const {userId} = userDetails;
+  const {_id} = userDetails;
 
   const getExpertDetails = async () => {
     try {
@@ -24,7 +24,7 @@ const useHome = () => {
 
   const getLatestAppointments = async () => {
     setLoading(true);
-    const endpoint = `${getAppointments}/${userId}?page=0&limit=5&sort=createdAt&status=booked`;
+    const endpoint = `${getAppointments}/${_id}?page=0&limit=5&sort=createdAt&status=booked`;
     try {
       const response: any = await APICaller.get(endpoint);
       console.log('response of gettig appointments', response);
@@ -41,7 +41,7 @@ const useHome = () => {
   };
 
   const getAllExpertMedia = async () => {
-    const url = `${getAllExpertsImages}/${userId}?page=0&limit=10&sort=createdAt&fields=user_work_images,expert_profile_videos,user_profile_images`;
+    const url = `${getAllExpertsImages}/${_id}?page=0&limit=10&sort=createdAt&fields=user_work_images,expert_profile_videos,user_profile_images`;
     try {
       const response: any = await APICaller.get(url);
       console.log('response of gettig all media', response);

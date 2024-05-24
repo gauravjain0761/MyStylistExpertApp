@@ -34,9 +34,9 @@ const CreatePackageSheet: FC<Props> = ({
   endDate,
   onYesPress,
 }) => {
-  const servicesNames = services.map(data => data.service_name);
   const translateY = useSharedValue(SHEET_HEIGHT);
   const opacity = useSharedValue(0);
+  const servicesNames = services.map(data => data.service_name);
 
   const overlayStyle = useAnimatedStyle(() => {
     return {
@@ -64,7 +64,6 @@ const CreatePackageSheet: FC<Props> = ({
   useEffect(() => {
     toggleBottomSheet('show');
   }, []);
-
   return (
     <Modal
       visible={visibility}
@@ -89,7 +88,7 @@ const CreatePackageSheet: FC<Props> = ({
               Services:
             </Text>
             <Text numberOfLines={1} size="sm" fontWeight="800">
-              {servicesNames.join(',')}
+              {servicesNames}
             </Text>
           </View>
           <View style={styles.itemsView}>

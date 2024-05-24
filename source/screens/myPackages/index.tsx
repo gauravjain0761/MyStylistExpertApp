@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
   Pressable,
   View,
@@ -16,6 +16,10 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useMyPackage from './hooks';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
+import {useAppDispatch, useAppSelector} from 'store';
+import {getAllPackage} from '../../Actions/packageAction';
+import {endPoints} from '../../../config';
+import {AppContext} from 'context';
 
 const cardsColor = {
   1: '#F7F5EB',
@@ -29,61 +33,52 @@ type Props = {
   route: RouteProp<RootStackParamList, 'MyPackages'>;
 };
 
-const allpackeges = [
-  {
-    _id: 1,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut,  Classic shaving'},
-    ],
-    package_name: 'Package name here',
-    number_of_package: 10,
-    accepted_offers: 3,
-  },
-  {
-    _id: 2,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut, Classic shaving'},
-    ],
-    package_name: 'Package name here',
-    number_of_package: 10,
-    accepted_offers: 3,
-  },
-  {
-    _id: 3,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut, Classic shaving'},
-    ],
-    package_name: 'Package name here',
-    number_of_package: 10,
-    accepted_offers: 3,
-  },
-  {
-    _id: 4,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut, Classic shaving'},
-    ],
-    package_name: 'Package name here',
-    number_of_package: 10,
-    accepted_offers: 3,
-  },
-];
-
 const MyPackages: FC<Props> = ({navigation}) => {
-  const {myPackages, getmyPackages} = useMyPackage();
+  // const {myPackages, getmyPackages} = useMyPackage();
+  const {getpackages} = useAppSelector(state => state?.packages);
+  const [packages, setPackages] = useState(getpackages);
+  const [page, setPage] = useState(1);
+  const {userDetails, setLoading} = useContext(AppContext);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getmyPackages();
+    console.log('okkkk', getpackages);
+    if (getpackages.length || Object.values(getpackages).length > 0) {
+      getmyPackages(false);
+    } else {
+      getmyPackages(true);
+    }
   }, []);
+
+  useEffect(() => {
+    setPackages(getpackages);
+  }, [getpackages]);
+
+  const getmyPackages = (isLoading: boolean) => {
+    setLoading(isLoading);
+    let obj = {
+      url: `${endPoints?.getAllPackageByUser}/${userDetails?._id}`,
+      params: {
+        limit: 10,
+        page: page,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+        console.log('resss', res);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+      },
+    };
+    dispatch(getAllPackage(obj));
+  };
 
   return (
     <Container>
       <View style={globalStyle.container}>
         <Header
-          title={`Packages (${allpackeges?.length || '0'})`}
+          title={`Packages (${packages?.packages?.length || '0'})`}
           rightView={
             <View style={styles.headerRight}>
               <Pressable
@@ -109,7 +104,7 @@ const MyPackages: FC<Props> = ({navigation}) => {
         />
         <View style={styles.mainView}>
           <FlatList
-            data={myPackages || allpackeges}
+            data={packages?.packages}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listView}
             keyExtractor={(item, index) => index.toString()}

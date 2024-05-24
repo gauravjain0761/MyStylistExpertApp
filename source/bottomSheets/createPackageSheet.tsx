@@ -109,7 +109,7 @@ const CreatePackageSheet: FC<Props> = ({
               Discount:
             </Text>
             <Text size="sm" fontWeight="800">
-              {`${discount}%`}
+              {`${discount}`}
             </Text>
           </View>
           <View style={styles.itemsView}>

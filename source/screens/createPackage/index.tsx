@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import moment from 'moment';
@@ -6,7 +6,7 @@ import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
 import DatePicker from 'react-native-date-picker';
 import {RouteProp} from '@react-navigation/native';
-import {CreatePackageSheet, ServiceSheet} from 'bottomSheets';
+import {CreatePackageSheet, OrderplaceSheet, ServiceSheet} from 'bottomSheets';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
   Pressable,
@@ -16,6 +16,7 @@ import {
   StyleSheet,
   Text,
   ImageBackground,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Header,
@@ -41,30 +42,25 @@ import {
 } from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {Purchase, offerData} from 'AppConstants';
+import {useAppSelector} from 'store';
+import FastImage from 'react-native-fast-image';
+import {appConfig} from '../../../config';
+import {AppContext} from 'context';
+import {Services} from 'types';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'CreatePackage'>;
   route: RouteProp<RootStackParamList, 'CreatePackage'>;
 };
 
-const banner = [
-  {
-    id: 1,
-    image: images?.packagebanner,
-  },
-  {
-    id: 2,
-    image: images?.packagebanner,
-  },
-  {
-    id: 3,
-    image: images?.packagebanner,
-  },
-];
-
 const CreatePackage: FC<Props> = () => {
+  const {bannerImage} = useAppSelector(state => state?.home);
   const [createPackageSheet, setCreatePackageSheet] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [orderPlaceSheet, setOrderPlaceSheet] = useState(false);
+  const [banner, setBanner] = useState(bannerImage);
+  const [selectDiscount, setSelectDiscount] = useState([]);
+  const {IMG_URL} = appConfig;
 
   const {
     endDate,
@@ -102,12 +98,17 @@ const CreatePackage: FC<Props> = () => {
     setSubServicesSheet,
     setSelectedSubServices,
     getAllServicesForMobile,
+    removeServices,
+    removeSubServices,
   } = useCreatePackage();
+
+  console.log('serviceaa', selectedServices, selectedSubServices);
 
   useEffect(() => {
     getAllServicesForMobile().then(() => {
-      setDiscount(offerData[0]?.discount);
+      setDiscount(offerData[0]?.value);
       setPurchaseLimit(Purchase[0]?.purchase);
+      setSelectDiscount(offerData[0]?.discount);
     });
   }, []);
 
@@ -122,8 +123,13 @@ const CreatePackage: FC<Props> = () => {
         selectionLimit: 1,
       });
       console.log(result.assets[0]);
-      setSelectedImage(result.assets[0]);
+      let selectedImage = result.assets[0];
+      setSelectedImage(selectedImage);
     } catch (error) {}
+  };
+
+  const removeimage = () => {
+    setSelectedImage([]);
   };
 
   return (
@@ -140,10 +146,13 @@ const CreatePackage: FC<Props> = () => {
               inactiveSlideScale={2}
               renderItem={({item}: any) => {
                 return (
-                  <Image
-                    source={item?.image}
-                    resizeMode="cover"
+                  <FastImage
+                    source={{
+                      uri: `${IMG_URL}/${item?.fileName}`,
+                      priority: FastImage.priority.high,
+                    }}
                     style={styles?.carousel_img}
+                    resizeMode="stretch"
                   />
                 );
               }}
@@ -162,6 +171,25 @@ const CreatePackage: FC<Props> = () => {
           />
           <View style={styles.innercontainer}>
             <ImagePicker label="Package Image" onPress={onPressImageUpload} />
+            {!!selectedImage && Object.values(selectedImage).length > 0 && (
+              <View style={styles?.selectimagecontainer}>
+                <Image
+                  source={{uri: selectedImage?.uri}}
+                  style={styles?.selectedimage}
+                  resizeMode="stretch"
+                />
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: 'yellow',
+                    position: 'absolute',
+                    top: hp(10),
+                    right: wp(40),
+                  }}
+                  onPress={removeimage}>
+                  <Image source={images?.trash} style={styles.trash} />
+                </TouchableOpacity>
+              </View>
+            )}
             <TextInput
               style={styles.input}
               placeholder="Enter here"
@@ -175,7 +203,7 @@ const CreatePackage: FC<Props> = () => {
               placeholder="Add services for this offer.."
               editable={false}
               value={''}
-              containerStyle={styles.fildsContainerStyle}
+              containerStyle={[styles.fildsContainerStyle, {marginTop: hp(27)}]}
               innerContainer={styles.inputinnercontainer}
               rightContent={
                 <RnImage source={images?.DownArrow} style={styles.iconstyle} />
@@ -193,12 +221,17 @@ const CreatePackage: FC<Props> = () => {
                     <Text style={styles.badgeTitle}>
                       {data?.service_name || ''}
                     </Text>
-                    <RnImage
-                      tintColor={'#000000'}
-                      style={styles.crossIcon}
-                      resizeMode="contain"
-                      source={images.CrossIcon}
-                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        removeServices(data?._id);
+                      }}>
+                      <RnImage
+                        tintColor={'#000000'}
+                        style={styles.crossIcon}
+                        resizeMode="contain"
+                        source={images.CrossIcon}
+                      />
+                    </TouchableOpacity>
                   </ImageBackground>
                 );
               })}
@@ -209,7 +242,7 @@ const CreatePackage: FC<Props> = () => {
               placeholder="Add sub services.."
               editable={false}
               value={''}
-              containerStyle={styles.fildsContainerStyle}
+              containerStyle={[styles.fildsContainerStyle, {marginTop: hp(27)}]}
               innerContainer={styles.inputinnercontainer}
               rightContent={
                 <RnImage source={images?.DownArrow} style={styles.iconstyle} />
@@ -227,12 +260,14 @@ const CreatePackage: FC<Props> = () => {
                     <Text style={styles.badgeTitle}>
                       {data?.service_name || '-'}
                     </Text>
-                    <RnImage
-                      tintColor={'#000000'}
-                      style={styles.crossIcon}
-                      resizeMode="contain"
-                      source={images.CrossIcon}
-                    />
+                    <TouchableOpacity onPress={() => removeSubServices(data)}>
+                      <RnImage
+                        tintColor={'#000000'}
+                        style={styles.crossIcon}
+                        resizeMode="contain"
+                        source={images.CrossIcon}
+                      />
+                    </TouchableOpacity>
                   </ImageBackground>
                 );
               })}
@@ -244,10 +279,11 @@ const CreatePackage: FC<Props> = () => {
                 label="Discount"
                 labelField={'discount'}
                 valueField={'discount'}
-                value={discount}
+                value={selectDiscount}
                 containerStyle={styles.containerStyle}
                 onChange={(t: string) => {
-                  setDiscount(t?.discount);
+                  setDiscount(t?.value);
+                  setSelectDiscount(t?.discount);
                 }}
                 DropDownStyle={styles.dropDownStyle}
               />
@@ -350,6 +386,8 @@ const CreatePackage: FC<Props> = () => {
             onPress={() => {
               if (!packageName) {
                 NativeToast('Please enter offer name');
+              } else if (!!selectedImage?.fileName == false) {
+                NativeToast('Please add offer image');
               } else if (!selectedServices.length) {
                 NativeToast('Please select service for this offer');
               } else if (!selectedSubServices.length) {
@@ -358,10 +396,12 @@ const CreatePackage: FC<Props> = () => {
                 NativeToast('Please select start date');
               } else if (!endDate) {
                 NativeToast('Please select end date');
-              } else if (!price) {
-                NativeToast('Please add offer image');
-              } else if (!selectedImage?.fileName) {
-                NativeToast('Please add offer image');
+              }
+              //  else if (!price) {
+              //   NativeToast('Please add price');
+              // }
+              else if (!additionalInfo) {
+                NativeToast('Please add additional info');
               } else {
                 setCreatePackageSheet(true);
               }
@@ -375,7 +415,7 @@ const CreatePackage: FC<Props> = () => {
             discount={discount}
             startDate={startDate}
             endDate={endDate}
-            createExpertPackage={createExpertPackage}
+            createExpertPackage={() => setOrderPlaceSheet(!orderPlaceSheet)}
             price={price}
             visibility={createPackageSheet}
             setVisibility={setCreatePackageSheet}
@@ -410,6 +450,14 @@ const CreatePackage: FC<Props> = () => {
         ) : (
           <View />
         )}
+        <OrderplaceSheet
+          visibility={orderPlaceSheet}
+          setVisibility={setOrderPlaceSheet}
+          onSuccess={() => createExpertPackage()}
+          onPressCancel={() => setOrderPlaceSheet(!orderPlaceSheet)}
+          title="Creating your Packages"
+          discription="We need access to your location to show you relevant Stylists, Offers and Packages"
+        />
       </View>
     </Container>
   );
@@ -433,6 +481,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: wp(7),
+    // marginTop: hp(17),
   },
   crossIcon: {
     width: wp(16),
@@ -540,6 +589,23 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
     paddingVertical: hp(24),
+  },
+  selectimagecontainer: {
+    width: '100%',
+    height: 'auto',
+    marginTop: hp(25),
+    borderRadius: wp(8),
+    overflow: 'hidden',
+  },
+  selectedimage: {
+    width: '100%',
+    height: hp(200),
+    borderRadius: wp(8),
+  },
+  trash: {
+    width: wp(30),
+    height: wp(30),
+    position: 'absolute',
   },
 });
 

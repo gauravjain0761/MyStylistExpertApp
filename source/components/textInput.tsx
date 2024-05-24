@@ -30,7 +30,7 @@ interface TextInput {
   ref?: Ref<any>;
   maxLength?: number;
   returnKeyType?: 'done' | 'next' | 'go';
-  containerStyle?: ViewStyle;
+  containerStyle?: ViewStyle | ViewStyle[];
   label?: string | number;
   placeholderTextColor?: ColorValue;
   rightContent?: ReactElement;

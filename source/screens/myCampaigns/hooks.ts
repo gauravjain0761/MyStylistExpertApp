@@ -16,20 +16,20 @@ const useMyCampaign = () => {
     useState<Array<CampaignList>>();
 
   const {userDetails, setLoading} = useContext(AppContext);
-  const {userId} = userDetails;
+  const {_id} = userDetails;
 
   const getAcceptedCampaigns = async () => {
     setLoading(true);
     try {
       const url = getCampaigns;
       const body = {
-        expert: userId,
+        expert: _id,
         campaignstatus: 'Accepted',
       };
       const response = await APICaller.post(url, body);
       const {data} = response;
       const {status, campaigns} = data;
-      if (status === 200 && campaigns?.length) {
+      if (status === 200) {
         setAcceptedCampaigns(campaigns);
       }
       console.log('response of getting compaigns accepted', response);
@@ -45,13 +45,14 @@ const useMyCampaign = () => {
     try {
       const url = getCampaigns;
       const body = {
-        expert: userId,
+        expert: _id,
         campaignstatus: 'Active',
       };
       const response = await APICaller.post(url, body);
       const {data} = response;
       const {status, campaigns} = data;
-      if (status === 200 && campaigns?.length) {
+      
+      if (status === 200) {
         setActiveCampaigns(campaigns);
       }
       console.log('response of getting compaigns active', response);
@@ -67,13 +68,13 @@ const useMyCampaign = () => {
     try {
       const url = getCampaigns;
       const body = {
-        expert: userId,
+        expert: _id,
         campaignstatus: 'Declined',
       };
       const response = await APICaller.post(url, body);
       const {data} = response;
       const {status, campaigns} = data;
-      if (status === 200 && campaigns?.length) {
+      if (status === 200) {
         setDeclineCampaigns(campaigns);
       }
       console.log('response of getting compaigns Declined', response);
@@ -85,18 +86,18 @@ const useMyCampaign = () => {
   };
 
   const getPendingCampaigns = async () => {
-    console.log('userId', userId);
+    console.log('userId', _id);
     setLoading(true);
     try {
       const url = getCampaigns;
       const body = {
-        expert: userId,
+        expert: _id,
         campaignstatus: 'Pending',
       };
       const response = await APICaller.post(url, body);
       const {data} = response;
       const {status, campaigns} = data;
-      if (status === 200 && campaigns?.length) {
+      if (status === 200) {
         setPendingCampaigns(campaigns);
       }
       console.log('response of getting compaigns Pending', response);

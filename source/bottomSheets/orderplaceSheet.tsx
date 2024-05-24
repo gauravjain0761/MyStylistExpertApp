@@ -15,6 +15,7 @@ import {
   Image as RnImage,
   KeyboardAvoidingView,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import Animated, {
   runOnJS,
@@ -22,6 +23,8 @@ import Animated, {
   withTiming,
   useAnimatedStyle,
   withSpring,
+  cancelAnimation,
+  withRepeat,
 } from 'react-native-reanimated';
 import {
   Gesture,
@@ -35,6 +38,8 @@ interface Props {
   setVisibility: Dispatch<SetStateAction<boolean>>;
   title?: string;
   discription?: string;
+  onPressCancel?: () => void;
+  onSuccess?: () => void;
 }
 
 const SPRING_CONFIG = {
@@ -53,11 +58,14 @@ const OrderplaseSheet: FC<Props> = ({
   setVisibility,
   title,
   discription,
+  onPressCancel,
+  onSuccess = () => {},
 }) => {
   const insets = useSafeAreaInsets();
   const snapPoints = [0, hiddenPosition];
   const translateY = useSharedValue(SHEET_HEIGHT);
   const opacity = useSharedValue(0);
+  const width = useSharedValue(0);
 
   const overlayStyle = useAnimatedStyle(() => {
     return {
@@ -70,6 +78,32 @@ const OrderplaseSheet: FC<Props> = ({
       transform: [{translateY: translateY.value}],
     };
   });
+
+  const increaseWidth = useAnimatedStyle(() => {
+    return {
+      width: width.value,
+    };
+  });
+
+  useEffect(() => {
+    if (visibility) {
+      progressbar();
+    }
+  }, [visibility]);
+
+  const progressbar = () => {
+    width.value = withTiming(wp(220), {duration: 10000}, isFinished => {
+      if (isFinished) {
+        runOnJS(finish)();
+      }
+    });
+  };
+
+  const finish = () => {
+    setVisibility(false);
+    width.value = 0;
+    onSuccess();
+  };
 
   const toggleBottomSheet = (param: string) => {
     const translateTo = param === 'show' ? 0 : SHEET_HEIGHT;
@@ -131,6 +165,17 @@ const OrderplaseSheet: FC<Props> = ({
             <Animated.View style={[styles.bottomSheet, bottomSheetStyle]}>
               <Text style={styles.title}>{title}</Text>
               <Text style={styles.discription}>{discription}</Text>
+              <View style={styles.progresscontainer}>
+                <Animated.View style={styles.barbg}>
+                  <Animated.View
+                    style={[styles.innerbar, increaseWidth]}></Animated.View>
+                </Animated.View>
+                <TouchableOpacity
+                  onPress={() => (onPressCancel(), cancelAnimation(width))}
+                  style={styles.button}>
+                  <Text style={styles.buttontitle}>{'Cancel'}</Text>
+                </TouchableOpacity>
+              </View>
             </Animated.View>
           </View>
         </KeyboardAvoidingView>
@@ -141,7 +186,9 @@ const OrderplaseSheet: FC<Props> = ({
 
 const styles = StyleSheet.create({
   overlay: tw`w-full h-full bg-black `,
-  container: tw`absolute w-full h-full z-10 justify-end`,
+  container: {
+    ...tw`absolute w-full h-full z-10 justify-end`,
+  },
   scrubberView: tw`w-full h-7`,
   scrubber: tw`w-15 h-1.5 bg-gray-400 rounded-full`,
   bottomSheet: {
@@ -149,28 +196,53 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: wp(20),
     borderTopRightRadius: wp(20),
     paddingTop: hp(10),
+    paddingHorizontal: wp(30),
   },
-  listView: tw`flex-1 w-full px-4`,
-  devider: tw`w-full h-0.2 bg-gray-200 mt-3 mb-5`,
-  commentItem: tw`w-full flex-row gap-2 mb-1`,
-  userImage: tw`w-7 h-7 rounded-full`,
-  commentView: tw`flex-1 w-full`,
-  commentWrapper: tw`w-full px-4 py-3 bg-cultured rounded-lg`,
-  likeCommentView: tw`w-full h-9 flex-row items-center justify-end`,
-  likeIconComment: tw`w-4.5 h-4.5`,
-  actionButton: tw`w-8 h-full items-center justify-center`,
-  inputWrapper: tw`w-full h-20 bg-white justify-center`,
-  inputView: tw`w-full rounded-full h-13 flex-row items-center bg-cultured border border-gray-100 pl-2 pr-5`,
   input: tw`flex-1 w-full bg-transparent`,
   sendButton: tw`w-10 h-full items-end justify-center`,
   sendIcon: tw`w-5 h-5`,
   title: {
     ...commonFontStyle(fontFamily.semi_bold, 23, Color?.Black),
     alignSelf: 'center',
+    marginTop: hp(22),
+    lineHeight: hp(26),
   },
   discription: {
     ...commonFontStyle(fontFamily.medium, 14, Color?.Grey70),
     alignSelf: 'center',
+    marginTop: hp(17),
+    lineHeight: hp(24),
+    textAlign: 'center',
+  },
+  progresscontainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: hp(30),
+    justifyContent: 'space-between',
+    gap: wp(20),
+    marginBottom: hp(50),
+  },
+  barbg: {
+    width: '70%',
+    height: hp(12),
+    backgroundColor: Color?.GreyE7,
+    borderRadius: wp(100),
+    overflow: 'hidden',
+  },
+  buttontitle: {
+    ...commonFontStyle(fontFamily.medium, 13, Color?.Grey48),
+    paddingHorizontal: wp(25),
+    paddingVertical: hp(10),
+  },
+  button: {
+    backgroundColor: Color?.Green,
+    borderRadius: wp(5),
+  },
+  innerbar: {
+    width: '0%',
+    backgroundColor: Color?.Green,
+    height: hp(12),
+    borderRadius: wp(100),
   },
 });
 

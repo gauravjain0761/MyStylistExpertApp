@@ -14,6 +14,7 @@ import {
   View,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Header,
@@ -34,30 +35,24 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {hp, screen_height, screen_width, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {Purchase, offerData} from 'AppConstants';
+import {useAppSelector} from 'store';
+import FastImage from 'react-native-fast-image';
+import {appConfig} from '../../../config';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'CreateOffer'>;
   route: RouteProp<RootStackParamList, 'CreateOffer'>;
 };
 
-const banner = [
-  {
-    id: 1,
-    image: images?.offerbanner,
-  },
-  {
-    id: 2,
-    image: images?.offerbanner,
-  },
-  {
-    id: 3,
-    image: images?.offerbanner,
-  },
-];
-
 const CreateOffer: FC<Props> = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const {bannerImage} = useAppSelector(state => state?.home);
+  const [banner, setBanner] = useState(bannerImage);
+  const [selecteServices, setSelecteServices] = useState([]);
+  const [subService, setSubService] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [selectDiscount, setSelectDiscount] = useState([]);
+  const {IMG_URL} = appConfig;
   const {
     endDate,
     startDate,
@@ -96,8 +91,9 @@ const CreateOffer: FC<Props> = () => {
 
   useEffect(() => {
     getAllServicesForMobile().then(() => {
-      setDiscount(offerData[0]?.discount);
+      setDiscount(offerData[0]?.value);
       setPurchaseLimit(Purchase[0]?.purchase);
+      setSelectDiscount(offerData[0]?.discount);
     });
   }, []);
 
@@ -116,6 +112,10 @@ const CreateOffer: FC<Props> = () => {
     } catch (error) {}
   };
 
+  const removeimage = () => {
+    setSelectedImage([]);
+  };
+
   return (
     <Container>
       <View style={styles.container}>
@@ -130,10 +130,13 @@ const CreateOffer: FC<Props> = () => {
               inactiveSlideScale={2}
               renderItem={({item}: any) => {
                 return (
-                  <Image
-                    resizeMode="cover"
-                    source={item?.image}
+                  <FastImage
+                    source={{
+                      uri: `${IMG_URL}/${item?.fileName}`,
+                      priority: FastImage.priority.high,
+                    }}
                     style={styles?.carousel_img}
+                    resizeMode="stretch"
                   />
                 );
               }}
@@ -152,6 +155,25 @@ const CreateOffer: FC<Props> = () => {
           />
           <View style={styles.innercontainer}>
             <ImagePicker label="Offer Image" onPress={onPressImageUpload} />
+            {!!selectedImage && Object.values(selectedImage).length > 0 && (
+              <View style={styles?.selectimagecontainer}>
+                <Image
+                  source={{uri: selectedImage?.uri}}
+                  style={styles?.selectedimage}
+                  resizeMode="stretch"
+                />
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: 'yellow',
+                    position: 'absolute',
+                    top: hp(10),
+                    right: wp(40),
+                  }}
+                  onPress={removeimage}>
+                  <Image source={images?.trash} style={styles.trash} />
+                </TouchableOpacity>
+              </View>
+            )}
             <TextInput
               style={styles.input}
               placeholder="Enter here"
@@ -165,9 +187,10 @@ const CreateOffer: FC<Props> = () => {
               placeholder="Select service"
               labelField={'service_name'}
               valueField={'service_name'}
-              value={selectedServices}
+              value={selecteServices}
               onChange={(t: any) => {
-                setSelectedServices(t.service_name);
+                setSelectedServices([t]);
+                setSelecteServices(t.service_name);
                 getSubServices([t]);
               }}
               containerStyle={styles.fildsContainerStyle}
@@ -178,9 +201,10 @@ const CreateOffer: FC<Props> = () => {
               placeholder="Select sub service"
               labelField={'service_name'}
               valueField={'service_name'}
-              value={selectedSubServices}
+              value={subService}
               onChange={(t: any) => {
-                setSelectedSubServices(t.service_name);
+                setSubService(t.service_name);
+                setSelectedSubServices([t]);
               }}
               containerStyle={styles.fildsContainerStyle}
             />
@@ -191,10 +215,11 @@ const CreateOffer: FC<Props> = () => {
                 label="Discount"
                 labelField={'discount'}
                 valueField={'discount'}
-                value={discount}
+                value={selectDiscount}
                 containerStyle={styles.containerStyle}
                 onChange={(t: string) => {
-                  setDiscount(t?.discount);
+                  setSelectDiscount(t?.discount);
+                  setDiscount(t?.value);
                 }}
                 DropDownStyle={styles.dropDownStyle}
               />
@@ -295,9 +320,12 @@ const CreateOffer: FC<Props> = () => {
           <PrimaryButton
             label="Create Offer"
             onPress={() => {
+              console.log('okkkkkk', selectedServices);
               // setVisible(!visible);
               if (!offerName) {
                 NativeToast('Please enter offer name');
+              } else if (!!selectedImage?.fileName == false) {
+                NativeToast('Please add offer image');
               } else if (!selectedServices.length) {
                 NativeToast('Please select service for this offer');
               } else if (!selectedSubServices.length) {
@@ -308,8 +336,11 @@ const CreateOffer: FC<Props> = () => {
                 NativeToast('Please select end date');
               } else if (!selectedImage?.fileName) {
                 NativeToast('Please add offer image');
+              } else if (!additionalInfo) {
+                NativeToast('Please add additional info');
               } else {
                 setCreateOfferSheet(true);
+                console.log('okkkkk');
               }
             }}
           />
@@ -478,6 +509,23 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
     paddingVertical: hp(24),
+  },
+  selectimagecontainer: {
+    width: '100%',
+    height: 'auto',
+    marginTop: hp(25),
+    borderRadius: wp(8),
+    overflow: 'hidden',
+  },
+  selectedimage: {
+    width: '100%',
+    height: hp(200),
+    borderRadius: wp(8),
+  },
+  trash: {
+    width: wp(30),
+    height: wp(30),
+    position: 'absolute',
   },
 });
 

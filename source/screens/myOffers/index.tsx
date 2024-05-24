@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {Pressable, View, FlatList, StyleSheet, Text} from 'react-native';
 import {Container, Header, Image, OffersCard} from 'components';
 import globalStyle from 'globalStyles';
@@ -10,6 +10,11 @@ import {RouteProp} from '@react-navigation/native';
 import useMyOffers from './hooks';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
+import {useAppDispatch, useAppSelector} from 'store';
+import {getallOffers} from '../../Actions/offersAction';
+import {AppContext} from 'context';
+import {NativeToast} from '../../utils/toast';
+import {endPoints} from '../../../config';
 
 const cardsColor = {
   1: '#F7F5EB',
@@ -23,57 +28,44 @@ type Props = {
   route: RouteProp<RootStackParamList, 'MyOffers'>;
 };
 
-const allMyOffers = [
-  {
-    _id: 1,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut,  Classic shaving'},
-    ],
-    offer_name: 'Offer name here',
-    number_of_offers: 10,
-    accepted_offers: 3,
-  },
-  {
-    _id: 2,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut, Classic shaving'},
-    ],
-    offer_name: 'Offer name here',
-    number_of_offers: 10,
-    accepted_offers: 3,
-  },
-  {
-    _id: 3,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut, Classic shaving'},
-    ],
-    offer_name: 'Offer name here',
-    number_of_offers: 10,
-    accepted_offers: 3,
-  },
-  {
-    _id: 4,
-    end_date: Date.now(),
-    service_name: [
-      {category_name: 'Services: Regular haircut, Classic shaving'},
-    ],
-    offer_name: 'Offer name here',
-    number_of_offers: 10,
-    accepted_offers: 3,
-  },
-];
-
 const MyOffers: FC<Props> = ({navigation}) => {
   // const {getMyOffers, allMyOffers} = useMyOffers();
+  const dispatch = useAppDispatch();
+  const {setLoading, userDetails} = useContext(AppContext);
+  const {getoffers} = useAppSelector(state => state?.offers);
+  const [offers, setOffers] = useState(getoffers);
+
+  const getMyOffers = (isLoading: boolean) => {
+    setLoading(isLoading);
+    let obj = {
+      url: `${endPoints?.getAllOffersByUser}/${userDetails?._id}`,
+      params: {
+        limit: 10,
+        page: 1,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    dispatch(getallOffers(obj));
+  };
+
+  useEffect(() => {
+    setOffers(getoffers);
+  }, [getoffers]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      // getMyOffers();
+      if (getoffers.length || Object.values(getoffers).length > 0) {
+        getMyOffers(false);
+      } else {
+        getMyOffers(true);
+      }
     });
-
     return unsubscribe;
   }, [navigation]);
 
@@ -81,7 +73,7 @@ const MyOffers: FC<Props> = ({navigation}) => {
     <Container>
       <View style={globalStyle.container}>
         <Header
-          title={`Offers (${allMyOffers?.length || '0'})`}
+          title={`Offers (${offers?.offers?.length || '0'})`}
           rightView={
             <View style={styles.headerRight}>
               <Pressable
@@ -107,7 +99,7 @@ const MyOffers: FC<Props> = ({navigation}) => {
         />
         <View style={styles.mainView}>
           <FlatList
-            data={allMyOffers}
+            data={offers?.offers}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listView}
             keyExtractor={(item, index) => index.toString()}

@@ -1,13 +1,16 @@
-import {USER_INFO} from '../types';
+import {GET_OFFERS} from '../types';
 
 const initialState = {
-  userinfo: {},
+  getoffers: [],
 };
 
 export default function (state = initialState, action: any) {
   switch (action?.type) {
-    case USER_INFO: {
-      return {...state, userinfo: action.payload};
+    case GET_OFFERS: {
+      return {
+        ...state,
+        getoffers: action.payload,
+      };
     }
     default:
       return state;

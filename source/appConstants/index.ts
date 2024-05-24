@@ -178,86 +178,102 @@ export const offerData = [
   {
     id: 1,
     discount: '5%',
+    value:5
   },
   {
     id: 2,
     discount: '10%',
+    value:10
   },
   {
     id: 3,
     discount: '15%',
+    value:15
   },
   {
     id: 4,
     discount: '20%',
+    value:20
   },
   {
     id: 5,
     discount: '25%',
+    value:25
   },
   {
     id: 6,
     discount: '30%',
+    value:30
   },
   {
     id: 7,
     discount: '35%',
+    value:35
   },
   {
     id: 8,
     discount: '40%',
+    value:40
   },
   {
     id: 9,
     discount: '45%',
+    value:45
   },
   {
     id: 10,
     discount: '50%',
+    value:50
   },
   {
     id: 11,
     discount: '55%',
+    value:55
   },
   {
     id: 12,
-    discount: '55%',
+    discount: '60%',
+    value:60
   },
   {
     id: 13,
-    discount: '60%',
+    discount: '65%',
+    value:65
   },
   {
     id: 14,
-    discount: '65%',
+    discount: '70%',
+    value:70
   },
   {
     id: 15,
-    discount: '70%',
+    discount: '75%',
+    value:75
   },
   {
     id: 16,
-    discount: '75%',
+    discount: '80%',
+    value:80
   },
   {
     id: 17,
-    discount: '80%',
+    discount: '85%',
+    value:85
   },
   {
     id: 18,
-    discount: '85%',
+    discount: '90%',
+    value:90
   },
   {
     id: 19,
-    discount: '90%',
+    discount: '95%',
+    value:95
   },
   {
     id: 20,
-    discount: '95%',
-  },
-  {
-    id: 21,
     discount: '100%',
+    value:100
   },
 ];
 

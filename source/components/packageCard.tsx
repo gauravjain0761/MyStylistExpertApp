@@ -9,26 +9,26 @@ import {commonFontStyle, fontFamily, hp} from '../utils/dimentions';
 import Color from '../../assets/color';
 
 interface Props {
-  data: Offer;
+  data: any;
   cardColor: string;
   onPressCard: (offerId: string) => void;
 }
 
 const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
-  const {
-    _id: packageId,
-    end_date,
-    number_of_package,
-    package_name,
-    service_name,
-  } = data;
-  const categoryNames = service_name.map(category => category.category_name);
+  const {_id, package_name, service_name, end_date, number_of_package, rate} =
+    data;
+
+  const categoryNames = service_name
+    .map((item: any) => item?.sub_services)
+    ?.flat()
+    .map((item: any) => item?.sub_service_name);
   const commaSeparatedNames = categoryNames.join(', ');
   const expiryDate = moment(end_date).format('DD MMM, YYYY');
+
   return (
     <Pressable
       onPress={() => {
-        onPressCard && onPressCard(packageId);
+        onPressCard && onPressCard(_id);
       }}
       style={[styles.cardContainer, {backgroundColor: cardColor}]}>
       <View style={styles.cardDetailWrapper}>
@@ -38,7 +38,7 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Package price</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              $36
+              ${rate}
             </Text>
           </View>
           <View style={styles.priceView}>

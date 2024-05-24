@@ -19,7 +19,6 @@ import {
   screen_width,
   wp,
 } from '../../utils/dimentions';
-import {toGammaSpace} from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
 const initialLayout = {
   height: 0,
@@ -30,57 +29,6 @@ type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'MyCampaigns'>;
   route: RouteProp<RootStackParamList, 'MyCampaigns'>;
 };
-
-const AllpendingCompaigns = [
-  {
-    _id: 1,
-    title: 'Diwali Bash',
-    startDate: Date.now(),
-    endDate: Date.now(),
-    campaignCode: 'MS205',
-    featured_image: images?.expert1,
-    service_name: [
-      {service_name: 'Hair + Shaving + Threading + Face Massage.'},
-    ],
-    price: 400,
-  },
-  {
-    _id: 2,
-    title: 'Diwali Bash',
-    startDate: Date.now(),
-    endDate: Date.now(),
-    campaignCode: 'MS205',
-    featured_image: images?.expert1,
-    service_name: [
-      {service_name: 'Hair + Shaving + Threading + Face Massage.'},
-    ],
-    price: 400,
-  },
-  {
-    _id: 3,
-    title: 'Diwali Bash',
-    startDate: Date.now(),
-    endDate: Date.now(),
-    campaignCode: 'MS205',
-    featured_image: images?.expert1,
-    service_name: [
-      {service_name: 'Hair + Shaving + Threading + Face Massage.'},
-    ],
-    price: 400,
-  },
-  {
-    _id: 4,
-    title: 'Diwali Bash',
-    startDate: Date.now(),
-    endDate: Date.now(),
-    campaignCode: 'MS205',
-    featured_image: images?.expert1,
-    service_name: [
-      {service_name: 'Hair + Shaving + Threading + Face Massage.'},
-    ],
-    price: 400,
-  },
-];
 
 const MyCampaigns: FC<Props> = ({navigation}) => {
   const {
@@ -99,7 +47,6 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
     {key: 'Pending', title: 'Pending'},
     {key: 'Accepted', title: 'Accepted'},
     {key: 'Declined', title: 'Declined'},
-    // {key: 'Active', title: 'Active'},
   ]);
 
   useEffect(() => {
@@ -116,10 +63,15 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
           <View style={styles.viewPager}>
             <FlatList
               bounces={false}
-              data={pendingCompaigns || AllpendingCompaigns}
+              data={pendingCompaigns}
               maxToRenderPerBatch={20}
               scrollEventThrottle={400}
               contentContainerStyle={styles.listContainer}
+              ListEmptyComponent={
+                <View style={styles?.empty}>
+                  <Text style={styles?.emptyTitle}>No Pending Campaigns</Text>
+                </View>
+              }
               alwaysBounceVertical={false}
               showsVerticalScrollIndicator={false}
               keyExtractor={(item, index) => index.toString()}
@@ -147,12 +99,17 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
           <View style={styles.viewPager}>
             <FlatList
               bounces={false}
-              data={acceptedCompaigns || AllpendingCompaigns}
+              data={acceptedCompaigns}
               maxToRenderPerBatch={20}
               scrollEventThrottle={400}
               contentContainerStyle={styles.listContainer}
               alwaysBounceVertical={false}
               showsVerticalScrollIndicator={false}
+              ListEmptyComponent={
+                <View style={styles?.empty}>
+                  <Text style={styles?.emptyTitle}>No Accepted Campaigns</Text>
+                </View>
+              }
               keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={() => {
                 return <View style={styles.separator} />;
@@ -178,12 +135,17 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
           <View style={styles.viewPager}>
             <FlatList
               bounces={false}
-              data={declineCompaigns || AllpendingCompaigns}
+              data={declineCompaigns}
               maxToRenderPerBatch={20}
               scrollEventThrottle={400}
               contentContainerStyle={styles.listContainer}
               alwaysBounceVertical={false}
               showsVerticalScrollIndicator={false}
+              ListEmptyComponent={
+                <View style={styles?.empty}>
+                  <Text style={styles?.emptyTitle}>No Declined Campaigns</Text>
+                </View>
+              }
               keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={() => {
                 return <View style={styles.separator} />;
@@ -339,6 +301,14 @@ const styles = StyleSheet.create({
   tabbarContainer: {
     backgroundColor: Color?.White,
     paddingBottom: hp(20),
+  },
+  empty: {
+    height: hp(screen_height * 0.8),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyTitle: {
+    ...commonFontStyle(fontFamily.medium, 14, Color?.Black),
   },
 });
 

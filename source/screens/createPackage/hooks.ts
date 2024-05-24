@@ -7,12 +7,16 @@ import moment from 'moment';
 import {Asset} from 'react-native-image-picker';
 import {NativeToast} from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from 'store';
+import { generatePackage } from '../../Actions/packageAction';
 const {getExpertServices, getExpertSeubServices, createPackage} = endPoints;
 
 const useCreatePackage = () => {
   const navigation = useNavigation();
+    const {userinfo}=useAppSelector(state=>state?.common)
+  const {state,district,city}=userinfo?.user
+  
   const {userDetails, setLoading} = useContext(AppContext);
-  const {userId} = userDetails;
   const [endDate, setEndDate] = useState<any>();
   const [startDate, setStartDate] = useState<Date>();
   const [selectedImage, setSelectedImage] = useState<Asset>();
@@ -31,7 +35,9 @@ const useCreatePackage = () => {
   const [purchaseLimit, setPurchaseLimit] = useState<number>(10);
   const [additionalInfo, setAdditionalInfo] = useState<string>('');
   const [packageName, setPackageName] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
+  const [price, setPrice] = useState<number>(0);
+
+  const dispatch=useAppDispatch()
 
   const getAllServicesForMobile = async () => {
     setLoading(true);
@@ -50,6 +56,29 @@ const useCreatePackage = () => {
       setLoading(false);
     }
   };
+
+  const removeServices=(selectedid:any)=>{
+    let newSelected=selectedServices.filter(services=>services?._id!=selectedid)
+    if(selectedSubServices.length>0){
+      let removesubServices = selectedSubServices.filter(services=>services?.serviceId!=selectedid)
+      setSelectedSubServices(removesubServices)
+    }
+    setSelectedServices(newSelected)
+  }
+
+  const removeSubServices=(selectedid:any)=>{
+    let data:any=[]
+    let newSelected=selectedSubServices.filter(services=>services?._id!=selectedid?._id)
+      setSelectedSubServices(newSelected)
+
+    selectedServices.map(services=>{
+      let newselected =newSelected.every((item)=>item?.serviceId!=services?._id)
+      if (!newselected) {
+        data.push(services)
+      }
+    })
+    setSelectedServices(data)    
+  }
 
   const getSubServices = async (items: Array<Services>) => {
     const serviceIds = items?.map(item => item._id) || [];
@@ -107,7 +136,7 @@ const useCreatePackage = () => {
 
       const body = new FormData();
 
-      body.append('expert_id', userId);
+      body.append('expert_id', userDetails?._id);
       body.append('package_name', packageName);
       body.append('service_name', sNamwe);
       body.append('number_of_package', purchaseLimit);
@@ -122,17 +151,23 @@ const useCreatePackage = () => {
         name: selectedImage?.fileName,
         type: selectedImage?.type,
       });
-
-      const resopnse = await APICaller.post(createPackage, body, {
-        headers: {'Content-Type': 'multipart/form-data'},
-      });
-      const {data} = resopnse;
-      const {status} = data;
-      if (data && status === 200) {
+      body.append('state',JSON.stringify(state));
+      body.append('district',JSON.stringify(district));
+      body.append('city',JSON.stringify(city))
+      let obj={
+        data:body,
+        onSuccess:(res:any)=>{
+          setLoading(false);
         NativeToast('Package created successfully');
         navigation.goBack();
+        },
+        onFaliure:(Err:any)=>{
+          setLoading(false);
+          console.log('Errrr',Err);
+          NativeToast('Something went wrong')
+        }
       }
-      console.log('response of create offer', resopnse);
+      // dispatch(generatePackage(obj))
     } catch (error) {
       console.log('error of create offer', error);
     } finally {
@@ -176,6 +211,8 @@ const useCreatePackage = () => {
     setSubServicesSheet,
     setSelectedSubServices,
     getAllServicesForMobile,
+    removeServices,
+    removeSubServices
   };
 };
 

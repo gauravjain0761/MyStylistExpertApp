@@ -30,7 +30,7 @@ import {NativeToast} from '../../utils/toast';
 import {
   getPastAppointment,
   getUpcomingAppointment,
-} from '../../Actions/appointment';
+} from '../../Actions/appointmentAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Appointments'>;
