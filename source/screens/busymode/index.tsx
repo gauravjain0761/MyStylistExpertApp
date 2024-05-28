@@ -34,6 +34,7 @@ import globalStyle from 'globalStyles';
 import {Container, Header, ToggleSwitch} from 'components';
 import {NativeToast} from '../../utils/toast';
 import images from 'images';
+import {AppContext} from 'context';
 
 const {getAllDatesOFUser, markAsBusy, markAsUnBusy} = endPoints;
 
@@ -87,9 +88,8 @@ function BusyMode() {
   const [endDate, setEndDate] = useState(null);
 
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const {userId} = useSelector(state => {
-    return state.user;
-  });
+  const {userDetails} = useContext(AppContext);
+  const {_id} = userDetails;
   const [period, setPeriod] = useState({});
 
   const minDate = moment().format('YYYY-MM-DD');
@@ -107,7 +107,7 @@ function BusyMode() {
     const method = 'POST';
     const endpoint = `${getAllDatesOFUser}`;
     const body = {
-      expertId: userId,
+      expertId: _id,
       startDate: selected,
     };
     DynamicCaller(endpoint, method, body, '')
@@ -117,7 +117,6 @@ function BusyMode() {
         const {response: calData} = data;
         if (status == 200 && data && calData?.[selected]['evening'].length) {
           const {afternoon, evening, morning} = calData?.[selected];
-
           setAfternoonDates(afternoon);
           setEveningDates(evening);
           setMorningDates(morning);
@@ -135,7 +134,7 @@ function BusyMode() {
     const method = 'POST';
     const endpoint = `${markAsBusy}`;
     const body = {
-      expert: userId,
+      expert: _id,
       unavailableTimeSlot: selectedValue,
       unavailableDate: selected,
       reason: 'urgent work',
@@ -163,7 +162,7 @@ function BusyMode() {
     const method = 'POST';
     const endpoint = `${markAsUnBusy}`;
     const body = {
-      userId: userId,
+      userId: _id,
       unavailabilityId: selectedId,
     };
 
@@ -427,7 +426,7 @@ function BusyMode() {
                     }}>
                     All Day
                   </Text>
-                  <ToggleSwitch active={true} />
+                  <ToggleSwitch onValueChange={toggleSwitch} active={true} />
                 </View>
               </View>
               {getMorningDates && getMorningDates.length ? (

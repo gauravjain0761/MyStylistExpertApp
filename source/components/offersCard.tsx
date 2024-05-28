@@ -21,8 +21,12 @@ interface Props {
 }
 
 const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
-  const {_id, end_date, sub_services, offer_name, number_of_offers} = data;
+  const {_id, end_date, sub_services, offer_name, number_of_offers, availed} =
+    data;
   const expiryDate = moment(end_date).format('DD MMM, YYYY');
+
+  console.log('subbbbsss', availed);
+
   return (
     <Pressable
       onPress={() => {
@@ -31,24 +35,27 @@ const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
       style={[styles.cardContainer, {backgroundColor: cardColor}]}>
       <View style={styles.cardDetailWrapper}>
         <RNText style={styles.offername}>{offer_name}</RNText>
-        <RNText style={styles.servicelabel}>{sub_services?.price}</RNText>
+        <RNText style={styles.servicelabel}>
+          {sub_services?.sub_service_name}
+        </RNText>
         <View style={styles.cardDetail}>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Offer price</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              $36
+              {'₹'}
+              {sub_services?.price}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Bookings</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {`23/${number_of_offers}`}
+              {number_of_offers}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Availed</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {`15/${number_of_offers}`}
+              {availed}
             </Text>
           </View>
         </View>

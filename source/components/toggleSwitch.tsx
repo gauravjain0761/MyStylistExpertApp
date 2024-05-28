@@ -6,9 +6,10 @@ import Color from '../../assets/color';
 
 interface Props {
   active: boolean;
+  onValueChange?: () => void;
 }
 
-const ToggleSwitch: FC<Props> = ({active = true}) => {
+const ToggleSwitch: FC<Props> = ({active = true, onValueChange}) => {
   const [isActive, setActive] = useState<boolean>(true);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ const ToggleSwitch: FC<Props> = ({active = true}) => {
 
   return (
     <Pressable
-      onPress={() => setActive(!isActive)}
+      onPress={() => (setActive(!isActive), onValueChange())}
       style={[styles.toogleButton, !isActive && styles.inActiveStyle]}>
       <View
         style={[styles.innerCircle, !isActive && styles.inActiveInnerCircle]}

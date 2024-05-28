@@ -15,9 +15,15 @@ interface Props {
 }
 
 const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
-  const {_id, package_name, service_name, end_date, number_of_package, rate} =
-    data;
-
+  const {
+    _id,
+    package_name,
+    service_name,
+    end_date,
+    number_of_package,
+    rate,
+    availed,
+  } = data;
   const categoryNames = service_name
     .map((item: any) => item?.sub_services)
     ?.flat()
@@ -38,19 +44,19 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Package price</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              ${rate}
+              ₹{rate}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Bookings</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {`23/${number_of_package}`}
+              {number_of_package}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Availed</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {`15/${number_of_package}`}
+              {availed}
             </Text>
           </View>
         </View>

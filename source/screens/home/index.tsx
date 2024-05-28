@@ -51,6 +51,7 @@ import {AppContext} from 'context';
 import {getAllBanner, getUserDetails} from '../../Actions/homeAction';
 import {getUpcomingAppointment} from '../../Actions/appointmentAction';
 import {TopService} from '../../Actions/servicesAction';
+import {io} from 'socket.io-client';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -76,9 +77,24 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {appointment} = useAppSelector(state => state.home);
   const {topServices} = useAppSelector(state => state?.service);
 
+  const SOCKET_URL = 'https://api.mystylist.in/';
+
   const dispatch = useAppDispatch();
   const {setLoading, userDetails} = useContext(AppContext);
   const {IMG_URL} = appConfig;
+
+  useEffect(() => {
+    const socket = io(SOCKET_URL);
+    // console.log(socket)
+    socket.on('connect', () => {
+      console.log('connect', socket.id);
+    });
+    return () => {
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+      });
+    };
+  }, []);
 
   useEffect(() => {
     setVisible(!visible);

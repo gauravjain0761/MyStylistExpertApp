@@ -168,6 +168,8 @@ const images = {
   locationmarker:require('./locationmarker.png'),
   cardbg2:require('./cardbg2.png'),
   cardbg3:require('./cardbg3.png'),
+  userIcon:require('./user.png'),
+  sendicon:require('./sendicon.png')
 };
 
 export default images;

@@ -83,11 +83,12 @@ const BubbleMine: FC<BubbleProps> = ({message, receiverName, time}) => {
 
 const ChatBubble: FC<Props> = ({userId, receiverName, data}) => {
   const {senderId, content, time} = data;
+  // console.log('senderererer', senderId, data);
+
   const messageTime = moment(time).format('h:mm');
   if (senderId === userId) {
     return <BubbleMine time={messageTime} message={content} />;
   }
-
   return (
     <BubbleOther
       message={content}

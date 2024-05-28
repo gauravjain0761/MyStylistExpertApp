@@ -69,6 +69,8 @@ const MyOffers: FC<Props> = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
+  console.log('offererere', offers);
+
   return (
     <Container>
       <View style={globalStyle.container}>

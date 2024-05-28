@@ -4,7 +4,7 @@ import {Container, Image} from 'components';
 import {AppContext} from 'context';
 import globalStyle from 'globalStyles';
 import images from 'images';
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -18,6 +18,8 @@ import tw from 'rn-tailwind';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import DataAccess from '../../dataAccess';
+import {useAppSelector} from 'store';
 
 interface Props {
   props: DrawerContentComponentProps;
@@ -64,8 +66,17 @@ const drawerMenuItems = [
 
 const DrawerMenu: FC<Props> = ({props}) => {
   const insets = useSafeAreaInsets();
-  const {setIsLogin, setUserDetails} = useContext(AppContext);
+  const {setIsLogin, userDetails} = useContext(AppContext);
   const {navigation} = props;
+  const {userinfo} = useAppSelector(state => state?.common);
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (Object.values(userinfo).length > 0) {
+      setName(userinfo?.user?.name);
+    }
+  }, [userinfo]);
+
   return (
     <Container>
       <View style={styles.profileframe}>
@@ -76,8 +87,11 @@ const DrawerMenu: FC<Props> = ({props}) => {
         />
       </View>
       <View style={styles.namecontainer}>
-        <Text style={styles.title}>{'Majid Khan'}</Text>
-        <Text style={styles.username}>{'@majidkhan'}</Text>
+        <Text style={styles.title}>{name}</Text>
+        <Text style={styles.username}>
+          {'@'}
+          {name}
+        </Text>
         <View style={styles.locationcontainer}>
           <Image style={styles.locationpin} source={images?.locationicon} />
           <Text style={styles.location}>{'Sector 67, Mohali'}</Text>

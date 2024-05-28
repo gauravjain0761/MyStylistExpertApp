@@ -35,10 +35,6 @@ const HomeHeader: FC<HomeProps> = ({
   const {userinfo} = useAppSelector(state => state?.common);
   const {IMG_URL} = appConfig;
   const [profileImage, setProfileImage] = useState('');
-  // console.log(IMG_URL);
-
-  //   const {profileData} = useAppSelector(state => state.profile);
-  //   const {cartCount} = useAppSelector(state => state.cart);
 
   const onPressBell = () => {
     // @ts-ignore

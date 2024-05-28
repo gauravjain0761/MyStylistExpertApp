@@ -111,6 +111,7 @@ interface Offer {
   start_date: string;
   updatedAt: string;
   user_id: string;
+  availed: number;
 }
 
 interface Package {

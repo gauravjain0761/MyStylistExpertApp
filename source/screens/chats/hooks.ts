@@ -9,12 +9,12 @@ const {getUsersList} = endPoints;
 const useChat = () => {
   const [chatUsers, setChatUsers] = useState<Array<ChatUser>>([]);
   const {userDetails, setLoading} = useContext(AppContext);
-  const {userId} = userDetails;
+  const {_id} = userDetails;
 
   const getAllUserList = async () => {
     setLoading(true);
     try {
-      const url = `${getUsersList}/${userId}`;
+      const url = `${getUsersList}/${_id}`;
       const response = await APICaller.get(url);
       const {data} = response;
       const {status, users} = data;
