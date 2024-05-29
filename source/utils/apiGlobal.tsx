@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {appConfig} from '../../config';
+import {NativeToast} from './toast';
 
 interface makeAPIRequestProps {
   method?: any;
@@ -38,13 +39,13 @@ export const makeAPIRequest = ({
         console.log('error?.response?', error?.response);
         if (error?.response?.status === 401) {
           //   clearAsync();
-          //   errorToast(error?.response?.data?.message);
+          NativeToast(error?.response?.data?.message);
           //   navigationRef?.current?.reset({
           //     index: 1,
           //     routes: [{name: screenName.Login}],
           //   });
         } else {
-          // errorToast(error?.response?.data?.message);
+          NativeToast(error?.response?.data?.message);
         }
         reject(error);
       });

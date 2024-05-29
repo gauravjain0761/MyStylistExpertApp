@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -19,6 +19,11 @@ import {RootStackParamList} from '..';
 import useChatDetail from './hooks';
 import {hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
+import {NativeToast} from '../../utils/toast';
+import APICaller from '../../service/apiCaller';
+import {appConfig, endPoints} from '../../../config';
+import {AppContext} from 'context';
+import {io} from 'socket.io-client';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ChatDetail'>;
@@ -27,22 +32,93 @@ type Props = {
 
 const ChatDetail: FC<Props> = ({route, navigation}) => {
   const {receiverId, receiverName, receiverImage} = route.params;
+  const [roomId, setRoomId] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
+  const [userTyping, setUserTyping] = useState<boolean>(false);
+  const [userOnline, setUserOnline] = useState<boolean>(false);
+  const [messageList, setMessageList] = useState([]);
 
-  const {
-    message,
-    createChatRoom,
-    sendMessage,
-    setMessage,
-    messageList,
-    userDetails,
-  } = useChatDetail(receiverId);
+  const {mainDomain} = appConfig;
+
+  const socket = io(mainDomain);
+
+  // const {message, sendMessage, setMessage, messageList, userDetails} =
+  //   useChatDetail(receiverId);
+  const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
+
+  const {createRoom} = endPoints;
+
+  const createChatRoom = async () => {
+    try {
+      const url = `${createRoom}`;
+      const body = {
+        participants: [receiverId, _id],
+      };
+      const response = await APICaller.post(url, body);
+      console.log('response of create room', response);
+      const {data} = response;
+      const {roomId} = data;
+      if (data && roomId) {
+        setRoomId(roomId);
+        joinRoom(roomId);
+      }
+    } catch (error) {
+      console.log('error of create room', error);
+      NativeToast(error?.data?.message);
+    }
+  };
+
+  const joinRoom = (roomId: string) => {
+    if (roomId !== '') {
+      socket.emit('join_room', roomId);
+      socket.emit('user_online', {chatid: roomId, name: _id});
+      getoldMessages(roomId);
+    }
+  };
+
+  const getoldMessages = (joinRoom: String) => {
+    socket.emit('fetch_messages', joinRoom);
+  };
 
   useEffect(() => {
     createChatRoom();
+
+    socket.on('receive_message', (res: any) => {
+      console.log('receive_message', res);
+      setMessageList(list => [...list, res]);
+    });
+
+    socket.on('past_messages', (data: any) => {
+      console.log('past_messages', data);
+      const messages = data?.messages.map((item: any) => {
+        const messageData = {
+          chatId: item.chat,
+          senderId: item.sender._id,
+          content: item.content,
+          time: item.timestamp,
+        };
+        return messageData;
+      });
+
+      setMessageList(messages);
+    });
   }, []);
 
-  console.log('massagessssssss', messageList);
+  const sendMessage = async () => {
+    if (message !== '') {
+      const messageData = {
+        chatId: roomId,
+        senderId: _id,
+        content: message,
+        time: new Date(),
+      };
+
+      socket.emit('send_message', messageData);
+      setMessageList(list => [...list, messageData]);
+      setMessage('');
+    }
+  };
 
   const renderChatList = ({item, index}: any) => {
     return (

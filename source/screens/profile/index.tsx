@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
   View,
   Pressable,
@@ -25,6 +25,13 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
 import Color from '../../../assets/color';
+import {useAppDispatch, useAppSelector} from 'store';
+import useGetReviews from '../myReviews/hooks';
+import {appConfig} from '../../../config';
+import {AppContext} from 'context';
+import {el} from 'date-fns/locale';
+import DataAccess from '../../dataAccess';
+import {getExpertMedia} from '../../Actions/homeAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
@@ -32,6 +39,58 @@ type Props = {
 };
 
 const Profile: FC<Props> = ({navigation}) => {
+  const {userinfo} = useAppSelector(state => state?.common);
+  const {expertMedia} = useAppSelector(state => state?.home);
+  const [profileData, setProfileData] = useState(userinfo);
+  const {getReviews, setLoading} = useGetReviews();
+  const getReview = useAppSelector(state => state?.review?.getReviews);
+  const {userDetails, setLoading: Loading} = useContext(AppContext);
+  const {_id} = userDetails;
+  const {IMG_URL} = appConfig;
+  const dispatch = useAppDispatch();
+  const [media, setMedia] = useState(expertMedia);
+
+  useEffect(() => {
+    setProfileData(userinfo);
+    if (expertMedia.length) {
+      Loading(false);
+    } else {
+      Loading(true);
+      getMedia();
+    }
+    if (getReview.length) {
+      setLoading(false);
+    } else {
+      getReviews();
+      setLoading(true);
+    }
+  }, [userinfo]);
+
+  useEffect(() => {
+    setMedia(expertMedia);
+  }, [expertMedia]);
+
+  const getMedia = () => {
+    Loading(true);
+    let obj = {
+      id: _id,
+      onSuccess: (res: any) => {
+        Loading(false);
+      },
+      onFaliure: (res: any) => {
+        Loading(false);
+      },
+    };
+    dispatch(getExpertMedia(obj));
+  };
+
+  const {user} = profileData || {};
+  const addresses = user?.addresses[0] || {};
+  const {sector} = addresses?.address || {};
+  const {image} = user?.user_profile_images[0] || {};
+  const ExpertData = media?.expertusers || [];
+  const {user_work_images} = ExpertData[0] || {};
+
   return (
     <Container>
       <View style={globalStyle.container}>
@@ -42,10 +101,10 @@ const Profile: FC<Props> = ({navigation}) => {
           <View style={styles.mainView}>
             <View style={styles.profileWrapperMain}>
               <View style={styles.profileView}>
-                <Image
+                <RNImage
                   resizeMode="cover"
                   source={{
-                    uri: 'https://images.unsplash.com/photo-1530268729831-4b0b9e170218?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDJ8fHVzZXJ8ZW58MHx8MHx8fDA%3D',
+                    uri: `${IMG_URL}/${image}`,
                   }}
                   style={styles.profileImage}
                 />
@@ -53,7 +112,7 @@ const Profile: FC<Props> = ({navigation}) => {
               <View style={styles.profileWrapper}>
                 <View style={styles.usernamecontainer}>
                   <View style={styles.namecontainer}>
-                    <RNText style={styles.username}>{'Majid Khan'}</RNText>
+                    <RNText style={styles.username}>{user?.name}</RNText>
                     <Image
                       source={images.verifybadge}
                       style={styles.verifyicon}
@@ -61,13 +120,16 @@ const Profile: FC<Props> = ({navigation}) => {
                   </View>
                   <View style={styles.rightside}>
                     <View style={styles.ratingbadge}>
-                      <RNText style={styles.ratingtitle}>{'4.6'}</RNText>
+                      <RNText style={styles.ratingtitle}>
+                        {user?.averageRating}
+                      </RNText>
                       <RNImage
                         style={styles.staricon}
                         source={images?.StarIcon}
                       />
                     </View>
-                    <RNText style={styles.count}>{'(34)'}</RNText>
+                    <RNText
+                      style={styles.count}>{`(${user?.totalReviews})`}</RNText>
                     <View style={styles.saparator}></View>
                     <Image style={styles.social} source={images.facebook} />
                     <Image style={styles.social} source={images.instagram} />
@@ -80,7 +142,9 @@ const Profile: FC<Props> = ({navigation}) => {
                     source={images.locationmarker}
                   />
                   <RNText numberOfLines={1} style={styles.addressText}>
-                    {'Sector 67, Mohali'}
+                    {sector}
+                    {', '}
+                    {user?.district[0]?.district_name}
                   </RNText>
                 </View>
                 <View style={styles.devider} />
@@ -101,16 +165,16 @@ const Profile: FC<Props> = ({navigation}) => {
               </View>
 
               <View style={styles.gridImageView}>
-                {user_profile_images?.length ? (
+                {user_work_images?.length ? (
                   <FlatList
                     numColumns={3}
                     columnWrapperStyle={{gap: wp(11)}}
-                    data={user_profile_images}
+                    data={user_work_images}
                     renderItem={({item, index}) => {
                       return (
                         <Image
                           key={index}
-                          source={item?.image}
+                          source={{uri: `${IMG_URL}/${item?.image}`}}
                           resizeMode="cover"
                           style={[styles.gridImage, styles.gridImageBottom]}
                         />
@@ -135,13 +199,19 @@ const Profile: FC<Props> = ({navigation}) => {
                     />
                   </Pressable>
                 </View>
-                {AVAILABILITIES.map((data, index) => {
-                  return (
-                    <View key={index} style={styles.availabilityItem}>
-                      <Text size="sm">{data.day}</Text>
-                      <Text size="sm">{data.status}</Text>
-                    </View>
-                  );
+                {user?.working_hours?.map((data, index) => {
+                  return Object.keys(data).map((key, indexs) => {
+                    if (key != '_id') {
+                      return (
+                        <View key={indexs} style={styles.availabilityItem}>
+                          <Text size="sm">{key}</Text>
+                          <Text size="sm">
+                            {data[key]?.from} - {data[key]?.to}
+                          </Text>
+                        </View>
+                      );
+                    }
+                  });
                 })}
               </View>
             </View>
@@ -159,23 +229,29 @@ const Profile: FC<Props> = ({navigation}) => {
                 </View>
                 <View style={styles.amenitiesList}>
                   {AMENITIES.map((data, index) => {
-                    const {title, icon, color} = data;
-                    return (
-                      <View key={index} style={[styles.amenitiesItem]}>
-                        <View
-                          style={[
-                            styles.iconWrapper,
-                            {backgroundColor: color},
-                          ]}>
-                          <Image
-                            source={icon}
-                            resizeMode="contain"
-                            style={styles.amenitiesIcon}
-                          />
-                        </View>
-                        <RNText style={styles.amenitiesttext}>{title}</RNText>
-                      </View>
-                    );
+                    const {title, icon, color, key} = data;
+                    return user?.amenities?.map((amenity, index) => {
+                      if (amenity[key] == 'Yes') {
+                        return (
+                          <View key={index} style={[styles.amenitiesItem]}>
+                            <View
+                              style={[
+                                styles.iconWrapper,
+                                {backgroundColor: color},
+                              ]}>
+                              <Image
+                                source={icon}
+                                resizeMode="contain"
+                                style={styles.amenitiesIcon}
+                              />
+                            </View>
+                            <RNText style={styles.amenitiesttext}>
+                              {title}
+                            </RNText>
+                          </View>
+                        );
+                      }
+                    });
                   })}
                 </View>
               </View>
@@ -192,10 +268,11 @@ const Profile: FC<Props> = ({navigation}) => {
                     />
                   </Pressable>
                 </View>
-                {[1, 2].map((data, index) => {
+                {getReview.map((data, index) => {
                   return (
                     <ReviewCard
                       key={index}
+                      data={data}
                       fullWidth={true}
                       style={'bg-aliceBlueDim mb-4'}
                     />
@@ -213,13 +290,19 @@ const Profile: FC<Props> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   header: tw`w-full h-13 bg-white flex-row items-center justify-between px-4`,
-  mainView: tw`w-full h-full flex-1 bg-cultured`,
+  mainView: {...tw`w-full h-full bg-cultured`, flex: 1},
   profileWrapperMain: {...tw`w-full`, paddingHorizontal: wp(20)},
-  profileView: {...tw`w-full`, marginTop: hp(16)},
-  profileImage: {
-    width: '100%',
+  profileView: {
+    marginTop: hp(16),
     height: hp(205),
     borderRadius: wp(10),
+    width: '100%',
+    overflow: 'hidden',
+    backgroundColor: 'green',
+  },
+  profileImage: {
+    width: '100%',
+    height: '100%',
   },
   profileWrapper: {...tw`w-full mt-8`, marginTop: hp(18)},
   locationView: {
@@ -240,8 +323,10 @@ const styles = StyleSheet.create({
     backgroundColor: Color?.GreyEB,
     marginTop: hp(19),
   },
-  scrollView: tw`w-full bg-cultured`,
-  availbilityView: tw`w-full bg-white p-4 pt-8 pb-0`,
+  scrollView: {...tw`w-full bg-cultured`, backgroundColor: 'yellow'},
+  availbilityView: {
+    ...tw`w-full bg-white p-4 pt-8 pb-0`,
+  },
   availabilityHeader: tw`w-full h-12 flex-row items-center justify-between`,
   wrapperButton: tw`w-12 h-full justify-center items-end`,
   minusIcon: tw`w-3.5 h-3.5`,
@@ -259,7 +344,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     paddingBottom: hp(20),
   },
-  amentiesView: tw`w-full bg-white px-4`,
+  amentiesView: {
+    ...tw`w-full bg-white px-4`,
+    flex: 1,
+  },
   amentiesBox: {
     borderColor: Color?.GreyB0,
     borderWidth: 1,
@@ -273,7 +361,6 @@ const styles = StyleSheet.create({
   },
   amenitiesList: {
     ...tw`w-full flex-row flex-wrap`,
-    paddingBottom: hp(10),
     justifyContent: 'space-between',
   },
   amenitiesItem: {
@@ -287,7 +374,7 @@ const styles = StyleSheet.create({
     width: wp(24),
     height: wp(24),
   },
-  reviewView: tw`w-full px-4 bg-white`,
+  reviewView: {...tw`w-full px-4 bg-white`},
   reviewBox: {
     borderColor: Color?.GreyB0,
     borderWidth: 1,

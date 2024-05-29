@@ -8,6 +8,7 @@ import {GET, POST, endPoints} from '../../config';
 import DataAccess from '../dataAccess';
 import {
   BANNER_IMAGE,
+  GET_EXPERTS_MEDIA,
   PAST_APPOINTMENTS,
   UPCOMING_APPOINTMENTS,
   USER_INFO,
@@ -59,6 +60,32 @@ export const getUserDetails =
           if (request.onSuccess) request.onSuccess(response.data);
           dispatch({
             type: USER_INFO,
+            payload: response?.data,
+          });
+        }
+      })
+      .catch(error => {
+        if (request.onFailure) request.onFailure(error.response);
+      });
+  };
+
+export const getExpertMedia =
+  (request?: any): ThunkAction<void, RootState, unknown, AnyAction> =>
+  async dispatch => {
+    let headers = {
+      'Content-Type': 'application/json',
+      Authorization: await getAsyncToken(),
+    };
+    return makeAPIRequest({
+      method: GET,
+      url: `${endPoints.getAllExpertsImages}/${request?.id}`,
+      headers: headers,
+    })
+      .then(async (response: any) => {
+        if (response.status === 200) {
+          if (request.onSuccess) request.onSuccess(response.data);
+          dispatch({
+            type: GET_EXPERTS_MEDIA,
             payload: response?.data,
           });
         }

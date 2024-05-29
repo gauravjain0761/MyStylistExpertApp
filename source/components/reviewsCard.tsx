@@ -6,13 +6,19 @@ import globalStyle from 'globalStyles';
 import {PLEASE_LOGIN, PHONE_NUMBER} from 'AppConstants';
 import {Image, Text, Container, Header} from 'components';
 import Stars from 'react-native-stars';
+import moment from 'moment';
+import {appConfig} from '../../config';
 
 interface Props {
   fullWidth?: boolean;
   style?: string;
+  data?: any;
 }
 
-const ReviewCard: FC<Props> = ({fullWidth, style = ''}) => {
+const ReviewCard: FC<Props> = ({fullWidth, style = '', data}) => {
+  let image = data?.userId?.user_profile_images[0]?.image;
+  const {IMG_URL} = appConfig;
+
   return (
     <View
       style={[styles.reviewCard, fullWidth && styles.cardFull, tw`${style}`]}>
@@ -21,20 +27,20 @@ const ReviewCard: FC<Props> = ({fullWidth, style = ''}) => {
           resizeMode="cover"
           style={styles.profileImage}
           source={{
-            uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            uri: `${IMG_URL}/${image}`,
           }}
         />
         <View style={styles.nameView}>
           <Text numberOfLines={1} size="sm" fontWeight="700">
-            Jeffery Bills
+            {data?.userId?.name}
           </Text>
           <Text size="xs" margin="mt-1" color="text-gray-400">
-            {'11-04-2023'}
+            {moment(data?.createdAt).format('DD-MM-YYYY')}
           </Text>
         </View>
         <Stars
           default={5}
-          count={5}
+          count={data?.star_rating}
           half={true}
           starSize={13}
           spacing={3}
@@ -44,9 +50,7 @@ const ReviewCard: FC<Props> = ({fullWidth, style = ''}) => {
         />
       </View>
       <Text numberOfLines={3} size="sm" margin="mt-1">
-        {
-          'Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit, sed do\neiusmod...'
-        }
+        {data?.review}
       </Text>
     </View>
   );

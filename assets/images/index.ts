@@ -169,7 +169,8 @@ const images = {
   cardbg2:require('./cardbg2.png'),
   cardbg3:require('./cardbg3.png'),
   userIcon:require('./user.png'),
-  sendicon:require('./sendicon.png')
+  sendicon:require('./sendicon.png'),
+  splash:require('./splash2.png')
 };
 
 export default images;

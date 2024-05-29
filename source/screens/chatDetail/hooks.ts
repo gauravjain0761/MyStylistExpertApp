@@ -5,6 +5,7 @@ import APICaller from '../../service/apiCaller';
 import io from 'socket.io-client';
 import {connect} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import { NativeToast } from '../../utils/toast';
 const SOCKET_URL = 'https://api.mystylist.in/';
 
 const socket = io(SOCKET_URL);
@@ -34,36 +35,49 @@ const useChatDetail = (props: any) => {
       const {roomId} = data;
       if (data && roomId) {
         setRoomId(roomId);
-        // joinRoom(roomId);
+        joinRoom(roomId);
       }
     } catch (error) {
       console.log('error of create room', error);
+      NativeToast(error?.data?.message)
     }
   }
 
-  useEffect(()=>{
-    socket.emit("join_room",roomId);
-    socket.emit("user_online", {
-      chatId:roomId,
-      name:_id,
+    const getoldMessages = (joinRoom: String) => {
+    socket.emit('fetch_messages', roomId);
+        socket.on('receive_message', (data: any) => {
+      console.log('recive massage');
+      console.log('message', data);
+      // setMessageList(list => [...list, data]);
     });
-    // socket.on('receive_message', (data: any) => {
-    //   console.log('recive massage');
-    //   console.log('message', data);
-    //   setMessageList(list => [...list, data]);
-    // });
+  };
 
-        socket.on('past_messages', (data: any) => {
-      console.log('data', data);
-      // const messages = data?.messages.map((item: any) => {
-      //   const messageData = {
-      //     chatId: item.chat,
-      //     senderId: item.sender._id,
-      //     content: item.content,
-      //     time: item.timestamp,
-      //   };
-      //   return messageData;
-      });
+    const joinRoom = (roomId: string) => {
+    if (roomId !== '') {
+      socket.emit('join_room', roomId);
+      socket.emit('user_online', {chatid: roomId, name: _id});
+      getoldMessages(roomId);
+    }
+  };
+
+  useEffect(()=>{
+    socket.on('receive_message', (data: any) => {
+      console.log('recive massage');
+      console.log('message', data);
+      // setMessageList(list => [...list, data]);
+    });
+
+    // socket.on('past_messages', (data: any) => {
+    //   console.log('data', data);
+    //   // const messages = data?.messages.map((item: any) => {
+    //   //   const messageData = {
+    //   //     chatId: item.chat,
+    //   //     senderId: item.sender._id,
+    //   //     content: item.content,
+    //   //     time: item.timestamp,
+    //   //   };
+    //   //   return messageData;
+    //   });
 
   },[roomId])
 

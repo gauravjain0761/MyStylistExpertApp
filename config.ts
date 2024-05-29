@@ -51,7 +51,10 @@ export const endPoints = {
   getAllBanner:`banner/getAllBannerForExpert/Top/Stylist`,
   getUpcomingAppointments:`appointment/getUpcomingAppointments`,
   getPastAppointments:`appointment/getPastAppointments`,
-  topService:`appointment/getTopServices`
+  topService:`appointment/getTopServices`,
+  getExpertnewSeubServices:`demo/getAllServiceSubServices`,
+  getAllExpertTopReview:`review/getAllExpertTopReview`,
+  uploadSubService:`service/uploadSubServiceImage`
 
 };
 

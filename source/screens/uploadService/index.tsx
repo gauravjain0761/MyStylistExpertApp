@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {FC, useState} from 'react';
-import {useRoute} from '@react-navigation/native';
+import React, {FC, useContext, useState} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Container from '../../components/container';
 import Header from '../../components/header';
 import {
@@ -24,13 +24,20 @@ import ImagePicker from '../../components/imagepicker';
 import images from 'images';
 import {launchImageLibrary} from 'react-native-image-picker';
 import PrimaryButton from '../../components/PrimaryButton';
+import {useAppDispatch} from 'store';
+import {uploadSubService} from '../../Actions/servicesAction';
+import {AppContext} from 'context';
+import {NativeToast} from '../../utils/toast';
 
 const ServiceUpload: FC = () => {
   const {params} = useRoute();
   const data = params?.data;
 
+  const dispatch = useAppDispatch();
   const [selectedImage, setSelectedImage] = useState([]);
   const [main, setMain] = useState(0);
+  const {setLoading} = useContext(AppContext);
+  const {goBack} = useNavigation();
 
   const onPressImageUpload = async () => {
     let Data = [];
@@ -46,6 +53,36 @@ const ServiceUpload: FC = () => {
       }));
       setSelectedImage(newData);
     } catch (error) {}
+  };
+
+  const uploadImage = () => {
+    let Data = new FormData();
+    Data.append('serviceId', data?.service_id);
+    Data.append('subServiceId', data?.sub_service_id);
+    Data.append('fileName', {
+      uri: selectedImage[0]?.uri,
+      name: selectedImage[0]?.fileName,
+      type: selectedImage[0]?.type,
+    });
+    let obj = {
+      data: Data,
+      onSuccess: (res: any) => {
+        setLoading(false);
+        goBack();
+      },
+      onFailure: (Err: any) => {
+        console.log('Errrr', Err);
+
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+      },
+    };
+    if (!selectedImage.length) {
+      NativeToast('No Images Selected');
+    } else {
+      setLoading(true);
+      dispatch(uploadSubService(obj));
+    }
   };
 
   return (
@@ -129,7 +166,7 @@ const ServiceUpload: FC = () => {
           </View>
         </ScrollView>
         <View style={styles.footerView}>
-          <PrimaryButton label="Submit" onPress={() => {}} />
+          <PrimaryButton label="Submit" onPress={uploadImage} />
         </View>
       </View>
     </Container>

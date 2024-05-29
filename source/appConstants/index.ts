@@ -98,41 +98,49 @@ const AMENITIES = [
     title: 'Parking Space',
     color: '#f7f5eb',
     icon: images.ParkingSpace,
+    key: 'parking_space'
   },
   {
     title: 'Music',
     color: '#e2f4fc',
     icon: images.Music,
+    key:'music'
   },
   {
     title: 'Wifi',
     color: '#faf1ec',
     icon: images.Wifi,
+    key:'wi_fi'
   },
   {
     color: '#f6f1f1',
     title: 'Selfie Station',
     icon: images.SelfieCamera,
+    key:'selfie_station'
   },
   {
     color: '#edf3fa',
     title: 'Child-Friendly',
     icon: images.ChildFriendly,
+    key:'child_friendly'
   },
   {
     color: '#f6edfa',
     title: 'Credit Cards Accepted',
     icon: images.CreditCard,
+    key:'credit_cards_accepted'
   },
   {
     color: '#fffae9',
     title: 'Pets-Friendly',
     icon: images.PetsFriendly,
+    key:'pets_friendly'
   },
   {
     color: '#ebffe9',
     title: 'Power Backup',
     icon: images.PowerBackup,
+    key:'power_backup'
   },
 ];
 

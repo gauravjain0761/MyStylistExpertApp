@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import {FlatList, Pressable, View} from 'react-native';
@@ -13,13 +13,31 @@ import {
   BottomTab,
 } from 'components';
 import Stars from 'react-native-stars';
+import useGetReviews from './hooks';
+import {useAppSelector} from 'store';
 
 const MyReviews: FC = () => {
+  const {getReviews, setLoading, getTopReviews} = useGetReviews();
+  const reviews = useAppSelector(state => state?.review?.getReviews);
+  const topReviews = useAppSelector(state => state?.review?.getTopReviews);
+
+  useEffect(() => {
+    if (reviews.length && topReviews.length) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+      getTopReviews();
+      getReviews();
+    }
+  }, []);
+
+  console.log('RRRRRRRRRRRRRRR', topReviews);
+
   return (
     <Container>
       <View style={globalStyle.container}>
         <Header
-          title="Review (209)"
+          title={`Review (${reviews.length})`}
           rightView={
             <View style={styles.rightView}>
               <Pressable style={styles.rightIconButton}>
@@ -39,7 +57,7 @@ const MyReviews: FC = () => {
             </Text>
             <FlatList
               horizontal={true}
-              data={[1, 2, 3, 4, 5, 6, 6]}
+              data={topReviews}
               contentContainerStyle={styles.horizontalList}
               showsHorizontalScrollIndicator={false}
               ItemSeparatorComponent={() => (
@@ -47,7 +65,7 @@ const MyReviews: FC = () => {
               )}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => {
-                return <ReviewCard key={index} />;
+                return <ReviewCard data={item} key={index} />;
               }}
             />
           </View>
@@ -56,13 +74,13 @@ const MyReviews: FC = () => {
               All Reviews
             </Text>
             <FlatList
-              data={[1, 2, 3, 4, 5, 6, 6]}
+              data={reviews}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.verticalList}
               ItemSeparatorComponent={() => <View style={styles.separato} />}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => {
-                return <ReviewCard key={index} fullWidth={true} />;
+                return <ReviewCard data={item} key={index} fullWidth={true} />;
               }}
             />
           </View>

@@ -20,6 +20,7 @@ import Color from '../../../assets/color';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import DataAccess from '../../dataAccess';
 import {useAppSelector} from 'store';
+import {appConfig} from '../../../config';
 
 interface Props {
   props: DrawerContentComponentProps;
@@ -41,7 +42,6 @@ const drawerMenuItems = [
     route: 'MyReviews',
     icon: images.reviewicon,
   },
-
   {
     itemName: "FAQ's",
     route: 'Faq',
@@ -69,20 +69,20 @@ const DrawerMenu: FC<Props> = ({props}) => {
   const {setIsLogin, userDetails} = useContext(AppContext);
   const {navigation} = props;
   const {userinfo} = useAppSelector(state => state?.common);
-  const [name, setName] = useState('');
 
-  useEffect(() => {
-    if (Object.values(userinfo).length > 0) {
-      setName(userinfo?.user?.name);
-    }
-  }, [userinfo]);
+  const {name, totalReviews, averageRating, addresses, district} =
+    userinfo?.user || {};
+  const {image} = userinfo?.user?.user_profile_images[0] || {};
+  const {IMG_URL} = appConfig;
+  // const {address} = addresses[0] || {};
+  // const {district_name} = district[0] || {};
 
   return (
     <Container>
       <View style={styles.profileframe}>
         <Image
           resizeMode="cover"
-          source={images?.avatar}
+          source={{uri: `${IMG_URL}/${image}`}}
           style={styles.profileimg}
         />
       </View>
@@ -94,13 +94,15 @@ const DrawerMenu: FC<Props> = ({props}) => {
         </Text>
         <View style={styles.locationcontainer}>
           <Image style={styles.locationpin} source={images?.locationicon} />
-          <Text style={styles.location}>{'Sector 67, Mohali'}</Text>
+          <Text style={styles.location}>
+            {/* {address?.sector}, {district_name} */}
+          </Text>
           <View style={styles.saparator}></View>
           <View style={styles.ratingbadge}>
-            <Text style={styles.ratingtitle}>{'4.6'}</Text>
+            <Text style={styles.ratingtitle}>{averageRating}</Text>
             <RNImage style={styles.staricon} source={images?.StarIcon} />
           </View>
-          <Text style={styles.count}>{'(36)'}</Text>
+          <Text style={styles.count}>{`(${totalReviews})`}</Text>
         </View>
       </View>
       <ScrollView

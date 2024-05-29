@@ -6,6 +6,7 @@ import appointmentReducers from './appointmentReducers';
 import servicesReducers from './servicesReducers';
 import packagesReducers from './packagesReducers';
 import offersReducers from './offersReducers';
+import reviewReducers from './reviewReducers';
 
 const rootReducer = combineReducers({
   user: user,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   appointment:appointmentReducers,
   service:servicesReducers,
   packages:packagesReducers,
-  offers:offersReducers
+  offers:offersReducers,
+  review:reviewReducers
 });
 
 export default rootReducer;

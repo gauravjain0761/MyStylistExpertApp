@@ -11,28 +11,24 @@ import React, {FC} from 'react';
 import {commonFontStyle, fontFamily, hp, wp} from '../utils/dimentions';
 import Color from '../../assets/color';
 import images from 'images';
+import {appConfig} from '../../config';
 
 interface Props {
   index?: number;
-  title?: string;
   onPress?: () => void;
   containerStyle?: ViewStyle;
-  image?: any;
-  price?: number;
+  data?: any;
 }
 
-const ServiceCard: FC<Props> = ({
-  title,
-  index,
-  onPress,
-  containerStyle,
-  image,
-  price,
-}) => {
+const ServiceCard: FC<Props> = ({index, onPress, containerStyle, data}) => {
+  const {fileName, price, sub_service_name} = data;
+
+  const {IMG_URL} = appConfig;
+
   return (
     <View style={[styles.maincontainer, containerStyle]} key={index}>
       <View style={styles.leftpart}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{sub_service_name}</Text>
         <Text style={styles.price}>{`₹${price}`}</Text>
         <TouchableOpacity onPress={onPress}>
           <ImageBackground
@@ -48,7 +44,11 @@ const ServiceCard: FC<Props> = ({
           </ImageBackground>
         </TouchableOpacity>
       </View>
-      <Image source={image} resizeMode="stretch" style={styles.image} />
+      <Image
+        source={{uri: `${IMG_URL}/${fileName}`}}
+        resizeMode="cover"
+        style={styles.image}
+      />
     </View>
   );
 };

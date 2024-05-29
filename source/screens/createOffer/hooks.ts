@@ -9,7 +9,7 @@ import {NativeToast} from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from 'store';
 import { generateOffer } from '../../Actions/offersAction';
-const {getExpertServices, getExpertSeubServices, createExpertOffer} = endPoints;
+const {getExpertServices, getExpertnewSeubServices, createExpertOffer} = endPoints;
 
 const useCreateOffer = () => {
   const navigation = useNavigation();
@@ -61,23 +61,22 @@ const useCreateOffer = () => {
   };
 
   const getSubServices = async (items: Array<Services>) => {
-    const serviceIds = items?.map(item => item._id) || [];
     setLoading(true);
     try {
-      const body = {
-        serviceIds: serviceIds.join(','),
-      };
-      const url = `${getExpertSeubServices}`;
-      const response = await APICaller.post(url, body);
-      const {data} = response;
-      const {status, subServices} = data;
-      if (status === 200 && subServices) {
-        const allServices = subServices.map(data => {
-          const obj = {...data};
-          obj['service_name'] = obj.sub_service_name;
-          return obj;
-        });
-        setAllSubServices(allServices);
+      const url = `${getExpertnewSeubServices}/${_id}`;
+      const response = await APICaller.get(url);
+      const {data,status} = response;
+      const {services} = data;
+      console.log('daadadada',status); 
+      if (status === 200 && services) {
+        const allServices = services?.map(data => {
+          return data?.sub_services?.map(item=>{
+            const obj = {...item};
+            obj['service_name'] = obj.sub_service_name;
+            return obj;
+          })
+        });        
+        setAllSubServices(allServices?.flat());
       }
       console.log('response of getting expert sub services', response);
     } catch (error) {

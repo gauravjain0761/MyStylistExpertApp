@@ -1,22 +1,22 @@
-import {GET_SERVICES, TOPSERVICESOLD} from '../types';
+import {GET_REVIEWS, GET_TOP_REVIEWS} from '../types';
 
 const initialState = {
-  topServices: [],
-  services: [],
+  getReviews: [],
+  getTopReviews: [],
 };
 
 export default function (state = initialState, action: any) {
   switch (action?.type) {
-    case TOPSERVICESOLD: {
+    case GET_REVIEWS: {
       return {
         ...state,
-        topServices: action.payload,
+        getReviews: action.payload,
       };
     }
-    case GET_SERVICES: {
+    case GET_TOP_REVIEWS: {
       return {
         ...state,
-        services: action.payload,
+        getTopReviews: action.payload,
       };
     }
     default:

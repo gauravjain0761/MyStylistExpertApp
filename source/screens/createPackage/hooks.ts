@@ -9,12 +9,12 @@ import {NativeToast} from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from 'store';
 import { generatePackage } from '../../Actions/packageAction';
-const {getExpertServices, getExpertSeubServices, createPackage} = endPoints;
+const {getExpertServices, getExpertSeubServices, createPackage,getExpertnewSeubServices} = endPoints;
 
 const useCreatePackage = () => {
   const navigation = useNavigation();
     const {userinfo}=useAppSelector(state=>state?.common)
-  const {state,district,city}=userinfo?.user
+  const {state,district,city}=userinfo?.user || {}
   
   const {userDetails, setLoading} = useContext(AppContext);
   const [endDate, setEndDate] = useState<any>();
@@ -36,6 +36,8 @@ const useCreatePackage = () => {
   const [additionalInfo, setAdditionalInfo] = useState<string>('');
   const [packageName, setPackageName] = useState<string>('');
   const [price, setPrice] = useState<number>(0);
+
+  const {_id}=userDetails
 
   const dispatch=useAppDispatch()
 
@@ -81,23 +83,22 @@ const useCreatePackage = () => {
   }
 
   const getSubServices = async (items: Array<Services>) => {
-    const serviceIds = items?.map(item => item._id) || [];
     setLoading(true);
     try {
-      const body = {
-        serviceIds: serviceIds.join(','),
-      };
-      const url = `${getExpertSeubServices}`;
-      const response = await APICaller.post(url, body);
-      const {data} = response;
-      const {status, subServices} = data;
-      if (status === 200 && subServices) {
-        const allServices = subServices.map(data => {
-          const obj = {...data};
-          obj['service_name'] = obj.sub_service_name;
-          return obj;
+      const url = `${getExpertnewSeubServices}/${_id}`;
+      const response = await APICaller.get(url);
+      const {data,status} = response;
+      const {services} = data;
+      console.log('okkoko',data);
+      if (status === 200 && services) {
+        const allServices = services.map(data => {
+          return data?.sub_services?.map(item=>{
+            const obj = {...item};
+            obj['service_name'] = obj.sub_service_name;
+            return obj;
+          })
         });
-        setAllSubServices(allServices);
+        setAllSubServices(allServices?.flat());
       }
       console.log('response of getting expert sub services', response);
     } catch (error) {

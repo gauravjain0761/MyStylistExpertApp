@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useContext, useEffect, useRef, useState} from 'react';
 import Container from '../../components/container';
 import Header from '../../components/header';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
@@ -14,38 +14,64 @@ import {hp, screen_width, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
-import {RouteProp, useNavigation} from '@react-navigation/native';
+import {RouteProp, useIsFocused, useNavigation} from '@react-navigation/native';
 import images from 'images';
 import Collapse from '../../components/collapse';
 import ServiceCard from '../../components/servicecard';
 import {Services} from 'AppConstants';
 import BottomTab from '../../components/bottomTabs';
 import FloatingButton from '../../components/floatingbutton';
+import {useAppDispatch, useAppSelector} from 'store';
+import {appConfig} from '../../../config';
+import {AppContext} from 'context';
+import {getMyService} from '../../Actions/servicesAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'MyServices'>;
   route: RouteProp<RootStackParamList, 'MyServices'>;
 };
 
-const banner = [
-  {
-    id: 1,
-    image: images?.offerbanner,
-  },
-  {
-    id: 2,
-    image: images?.offerbanner,
-  },
-  {
-    id: 3,
-    image: images?.offerbanner,
-  },
-];
-
-const MyServices: FC = () => {
+const MyServices: FC<Props> = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const {bannerImage} = useAppSelector(state => state?.home);
+  const mainservices = useAppSelector(state => state?.service?.services);
   const navigation = useNavigation();
+  const [banner, setbanner] = useState(bannerImage);
+  const [service, setServices] = useState(mainservices);
+  const {IMG_URL} = appConfig;
+  const {userDetails, setLoading} = useContext(AppContext);
+  const {_id} = userDetails;
+  const dispatch = useAppDispatch();
+
+  const {services} = mainservices || {};
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (mainservices.length || Object.values(mainservices).length) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+    GetServices();
+  }, [isFocused]);
+
+  const GetServices = () => {
+    let obj = {
+      id: '660d930204d57ad52b33d6bb',
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+      },
+    };
+    dispatch(getMyService(obj));
+  };
+
+  useEffect(() => {
+    setbanner(bannerImage);
+    setServices(mainservices?.services);
+  }, [bannerImage, mainservices]);
 
   const onSnapToItem = (index: React.SetStateAction<number>) => {
     setActiveIndex(index);
@@ -80,7 +106,7 @@ const MyServices: FC = () => {
                 return (
                   <Image
                     resizeMode="stretch"
-                    source={item?.image}
+                    source={{uri: `${IMG_URL}/${item?.fileName}`}}
                     style={styles?.carousel_img}
                   />
                 );
@@ -104,25 +130,32 @@ const MyServices: FC = () => {
               children={
                 <>
                   <FlatList
-                    keyExtractor={item => item?.id.toString()}
-                    data={Services}
+                    data={service?.flatMap((service: any) => {
+                      return service.sub_services.map((sub_service: any) => {
+                        sub_service['service_id'] = service.service_id;
+                        return sub_service;
+                      });
+                    })}
                     contentContainerStyle={styles.container}
                     ItemSeparatorComponent={() => (
                       <View style={styles.separator}></View>
                     )}
+                    ListFooterComponent={
+                      <FloatingButton onPress={onPresstoTop} />
+                    }
+                    ListFooterComponentStyle={{
+                      paddingBottom: 1,
+                    }}
                     renderItem={({item, index}) => {
                       return (
                         <ServiceCard
                           key={index}
-                          title={item?.name}
-                          image={item?.images}
-                          price={item?.price}
+                          data={item}
                           onPress={() => uploadImageHandler(item)}
                         />
                       );
                     }}
                   />
-                  <FloatingButton onPress={onPresstoTop} />
                 </>
               }
             />

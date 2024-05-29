@@ -52,6 +52,7 @@ import {getAllBanner, getUserDetails} from '../../Actions/homeAction';
 import {getUpcomingAppointment} from '../../Actions/appointmentAction';
 import {TopService} from '../../Actions/servicesAction';
 import {io} from 'socket.io-client';
+import {socketConnect} from '../Socket';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -77,39 +78,38 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {appointment} = useAppSelector(state => state.home);
   const {topServices} = useAppSelector(state => state?.service);
 
+  const [user, setUser] = useState(userinfo);
+
+  const {name, addresses, district} = user?.user || {};
+
   const SOCKET_URL = 'https://api.mystylist.in/';
 
   const dispatch = useAppDispatch();
   const {setLoading, userDetails} = useContext(AppContext);
   const {IMG_URL} = appConfig;
 
-  useEffect(() => {
-    const socket = io(SOCKET_URL);
-    // console.log(socket)
-    socket.on('connect', () => {
-      console.log('connect', socket.id);
-    });
-    return () => {
-      socket.on('disconnect', () => {
-        console.log('Disconnected from server');
-      });
-    };
-  }, []);
+  // const {address} = addresses[0] || [];
+  // const {district_name} = district[0] || [];
 
   useEffect(() => {
     setVisible(!visible);
+    // const socket = io(SOCKET_URL);
+    socketConnect(dispatch);
     let clean = setTimeout(() => {
       getUserDetail();
       getBanners();
       getAppointment();
       getTopServices();
     }, 1000);
-    return () => clearInterval(clean);
+    return () => {
+      clearInterval(clean);
+    };
   }, []);
 
   useEffect(() => {
     setBanner(bannerImage);
-  }, [bannerImage]);
+    setUser(userinfo);
+  }, [bannerImage, userinfo]);
 
   const {
     expertMedia,
@@ -216,7 +216,7 @@ const Home: FC<Props> = ({navigation, route}) => {
         <StatusBar style="dark" />
         <HomeHeader
           onPresslocation={() => setVisible(!visible)}
-          location={'Shop No. 4, Ansal Palm Grove, Mohali'}
+          location={`Shop No. 4, Ansal Palm Grove, Mohali`}
           onPressProfile={onPressProfile}
         />
         <View style={styles?.mainView}>
@@ -289,7 +289,10 @@ const Home: FC<Props> = ({navigation, route}) => {
             </View>
             <View style={styles.gridView}>
               <View style={styles.gridViewHeader}>
-                <RNText style={styles.ViewTitle}>{`Majid Khan Work`}</RNText>
+                <RNText style={styles.ViewTitle}>
+                  {name}
+                  {` Work`}
+                </RNText>
                 <RNText style={styles.viewAll}>{`View All`}</RNText>
               </View>
 
@@ -306,7 +309,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                           resizeMode="cover"
                           style={[styles.gridImage, styles.gridImageBottom]}
                           source={{
-                            uri: `${user_work_images_url}${item?.image}`,
+                            uri: `${IMG_URL}/${item?.image}`,
                             priority: FastImage?.priority?.high,
                           }}
                         />
@@ -323,7 +326,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                 <RNText
                   style={
                     styles?.ViewTitle
-                  }>{`Upcoming Appointment(23)`}</RNText>
+                  }>{`Upcoming Appointment(${appointment.length})`}</RNText>
                 <RNText
                   style={styles.viewAll}
                   onPress={() => navigation.navigate('Appointments')}>

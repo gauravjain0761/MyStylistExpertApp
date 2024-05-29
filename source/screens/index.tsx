@@ -35,6 +35,7 @@ import VideoPlayer from './videoPlayer';
 import BusyMode from './busymode';
 import MyServices from './myServices';
 import ServiceUpload from './uploadService';
+import Loading from './Loading';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -81,6 +82,7 @@ export type RootStackParamList = {
     data: Object;
   };
   ServiceUpload: undefined;
+  Loading: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -90,9 +92,10 @@ const screenOptions = {
 
 function AuthNavigator() {
   return (
-    <Stack.Navigator initialRouteName={'Login'} screenOptions={screenOptions}>
+    <Stack.Navigator initialRouteName={'Loading'} screenOptions={screenOptions}>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="OtpVeirfy" component={OtpVeirfy} />
+      <Stack.Screen name="Loading" component={Loading} />
     </Stack.Navigator>
   );
 }
@@ -133,6 +136,7 @@ function AppStackNavigator() {
         name="NotificationSetting"
         component={NotificationSetting}
       />
+      <Stack.Screen name="Loading" component={Loading} />
       <Stack.Screen name="BusyMode" component={BusyMode} />
       <Stack.Screen name="MyServices" component={MyServices} />
       <Stack.Screen name="ServiceUpload" component={ServiceUpload} />

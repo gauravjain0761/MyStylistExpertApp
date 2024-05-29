@@ -1,8 +1,9 @@
-import {BANNER_IMAGE, UPCOMING_APPOINTMENTS} from '../types';
+import {BANNER_IMAGE, GET_EXPERTS_MEDIA, UPCOMING_APPOINTMENTS} from '../types';
 
 const initialState = {
   appointment: [],
   bannerImage: [],
+  expertMedia: [],
 };
 
 export default function (state = initialState, action: any) {
@@ -12,6 +13,9 @@ export default function (state = initialState, action: any) {
     }
     case BANNER_IMAGE: {
       return {...state, bannerImage: action.payload};
+    }
+    case GET_EXPERTS_MEDIA: {
+      return {...state, expertMedia: action.payload};
     }
     default:
       return state;
