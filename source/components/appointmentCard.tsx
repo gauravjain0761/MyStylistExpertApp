@@ -23,6 +23,7 @@ import {
   wp,
 } from '../utils/dimentions';
 import Color from '../../assets/color';
+import {appConfig} from '../../config';
 
 interface Props {
   fullWidth?: boolean;
@@ -38,17 +39,11 @@ const AppointmentCard: FC<Props> = ({
   data,
   onPreeCard,
 }) => {
-  const {
-    _id: appointmentId,
-    bookingNumber,
-    customerName,
-    status,
-    services,
-    createdAt,
-    amount,
-    featured_image,
-  } = data;
-  const date = moment(createdAt).format('DD MMMM YYYY, hh:mm');
+  const {customerName, services, timeSlot, totalAmount, bookingNumber} = data;
+  const service = services.map(service => service?.service_name).toString();
+  const {IMG_URL} = appConfig;
+
+  const date = moment(timeSlot[0]?.availableDate).format('hh:mm A,DD MMM YYYY');
   return (
     <Pressable
       onPress={() => onPreeCard && onPreeCard(data?._id)}
@@ -61,15 +56,13 @@ const AppointmentCard: FC<Props> = ({
           <RnImage
             resizeMode="contain"
             style={styles.cardProfile}
-            source={featured_image}
+            source={{uri: `${IMG_URL}/${services[0]?.subServiceFileNames}`}}
           />
           <View style={styles.nameView}>
             <RNText style={styles.title}>{customerName}</RNText>
             <RNText style={styles.date}>{date}</RNText>
             <RNText style={styles.service}>
-              {services.length > 30
-                ? `${services.substring(0, 22)}...`
-                : services}
+              {service.length > 30 ? `${service.substring(0, 22)}...` : service}
             </RNText>
             <View style={styles.functionalityconatiner}>
               <TouchableOpacity style={styles.buttons}>
@@ -89,7 +82,7 @@ const AppointmentCard: FC<Props> = ({
         <View style={styles.cardDetailRow}>
           <RNText
             style={styles.amount}>{`Booking ID: ${bookingNumber}`}</RNText>
-          <RNText style={styles.amount}>{`₹${amount}`}</RNText>
+          <RNText style={styles.amount}>{`₹${totalAmount}`}</RNText>
         </View>
       </ImageBackground>
     </Pressable>

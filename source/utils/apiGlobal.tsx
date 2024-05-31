@@ -28,8 +28,8 @@ export const makeAPIRequest = ({
     };
     axios(option)
       .then(response => {
-        // console.log("response-->", response);
-        if (response.status === 200 || response.status === 201) {
+        // console.log('response-->', response);
+        if (response?.status === 200 || response?.status === 201) {
           resolve(response);
         } else {
           reject(response);
@@ -37,16 +37,6 @@ export const makeAPIRequest = ({
       })
       .catch(error => {
         console.log('error?.response?', error?.response);
-        if (error?.response?.status === 401) {
-          //   clearAsync();
-          NativeToast(error?.response?.data?.message);
-          //   navigationRef?.current?.reset({
-          //     index: 1,
-          //     routes: [{name: screenName.Login}],
-          //   });
-        } else {
-          NativeToast(error?.response?.data?.message);
-        }
         reject(error);
       });
   });

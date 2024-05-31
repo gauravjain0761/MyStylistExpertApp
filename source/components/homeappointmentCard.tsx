@@ -24,15 +24,24 @@ const AppointmentCard: FC<Props> = ({
   onPreeCard,
 }) => {
   const {
-    _id: appointmentId,
     bookingNumber,
     customerName,
-    status,
     services,
-    createdAt,
-    amount,
-  } = data;
-  const date = moment(createdAt).format('DD MMMM YYYY, hh:mm');
+    timeSlot,
+    totalAmount,
+    status,
+    expertDetails,
+  } = data || {};
+
+  const {addresses, district} = expertDetails || {};
+  const {address} = addresses[0];
+  const {sector} = address || {};
+  const {district_name} = district?.[0];
+
+  const date = moment(timeSlot?.[0]?.availableDate).format(
+    'DD MMMM YYYY, hh:mm',
+  );
+  const service = services.map(service => service?.service_name);
   return (
     <Pressable
       style={[styles.upcomingItemContainer, fullWidth && styles.cardFullWidth]}>
@@ -48,7 +57,7 @@ const AppointmentCard: FC<Props> = ({
         <RNText style={styles.customerName}>{customerName}</RNText>
         <RNText style={styles.amount}>
           {'₹'}
-          {amount}
+          {totalAmount}
         </RNText>
       </View>
       <View style={styles.upcomingDetails}>
@@ -57,7 +66,9 @@ const AppointmentCard: FC<Props> = ({
           style={styles.locationIcon}
           source={images.locationpin}
         />
-        <RNText style={styles.label}>{'America, Las Vagas'}</RNText>
+        <RNText style={styles.label}>
+          {sector}, {district_name}
+        </RNText>
       </View>
       <View style={styles.upcomingDetails}>
         <Image
@@ -73,8 +84,12 @@ const AppointmentCard: FC<Props> = ({
         </RNText>
       </View>
       <RNText style={styles.services}>
-        {services}
-        <RNText style={styles.others}>{' +2 others'}</RNText>
+        {service.join(',')}
+        {service.length > 2 && (
+          <RNText style={styles.others}>{` +${
+            service.length - 2
+          } others`}</RNText>
+        )}
       </RNText>
     </Pressable>
   );

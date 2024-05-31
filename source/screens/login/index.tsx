@@ -1,6 +1,7 @@
 import {
   Image,
   ImageBackground,
+  Linking,
   Platform,
   StyleSheet,
   Text,
@@ -77,6 +78,11 @@ const Login: FC<Props> = ({navigation}) => {
       dispatch(expertLogin(obj));
     }
   };
+
+  const onPressSigup = () => {
+    Linking.openURL('https://onboarding.mystylist.in/');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.bgcontainer}>
@@ -117,7 +123,7 @@ const Login: FC<Props> = ({navigation}) => {
               containerLabelStyle={styles.btnTitle}
               onPress={onLoginPress}
             />
-            <TouchableOpacity style={styles.signupBtn}>
+            <TouchableOpacity onPress={onPressSigup} style={styles.signupBtn}>
               <Text style={styles.signup}>{'Signup'}</Text>
             </TouchableOpacity>
           </KeyboardAwareScrollView>

@@ -19,6 +19,7 @@ const App: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<string>('Home');
   const [userDetails, setUserDetails] = useState<UserDetail>();
+  const [location, setLocation] = useState([]);
 
   const context = useMemo(
     () => ({
@@ -30,6 +31,8 @@ const App: FC = () => {
       userDetails,
       setActiveRoute,
       setUserDetails,
+      setLocation,
+      location,
     }),
     [
       isLogin,
@@ -40,6 +43,8 @@ const App: FC = () => {
       setActiveRoute,
       userDetails,
       setUserDetails,
+      setLocation,
+      location,
     ],
   );
 

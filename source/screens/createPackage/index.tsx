@@ -396,11 +396,7 @@ const CreatePackage: FC<Props> = () => {
                 NativeToast('Please select start date');
               } else if (!endDate) {
                 NativeToast('Please select end date');
-              }
-              //  else if (!price) {
-              //   NativeToast('Please add price');
-              // }
-              else if (!additionalInfo) {
+              } else if (!additionalInfo) {
                 NativeToast('Please add additional info');
               } else {
                 setCreatePackageSheet(true);

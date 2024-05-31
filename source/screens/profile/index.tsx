@@ -7,6 +7,8 @@ import {
   Text as RNText,
   StyleSheet,
   Image as RNImage,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
 import {
   BottomTab,
@@ -85,11 +87,20 @@ const Profile: FC<Props> = ({navigation}) => {
   };
 
   const {user} = profileData || {};
-  const addresses = user?.addresses[0] || {};
+  const addresses = user?.addresses?.[0] || {};
   const {sector} = addresses?.address || {};
-  const {image} = user?.user_profile_images[0] || {};
+  const {image} = user?.user_profile_images?.[0] || {};
   const ExpertData = media?.expertusers || [];
-  const {user_work_images} = ExpertData[0] || {};
+  const {user_work_images} = ExpertData?.[0] || {};
+  const {user_information} = user || {};
+
+  const onPressFacebook = () => {
+    Linking.openURL('https://www.facebook.com/example');
+  };
+
+  const onPressInstagram = () => {
+    Linking.openURL('https://www.instagram.com/example');
+  };
 
   return (
     <Container>
@@ -131,8 +142,12 @@ const Profile: FC<Props> = ({navigation}) => {
                     <RNText
                       style={styles.count}>{`(${user?.totalReviews})`}</RNText>
                     <View style={styles.saparator}></View>
-                    <Image style={styles.social} source={images.facebook} />
-                    <Image style={styles.social} source={images.instagram} />
+                    <TouchableOpacity onPress={onPressFacebook}>
+                      <Image style={styles.social} source={images.facebook} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onPressInstagram}>
+                      <Image style={styles.social} source={images.instagram} />
+                    </TouchableOpacity>
                   </View>
                 </View>
                 <View style={styles.locationView}>
@@ -148,12 +163,9 @@ const Profile: FC<Props> = ({navigation}) => {
                   </RNText>
                 </View>
                 <View style={styles.devider} />
-                <RNText style={styles.abouttitle}>About Nickson's</RNText>
+                <RNText style={styles.abouttitle}>About {user?.name}</RNText>
                 <RNText style={styles.aboutsection}>
-                  {`I am a barber with over 10 years of experience in the industry. I am passionate about my work and love helping my clients to look and feel their's b...`}
-                  <Text size="sm" fontWeight="700">
-                    {'read more'}
-                  </Text>
+                  {user_information[0]?.aboutMe}
                 </RNText>
               </View>
             </View>
@@ -298,7 +310,6 @@ const styles = StyleSheet.create({
     borderRadius: wp(10),
     width: '100%',
     overflow: 'hidden',
-    backgroundColor: 'green',
   },
   profileImage: {
     width: '100%',

@@ -3,19 +3,19 @@ import {useContext, useState} from 'react';
 import {Appointment} from 'types';
 import {endPoints} from '../../../config';
 import APICaller from '../../service/apiCaller';
-const {getUserDetails, getAppointments} = endPoints;
+const {getUserDetails, getUpcomingAppointments} = endPoints;
 
 const useAppointment = () => {
   const {userDetails, setLoading} = useContext(AppContext);
   const [appointments, setAppointments] = useState<Array<Appointment>>([]);
 
-  const {userId} = userDetails;
+  const {_id} = userDetails;
 
   const getAllAppointments = async () => {
     setLoading(true);
-    const endpoint = `${getAppointments}/${userId}?page=0&limit=5&sort=createdAt&status=booked`;
+    const endpoint = `${getUpcomingAppointments}`;
     try {
-      const response: any = await APICaller.get(endpoint);
+      const response: any = await APICaller.post(endpoint);
       console.log('response of gettig appointments', response);
       const {data} = response;
       const {Appointments, status} = data;

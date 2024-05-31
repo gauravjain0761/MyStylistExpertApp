@@ -44,7 +44,11 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
     start_date,
     end_date,
     additional_information,
+    sub_services,
   } = offerDetails;
+
+  console.log('offerererer', sub_services);
+
   const startDate = moment(start_date).format('MMM DD, YYYY');
   const endDate = moment(end_date).format('MMM DD, YYYY');
 
@@ -132,7 +136,8 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                     {'Package price'}
                   </Text>
                   <Text size="base" fontWeight="800">
-                    {'$36'}
+                    {'₹'}
+                    {sub_services?.price}
                   </Text>
                 </View>
                 <View style={styles.detailViewSub}>
@@ -144,7 +149,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                     {'Bookings'}
                   </Text>
                   <Text size="base" margin="mt-0.5" fontWeight="800">
-                    {`${accepted_offers}/${number_of_offers}`}
+                    {`${number_of_offers}`}
                   </Text>
                 </View>
                 <View style={styles.detailViewSub}>
@@ -156,9 +161,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                     {'Availed'}
                   </Text>
                   <Text size="base" fontWeight="800">
-                    {`${
-                      number_of_offers - accepted_offers
-                    }/${number_of_offers}`}
+                    {`${number_of_offers}`}
                   </Text>
                 </View>
               </View>

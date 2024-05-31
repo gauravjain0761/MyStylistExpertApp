@@ -171,7 +171,9 @@ const OrderplaseSheet: FC<Props> = ({
                     style={[styles.innerbar, increaseWidth]}></Animated.View>
                 </Animated.View>
                 <TouchableOpacity
-                  onPress={() => (onPressCancel(), cancelAnimation(width))}
+                  onPress={() => (
+                    onPressCancel(), cancelAnimation(width), (width.value = 0)
+                  )}
                   style={styles.button}>
                   <Text style={styles.buttontitle}>{'Cancel'}</Text>
                 </TouchableOpacity>

@@ -2,20 +2,22 @@ import React, {FC, useContext, useEffect} from 'react';
 import {AppContext} from 'context';
 import {AuthNavigator} from '../screens';
 import AppNavigator from './drawer';
-import DataAccess from '../dataAccess';
+import DataAccess, {getAsyncLocation} from '../dataAccess';
 import RNBootSplash from 'react-native-bootsplash';
 import {NavigationContainer} from '@react-navigation/native';
 
 const Navigator: FC = () => {
-  const {isLogin, setUserDetails, setIsLogin, setActiveRoute} =
+  const {isLogin, setUserDetails, setIsLogin, setActiveRoute, setLocation} =
     useContext(AppContext);
   const {getUserLogin, getUserDetails} = DataAccess();
 
   const getUserDetailsFromStorage = async () => {
     const userDetails = await getUserDetails();
+    const locations = await getAsyncLocation();
     const isLogin = await getUserLogin();
     setUserDetails(userDetails);
     setIsLogin(isLogin);
+    setLocation(locations);
     setTimeout(() => {
       RNBootSplash.hide({fade: true});
     }, 500);

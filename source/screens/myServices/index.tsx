@@ -37,7 +37,7 @@ const MyServices: FC<Props> = () => {
   const mainservices = useAppSelector(state => state?.service?.services);
   const navigation = useNavigation();
   const [banner, setbanner] = useState(bannerImage);
-  const [service, setServices] = useState(mainservices);
+  const [service, setServices] = useState([]);
   const {IMG_URL} = appConfig;
   const {userDetails, setLoading} = useContext(AppContext);
   const {_id} = userDetails;
@@ -55,9 +55,14 @@ const MyServices: FC<Props> = () => {
     GetServices();
   }, [isFocused]);
 
+  useEffect(() => {
+    setbanner(bannerImage);
+    setServices(mainservices?.services);
+  }, [bannerImage, mainservices]);
+
   const GetServices = () => {
     let obj = {
-      id: '660d930204d57ad52b33d6bb',
+      id: _id,
       onSuccess: (res: any) => {
         setLoading(false);
       },
@@ -67,11 +72,6 @@ const MyServices: FC<Props> = () => {
     };
     dispatch(getMyService(obj));
   };
-
-  useEffect(() => {
-    setbanner(bannerImage);
-    setServices(mainservices?.services);
-  }, [bannerImage, mainservices]);
 
   const onSnapToItem = (index: React.SetStateAction<number>) => {
     setActiveIndex(index);
@@ -141,7 +141,9 @@ const MyServices: FC<Props> = () => {
                       <View style={styles.separator}></View>
                     )}
                     ListFooterComponent={
-                      <FloatingButton onPress={onPresstoTop} />
+                      services?.length >= 3 && (
+                        <FloatingButton onPress={onPresstoTop} />
+                      )
                     }
                     ListFooterComponentStyle={{
                       paddingBottom: 1,

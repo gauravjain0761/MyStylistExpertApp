@@ -22,6 +22,7 @@ import {
 import Color from '../../assets/color';
 import images from 'images';
 import {DASHED} from 'AppConstants';
+import {appConfig} from '../../config';
 
 interface Props {
   cardType: 'Pending' | 'Accepted' | 'Decline' | 'Active';
@@ -30,25 +31,20 @@ interface Props {
 }
 
 const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
-  // const {campaign, campaignstatus} = data;
+  const {IMG_URL} = appConfig;
 
-  const {
-    _id,
-    title,
-    startDate,
-    endDate,
-    campaignCode,
-    featured_image,
-    service_name,
-    price,
-  } = data;
+  const {campaign, sub_services} = data || {};
+  const {title, campaignCode, startDate, endDate, fileName} = campaign || {};
+
+  console.log('datatatatata', fileName);
 
   const sDate = moment(startDate).format('MMM DD, YYYY');
   const eDate = moment(endDate).format('MMM DD, YYYY');
-  const services = service_name.map(data => data.service_name);
+  // const services = sub_services.map(data => data.service_name);
+
   return (
     <Pressable
-      onPress={() => onPressCard && onPressCard(_id)}
+      onPress={() => onPressCard && onPressCard('')}
       style={styles.compaingnsCard}>
       <ImageBackground
         resizeMode="stretch"
@@ -56,20 +52,20 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
         style={styles.cardbg}>
         <View style={styles.cardProfileView}>
           <RnImage
-            resizeMode="contain"
+            resizeMode="cover"
             style={styles.cardProfile}
-            source={featured_image}
+            source={{uri: `${IMG_URL}/${fileName}`}}
           />
           <View style={styles.nameView}>
             <RNText style={styles?.title}>{title}</RNText>
             <RNText style={styles.code}>{`Code: ${campaignCode}`}</RNText>
-            <RNText style={styles.price}>{`Price: ₹${price}`}</RNText>
+            <RNText style={styles.price}>{`Price: ₹00`}</RNText>
           </View>
         </View>
         <View style={styles.cardDetailRow}>
           <View style={styles.cardDetail}>
             <RNText style={styles.servicelabel}>Services</RNText>
-            <RNText style={styles.service}>{services.join(',')}</RNText>
+            {/* <RNText style={styles.service}>{services.join(',')}</RNText> */}
           </View>
         </View>
         <View style={styles.daterow}>

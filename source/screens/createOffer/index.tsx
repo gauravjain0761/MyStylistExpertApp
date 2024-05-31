@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import moment from 'moment';
@@ -6,7 +6,7 @@ import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
 import {CreateOfferSheet, OrderplaceSheet, ServiceSheet} from 'bottomSheets';
 import DatePicker from 'react-native-date-picker';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
   Pressable,
@@ -35,9 +35,11 @@ import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {hp, screen_height, screen_width, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {Purchase, offerData} from 'AppConstants';
-import {useAppSelector} from 'store';
+import {useAppDispatch, useAppSelector} from 'store';
 import FastImage from 'react-native-fast-image';
 import {appConfig} from '../../../config';
+import {AppContext} from 'context';
+import {generateOffer} from '../../Actions/offersAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'CreateOffer'>;
@@ -47,12 +49,17 @@ type Props = {
 const CreateOffer: FC<Props> = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const {bannerImage} = useAppSelector(state => state?.home);
+  const {userinfo} = useAppSelector(state => state?.common);
   const [banner, setBanner] = useState(bannerImage);
   const [selecteServices, setSelecteServices] = useState([]);
   const [subService, setSubService] = useState([]);
   const [visible, setVisible] = useState(false);
   const [selectDiscount, setSelectDiscount] = useState([]);
+  const [orderPlaceSheet, setOrderPlaceSheet] = useState(false);
   const {IMG_URL} = appConfig;
+  const {userDetails} = useContext(AppContext);
+  const {state, district, city} = userinfo?.user || {};
+  const {_id} = userDetails;
   const {
     endDate,
     startDate,
@@ -70,7 +77,6 @@ const CreateOffer: FC<Props> = () => {
     subServicesSheet,
     additionalInfo,
     selectedSubServices,
-    createOffer,
     setEndDate,
     setDiscount,
     setOfferName,
@@ -87,6 +93,7 @@ const CreateOffer: FC<Props> = () => {
     setSubServicesSheet,
     setSelectedSubServices,
     getAllServicesForMobile,
+    setLoading,
   } = useCreateOffer();
 
   useEffect(() => {
@@ -96,6 +103,74 @@ const CreateOffer: FC<Props> = () => {
       setSelectDiscount(offerData[0]?.discount);
     });
   }, []);
+
+  const dispatch = useAppDispatch();
+  const {goBack} = useNavigation();
+
+  const createOffer = async () => {
+    setLoading(true);
+    try {
+      const services = {};
+      selectedServices.forEach(service => {
+        const {service_name, _id} = service;
+        const item = {
+          service_id: _id,
+          service_name: service_name,
+        };
+        Object.assign(services, item);
+      });
+      const subServices = {};
+      selectedSubServices.forEach(element => {
+        const obj = {
+          sub_service_id: element.sub_service_id,
+          price: element?.price,
+        };
+        Object.assign(subServices, obj);
+      });
+
+      const sNamwe = JSON.stringify(services);
+      const subservice = JSON.stringify(subServices);
+      const sDate = moment(startDate).format('DD-MM-YYYY');
+      const eDate = moment(endDate).format('DD-MM-YYYY');
+
+      const body = new FormData();
+      body.append('expert_id', _id);
+      body.append('offer_name', offerName);
+      body.append('service', sNamwe);
+      body.append('number_of_offers', purchaseLimit);
+      body.append('start_date', sDate);
+      body.append('end_date', eDate);
+      body.append('additional_information', additionalInfo);
+      body.append('status', 'Active');
+      body.append('discount', discount);
+      body.append('featured_image', {
+        uri: selectedImage?.uri,
+        name: selectedImage?.fileName,
+        type: selectedImage?.type,
+      });
+      body.append('state', JSON.stringify(state));
+      body.append('city', JSON.stringify(city));
+      body.append('district', JSON.stringify(district));
+      body.append('sub_services', subservice);
+
+      let obj = {
+        data: body,
+        onSuccess: (res: any) => {
+          setLoading(false);
+          NativeToast('Offer Created Successfully');
+          goBack();
+        },
+        onFailure: (Err: any) => {
+          setLoading(false);
+          NativeToast(Err?.data?.message || 'Something went wrong');
+        },
+      };
+      dispatch(generateOffer(obj));
+    } catch (error) {
+      console.log('error of create offer', error);
+    } finally {
+    }
+  };
 
   const onSnapToItem = (index: React.SetStateAction<number>) => {
     setActiveIndex(index);
@@ -345,14 +420,6 @@ const CreateOffer: FC<Props> = () => {
             }}
           />
         </View>
-        {visible && (
-          <OrderplaceSheet
-            title="Creating your Offer"
-            discription="We need access to your location to show you relevant Stylists, Offers and Packages"
-            visibility={visible}
-            setVisibility={setVisible}
-          />
-        )}
         {createOfferSheet ? (
           <CreateOfferSheet
             endDate={endDate}
@@ -361,7 +428,8 @@ const CreateOffer: FC<Props> = () => {
             services={selectedServices}
             visibility={createOfferSheet}
             setVisibility={setCreateOfferSheet}
-            onYesPress={createOffer}
+            onYesPress={() => setOrderPlaceSheet(!orderPlaceSheet)}
+            subService={selectedSubServices}
           />
         ) : (
           <View />
@@ -393,6 +461,14 @@ const CreateOffer: FC<Props> = () => {
         ) : (
           <View />
         )}
+        <OrderplaceSheet
+          visibility={orderPlaceSheet}
+          setVisibility={setOrderPlaceSheet}
+          onSuccess={() => createOffer()}
+          onPressCancel={() => setOrderPlaceSheet(!orderPlaceSheet)}
+          title="Creating your Packages"
+          discription="We need access to your location to show you relevant Stylists, Offers and Packages"
+        />
       </View>
     </Container>
   );

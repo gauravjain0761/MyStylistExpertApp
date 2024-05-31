@@ -10,9 +10,10 @@ import Color from '../../assets/color';
 type modalProp = {
   visible: boolean;
   setVisible: (visible: boolean) => void;
+  onPress?: () => void;
 };
 
-const locationmodal: FC<modalProp> = ({visible, setVisible}) => {
+const locationmodal: FC<modalProp> = ({visible, setVisible, onPress}) => {
   return (
     <Modals
       visible={visible}
@@ -31,7 +32,7 @@ const locationmodal: FC<modalProp> = ({visible, setVisible}) => {
           <PrimaryButton
             label="Allow"
             containerStyle={styles.btncontainer}
-            onPress={() => setVisible(!visible)}
+            onPress={onPress}
           />
         </View>
       }

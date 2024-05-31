@@ -8,6 +8,8 @@ export const asyncKeys = {
   // clear in logout time
   token: '@token',
   user_info: '@user_info',
+  location: '@location',
+  Coord: '@coord',
   // no clear in logout time
 };
 
@@ -53,6 +55,32 @@ const DataAccess = () => {
     setAsyncToken,
     getAsyncToken,
   };
+};
+
+export const setAsyncLocation = async (location: any) => {
+  await AsyncStorage.setItem(asyncKeys.location, JSON.stringify(location));
+};
+
+export const getAsyncLocation = async () => {
+  const userlocation = await AsyncStorage.getItem(asyncKeys.location);
+  if (userlocation) {
+    return JSON.parse(userlocation);
+  } else {
+    return null;
+  }
+};
+
+export const setAsyncCoord = async (location: any) => {
+  await AsyncStorage.setItem(asyncKeys.Coord, JSON.stringify(location));
+};
+
+export const getAsyncCoord = async () => {
+  const locationCoord = await AsyncStorage.getItem(asyncKeys.Coord);
+  if (locationCoord) {
+    return JSON.parse(locationCoord);
+  } else {
+    return null;
+  }
 };
 
 export default DataAccess;

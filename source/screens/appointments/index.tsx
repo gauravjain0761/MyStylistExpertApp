@@ -37,43 +37,35 @@ type Props = {
   route: RouteProp<RootStackParamList, 'Appointments'>;
 };
 
-const Allappointment = [
-  {
-    _id: 1,
-    bookingNumber: '050',
-    customerName: 'Harleen Kaur',
-    status: 'Upcoming',
-    services: 'Haircut, Facial, Beard Styling...',
-    createdAt: Date.now(),
-    amount: 400,
-    featured_image: images?.wom1,
-  },
-  {
-    _id: 2,
-    bookingNumber: '050',
-    customerName: 'Jaspreet Kaur',
-    status: 'Upcoming',
-    services: 'Haircut, Classic shaving',
-    createdAt: Date.now(),
-    amount: 500,
-    featured_image: images?.wom2,
-  },
-];
-
 const Appointments: FC<Props> = ({navigation}) => {
   const {appointment} = useAppSelector(state => state?.home);
   const {past_appointment} = useAppSelector(state => state?.appointment);
   const [activeTab, setActiveTab] = useState<string>('Upcoming');
   const [visible, setVisible] = useState(false);
-  const [upcomingAppointment, setUpcomingAppointment] = useState(appointment);
-  const [pastAppointment, setPastAppointment] = useState(past_appointment);
+  const [upcommingPage, setUpcomingPage] = useState(1);
+  const [pastPage, setPastPage] = useState(1);
+  const [upcomingAppointment, setUpcomingAppointment] = useState(
+    appointment || [],
+  );
+  const [pastAppointment, setPastAppointment] = useState(
+    past_appointment || [],
+  );
+  const {appointments} = appointment || {};
+  const {appointments: PastAppo} = past_appointment || {};
 
   const dispatch = useAppDispatch();
   const {setLoading, userDetails} = useContext(AppContext);
+  const {_id} = userDetails;
 
   useEffect(() => {
     getAllPastAppointments(true);
+    getAllUpcommingAppointments(false);
   }, []);
+
+  useEffect(() => {
+    setUpcomingAppointment(appointments);
+    setPastAppointment(PastAppo);
+  }, [appointment, past_appointment]);
 
   const onPressFilter = () => {
     setVisible(!visible);
@@ -82,11 +74,12 @@ const Appointments: FC<Props> = ({navigation}) => {
   const getAllUpcommingAppointments = useCallback((isLogin: boolean) => {
     let obj = {
       data: {
-        expertId: userDetails?.userId,
+        expertId: _id,
         limit: 10,
-        page: 1,
+        page: upcommingPage,
       },
       onSuccess: (res: any) => {
+        setUpcomingPage(upcommingPage + 1);
         setLoading(false);
       },
       onFailure: (Err: any) => {
@@ -101,11 +94,12 @@ const Appointments: FC<Props> = ({navigation}) => {
     setLoading(isLogin);
     let obj = {
       data: {
-        expertId: userDetails?.userId,
+        expertId: _id,
         limit: 10,
-        page: 1,
+        page: pastPage,
       },
       onSuccess: (res: any) => {
+        setPastPage(pastPage + 1);
         setLoading(false);
       },
       onFailure: (Err: any) => {

@@ -208,6 +208,7 @@ interface CampaignList {
   createdAt: string;
   expert: string;
   updatedAt: string;
+  fileName: string;
 }
 
 interface Job {

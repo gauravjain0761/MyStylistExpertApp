@@ -29,7 +29,7 @@ export const endPoints = {
   getAllFAQForMobile: `faq/getAllFAQForMobile`,
   getAllExpertReview: `review/getAllExpertReview`,
   getAllPolicy: `cms/getCMSPageForMobile/64fc1db93f161dd8548acb18`,
-  getAllTerms: `cms/getCMSPageForMobile/64fc1e863f161dd8548acb1e`,
+  getAllTerms: `cms/getCMSPageForMobile/661fa6f7f1b6729c33cd4bb1`,
   getAboutUs: `cms/getCMSPageForMobile/64fc1d003f161dd8548acb12`,
   getAppointments: `appointment/getAppointmentForMobile`,
   getAppointmentDetails: `appointment/getAppointmentDetails`,
@@ -47,15 +47,14 @@ export const endPoints = {
   jobApply: `JobApplication/applyJobApplication`,
   getJobDetails: 'salonJob/getJobsDetails',
   getProductListItems: `/product/getAlllProductName`,
-
   getAllBanner:`banner/getAllBannerForExpert/Top/Stylist`,
   getUpcomingAppointments:`appointment/getUpcomingAppointments`,
   getPastAppointments:`appointment/getPastAppointments`,
   topService:`appointment/getTopServices`,
   getExpertnewSeubServices:`demo/getAllServiceSubServices`,
   getAllExpertTopReview:`review/getAllExpertTopReview`,
-  uploadSubService:`service/uploadSubServiceImage`
-
+  uploadSubService:`service/uploadSubServiceImage`,
+  stylistWorkImage:`stylistWorkImages/getStylistWorkImages`
 };
 
 export const POST = "POST";

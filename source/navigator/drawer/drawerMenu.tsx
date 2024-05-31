@@ -49,12 +49,12 @@ const drawerMenuItems = [
   },
   {
     itemName: 'Privacy Policy',
-    route: 'Privacy Policy',
+    route: 'PrivacyPolicy',
     icon: images.privacyicon,
   },
   {
     itemName: 'Terms & Conditions',
-    route: 'Terms & Conditions',
+    route: 'Terms',
     icon: images.termsicon,
   },
   {
@@ -74,8 +74,8 @@ const DrawerMenu: FC<Props> = ({props}) => {
     userinfo?.user || {};
   const {image} = userinfo?.user?.user_profile_images[0] || {};
   const {IMG_URL} = appConfig;
-  // const {address} = addresses[0] || {};
-  // const {district_name} = district[0] || {};
+  const {address} = addresses?.[0] || {};
+  const {district_name} = district?.[0] || {};
 
   return (
     <Container>
@@ -95,7 +95,7 @@ const DrawerMenu: FC<Props> = ({props}) => {
         <View style={styles.locationcontainer}>
           <Image style={styles.locationpin} source={images?.locationicon} />
           <Text style={styles.location}>
-            {/* {address?.sector}, {district_name} */}
+            {address?.sector}, {district_name}
           </Text>
           <View style={styles.saparator}></View>
           <View style={styles.ratingbadge}>

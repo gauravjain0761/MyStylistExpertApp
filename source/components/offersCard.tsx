@@ -25,8 +25,6 @@ const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
     data;
   const expiryDate = moment(end_date).format('DD MMM, YYYY');
 
-  console.log('subbbbsss', availed);
-
   return (
     <Pressable
       onPress={() => {

@@ -36,6 +36,8 @@ import BusyMode from './busymode';
 import MyServices from './myServices';
 import ServiceUpload from './uploadService';
 import Loading from './Loading';
+import PrivacyPolicy from './PrivacyPolicy';
+import Terms from './terms';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -83,6 +85,8 @@ export type RootStackParamList = {
   };
   ServiceUpload: undefined;
   Loading: undefined;
+  PrivacyPolicy: undefined;
+  Terms: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -92,7 +96,7 @@ const screenOptions = {
 
 function AuthNavigator() {
   return (
-    <Stack.Navigator initialRouteName={'Loading'} screenOptions={screenOptions}>
+    <Stack.Navigator initialRouteName={'Login'} screenOptions={screenOptions}>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="OtpVeirfy" component={OtpVeirfy} />
       <Stack.Screen name="Loading" component={Loading} />
@@ -140,6 +144,8 @@ function AppStackNavigator() {
       <Stack.Screen name="BusyMode" component={BusyMode} />
       <Stack.Screen name="MyServices" component={MyServices} />
       <Stack.Screen name="ServiceUpload" component={ServiceUpload} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+      <Stack.Screen name="Terms" component={Terms} />
     </Stack.Navigator>
   );
 }

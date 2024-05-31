@@ -114,7 +114,7 @@ const Chats: FC<Props> = ({navigation}) => {
               renderItem={({item, index}) => {
                 const {_id, name, user_profile_images} = item;
                 const {image_medium} = user_profile_images.length
-                  ? user_profile_images[0]
+                  ? user_profile_images?.[0]
                   : {};
                 return (
                   <ChatUserCard

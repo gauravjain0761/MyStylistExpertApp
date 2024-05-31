@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {FC, useContext, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Container from '../../components/container';
 import Header from '../../components/header';
@@ -25,9 +25,10 @@ import images from 'images';
 import {launchImageLibrary} from 'react-native-image-picker';
 import PrimaryButton from '../../components/PrimaryButton';
 import {useAppDispatch} from 'store';
-import {uploadSubService} from '../../Actions/servicesAction';
+import {stylistWorkImage, uploadSubService} from '../../Actions/servicesAction';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
+import {appConfig} from '../../../config';
 
 const ServiceUpload: FC = () => {
   const {params} = useRoute();
@@ -36,33 +37,116 @@ const ServiceUpload: FC = () => {
   const dispatch = useAppDispatch();
   const [selectedImage, setSelectedImage] = useState([]);
   const [main, setMain] = useState(0);
-  const {setLoading} = useContext(AppContext);
+  const [selectedMain, setSelectedMain] = useState([]);
+  const {setLoading, userDetails} = useContext(AppContext);
   const {goBack} = useNavigation();
+
+  const {_id} = userDetails || {};
+  const {service_id, sub_service_id} = data || {};
+  const {IMG_URL} = appConfig;
+
+  useEffect(() => {
+    getImage();
+  }, []);
+
+  useEffect(() => {
+    setSelectedMain(selectedImage);
+  }, [selectedImage]);
 
   const onPressImageUpload = async () => {
     let Data = [];
     try {
-      const result = await launchImageLibrary({
-        mediaType: 'photo',
-        selectionLimit: 6,
+      await launchImageLibrary(
+        {
+          mediaType: 'photo',
+          selectionLimit:
+            6 - selectedImage.length == 0 ? -1 : 6 - selectedImage.length,
+        },
+        result => {
+          if (result.didCancel) {
+            if (6 - selectedImage.length == 0) {
+              NativeToast('Max limit Reached');
+            } else {
+              NativeToast('Image upload cancelled');
+            }
+          } else {
+            Data.push(...result?.assets);
+            let newData = Data.map((item, index) => ({
+              id: Math.floor(Math.random() * 9000000000) + 1000000000,
+              name: item?.fileName,
+              ...item,
+            }));
+            setSelectedImage([...selectedImage, ...newData]);
+          }
+          // Data.map((item, index) => console.log('itemData', item));
+        },
+      );
+    } catch (error) {
+      console.log('Errrrrr', error?.data);
+    }
+  };
+
+  const getImage = () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        user: _id,
+        service: service_id,
+        sub_services: sub_service_id,
+      },
+      onSuccess: (res: any) => {
+        mixImage(res);
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        console.log('Errrrr', Err);
+        setLoading(false);
+      },
+    };
+    dispatch(stylistWorkImage(obj));
+  };
+
+  const mixImage = (res: any) => {
+    let data = [];
+    res?.data?.map(item => {
+      let types = item?.userWorkImages?.[0]?.image.split('.');
+      data.push({
+        id: item?.userWorkImages?.[0]?._id,
+        uri: `${IMG_URL}/${item?.userWorkImages?.[0]?.image}`,
+        type: `image/${
+          item?.userWorkImages?.[0]?.image.split('.')[types.length - 1]
+        }`,
+        name: item?.userWorkImages?.[0]?.image,
       });
-      Data.push(...result?.assets);
-      let newData = Data.map((item, index) => ({
-        id: Math.floor(Math.random() * 9000000000) + 1000000000,
-        ...item,
-      }));
-      setSelectedImage(newData);
-    } catch (error) {}
+    });
+    setSelectedImage([...selectedImage, ...data]);
+  };
+
+  const deleteSelectedImage = (id: any) => {
+    let filterData = selectedImage.filter(item => item?.id != id);
+    setMain(0);
+    setSelectedImage([...filterData]);
+  };
+
+  const selectMain = (data: any, index: any) => {
+    let selectedData: any = [...selectedImage];
+    selectedData[index] = selectedData[0];
+    selectedData[0] = data;
+    setMain(index);
+    setSelectedMain(selectedData);
   };
 
   const uploadImage = () => {
     let Data = new FormData();
-    Data.append('serviceId', data?.service_id);
-    Data.append('subServiceId', data?.sub_service_id);
-    Data.append('fileName', {
-      uri: selectedImage[0]?.uri,
-      name: selectedImage[0]?.fileName,
-      type: selectedImage[0]?.type,
+    Data.append('user', _id);
+    Data.append('service', data?.service_id);
+    Data.append('sub_services', data?.sub_service_id);
+    selectedMain.map((item, index) => {
+      Data.append('userWorkimages', {
+        uri: selectedMain[index]?.uri,
+        name: selectedImage[index]?.name,
+        type: selectedImage[index]?.type,
+      });
     });
     let obj = {
       data: Data,
@@ -82,6 +166,7 @@ const ServiceUpload: FC = () => {
     } else {
       setLoading(true);
       dispatch(uploadSubService(obj));
+      // console.log('okook', obj.data);
     }
   };
 
@@ -128,14 +213,16 @@ const ServiceUpload: FC = () => {
               renderItem={({item, index}) => {
                 return (
                   <Pressable
-                    onPress={() => setMain(index)}
+                    onPress={() => selectMain(item, index)}
                     style={styles?.photo}>
                     <Image
                       resizeMode="cover"
                       style={styles?.image}
                       source={{uri: item?.uri}}
                     />
-                    <TouchableOpacity style={styles?.trashIcon}>
+                    <TouchableOpacity
+                      onPress={() => deleteSelectedImage(item?.id)}
+                      style={styles?.trashIcon}>
                       <Image
                         style={styles.trashIcon}
                         resizeMode="contain"

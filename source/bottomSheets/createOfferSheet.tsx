@@ -21,6 +21,7 @@ interface Props {
   services: Array<Services>;
   onYesPress: () => void;
   setVisibility: Dispatch<SetStateAction<boolean>>;
+  subService: any;
 }
 
 const SHEET_HEIGHT = h(60);
@@ -33,6 +34,7 @@ const CreatePackageSheet: FC<Props> = ({
   startDate,
   endDate,
   onYesPress,
+  subService,
 }) => {
   const translateY = useSharedValue(SHEET_HEIGHT);
   const opacity = useSharedValue(0);
@@ -121,7 +123,7 @@ const CreatePackageSheet: FC<Props> = ({
               Total Price (USD):
             </Text>
             <Text size="sm" fontWeight="800">
-              $34
+              ₹{subService[0]?.price}
             </Text>
           </View>
           <View style={styles.buttonsView}>

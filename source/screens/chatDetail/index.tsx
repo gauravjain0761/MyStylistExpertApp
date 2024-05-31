@@ -42,8 +42,6 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
 
   const socket = io(mainDomain);
 
-  // const {message, sendMessage, setMessage, messageList, userDetails} =
-  //   useChatDetail(receiverId);
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
@@ -83,12 +81,11 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
 
   useEffect(() => {
     createChatRoom();
-
     socket.on('receive_message', (res: any) => {
       console.log('receive_message', res);
-      setMessageList(list => [...list, res]);
+      socket.emit('fetch_messages', roomId);
+      // setMessageList(list => [...list, res]);
     });
-
     socket.on('past_messages', (data: any) => {
       console.log('past_messages', data);
       const messages = data?.messages.map((item: any) => {
@@ -100,8 +97,18 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         };
         return messageData;
       });
-
       setMessageList(messages);
+    });
+
+    socket.on('user_typing', data => {
+      if (data?.username === receiverId) {
+        setUserTyping(true);
+      }
+    });
+    socket.on('user_stopped_typing', data => {
+      if (data?.username === receiverId) {
+        setUserTyping(false);
+      }
     });
   }, []);
 
@@ -113,9 +120,8 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         content: message,
         time: new Date(),
       };
-
       socket.emit('send_message', messageData);
-      setMessageList(list => [...list, messageData]);
+      socket.emit('fetch_messages', roomId);
       setMessage('');
     }
   };

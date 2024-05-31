@@ -53,6 +53,11 @@ import {getUpcomingAppointment} from '../../Actions/appointmentAction';
 import {TopService} from '../../Actions/servicesAction';
 import {io} from 'socket.io-client';
 import {socketConnect} from '../Socket';
+import {
+  getAddress,
+  requestLocationPermission,
+} from '../../utils/locationHandler';
+import {setAsyncLocation} from '../../dataAccess';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -82,18 +87,14 @@ const Home: FC<Props> = ({navigation, route}) => {
 
   const {name, addresses, district} = user?.user || {};
 
-  const SOCKET_URL = 'https://api.mystylist.in/';
-
   const dispatch = useAppDispatch();
-  const {setLoading, userDetails} = useContext(AppContext);
+  const {setLoading, userDetails, location} = useContext(AppContext);
   const {IMG_URL} = appConfig;
-
-  // const {address} = addresses[0] || [];
-  // const {district_name} = district[0] || [];
+  const {_id} = userDetails;
+  const {appointments} = appointment || [];
 
   useEffect(() => {
-    setVisible(!visible);
-    // const socket = io(SOCKET_URL);
+    GetStatus();
     socketConnect(dispatch);
     let clean = setTimeout(() => {
       getUserDetail();
@@ -106,31 +107,42 @@ const Home: FC<Props> = ({navigation, route}) => {
     };
   }, []);
 
+  const GetStatus = () => {
+    location ? setVisible(false) : setVisible(true);
+  };
+
+  const getCurrentLocation = async () => {
+    await requestLocationPermission(
+      async response => {
+        await getAddress(
+          response,
+          async (res: any) => {
+            console.log('ress', res?.results?.[0]?.formatted_address);
+            await setAsyncLocation(res?.results?.[0]?.formatted_address);
+          },
+          async (Err: any) => {
+            console.log('Home screen Get Address', Err);
+          },
+        );
+      },
+      err => {
+        console.log('Home Location API', err);
+      },
+    );
+  };
+
   useEffect(() => {
     setBanner(bannerImage);
     setUser(userinfo);
   }, [bannerImage, userinfo]);
 
-  const {
-    expertMedia,
-    appointments,
-    getAllExpertMedia,
-    getExpertDetails,
-    getLatestAppointments,
-  } = useHome();
+  const {expertMedia, getAllExpertMedia} = useHome();
 
   useEffect(() => {
-    // getExpertDetails();
     getAllExpertMedia();
-    // getLatestAppointments();
   }, []);
 
-  const {
-    expertusers,
-    user_work_images_url,
-    user_profile_images_url,
-    expert_profile_video_url,
-  } = expertMedia || {};
+  const {expertusers} = expertMedia || {};
 
   const {user_profile_images, user_work_images, expert_profile_videos} =
     expertusers?.length ? expertusers[0] : {};
@@ -160,7 +172,7 @@ const Home: FC<Props> = ({navigation, route}) => {
     setLoading(true);
     let obj = {
       data: {
-        expertId: userDetails?._id,
+        expertId: _id,
         limit: 10,
         page: 1,
       },
@@ -215,8 +227,8 @@ const Home: FC<Props> = ({navigation, route}) => {
       <>
         <StatusBar style="dark" />
         <HomeHeader
-          onPresslocation={() => setVisible(!visible)}
-          location={`Shop No. 4, Ansal Palm Grove, Mohali`}
+          onPresslocation={() => {}}
+          location={location}
           onPressProfile={onPressProfile}
         />
         <View style={styles?.mainView}>
@@ -326,7 +338,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                 <RNText
                   style={
                     styles?.ViewTitle
-                  }>{`Upcoming Appointment(${appointment.length})`}</RNText>
+                  }>{`Upcoming Appointment(${appointments?.length})`}</RNText>
                 <RNText
                   style={styles.viewAll}
                   onPress={() => navigation.navigate('Appointments')}>
@@ -335,7 +347,7 @@ const Home: FC<Props> = ({navigation, route}) => {
               </View>
               <FlatList
                 horizontal={true}
-                data={appointment}
+                data={appointments}
                 ListHeaderComponent={<View style={styles.listcontainer}></View>}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.horizontalList}
@@ -384,13 +396,13 @@ const Home: FC<Props> = ({navigation, route}) => {
                     <View
                       style={[
                         styles.topServiceItemContainer,
-                        {backgroundColor: item.bgColor},
+                        {backgroundColor: SERVIE_ARR[index % 4].bgColor},
                       ]}>
                       <RNText style={styles.servicetitle}>
                         {item?.serviceDetails?.sub_service_name}
                       </RNText>
                       <RNText style={styles.service}>{'Service'}</RNText>
-                      <RNText style={styles.soldtitle}>{'456'}</RNText>
+                      <RNText style={styles.soldtitle}>{item?.count}</RNText>
                       <RNText style={styles.servicelabel}>
                         {'Total Sold service'}
                       </RNText>
@@ -437,7 +449,11 @@ const Home: FC<Props> = ({navigation, route}) => {
             </View>
           </ScrollView>
           <BottomTab />
-          <Locationmodal visible={visible} setVisible={setVisible} />
+          <Locationmodal
+            onPress={getCurrentLocation}
+            visible={visible}
+            setVisible={setVisible}
+          />
         </View>
       </>
     </Container>
@@ -503,8 +519,9 @@ const styles = StyleSheet.create({
     paddingRight: wp(14),
   },
   topServiceItemContainer: {
-    ...tw`w-37 h-32 pl-4 rounded-lg `,
+    ...tw`w-37 h-32 pl-4`,
     marginRight: wp(16),
+    borderRadius: wp(6),
   },
   dropdownArrow: tw`w-3.5 h-3.5 ml-1`,
   serviceDropdownView: tw`flex-row px-3 h-9 rounded-lg bg-aliceBlue`,

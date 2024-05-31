@@ -10,13 +10,17 @@ export const AppContext = createContext<{
   setActiveRoute: (param: string) => void;
   setIsLogin: (param: string) => void;
   setLoading: (param: boolean) => void;
+  setLocation: (param: string) => void;
+  location:{}
 }>({
   isLogin: '',
   loading: false,
   activeRoute: 'Home',
   userDetails: {} as UserDetail,
+  location:{},
   setUserDetails: () => {},
   setActiveRoute: () => {},
   setIsLogin: () => {},
   setLoading: () => {},
+  setLocation:()=>{}
 });

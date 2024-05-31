@@ -23,7 +23,7 @@ const useMyCampaign = () => {
     try {
       const url = getCampaigns;
       const body = {
-        expert: _id,
+        user: _id,
         campaignstatus: 'Accepted',
       };
       const response = await APICaller.post(url, body);
@@ -45,7 +45,7 @@ const useMyCampaign = () => {
     try {
       const url = getCampaigns;
       const body = {
-        expert: _id,
+        user: _id,
         campaignstatus: 'Active',
       };
       const response = await APICaller.post(url, body);
@@ -68,7 +68,7 @@ const useMyCampaign = () => {
     try {
       const url = getCampaigns;
       const body = {
-        expert: _id,
+        user: _id,
         campaignstatus: 'Declined',
       };
       const response = await APICaller.post(url, body);
@@ -86,12 +86,11 @@ const useMyCampaign = () => {
   };
 
   const getPendingCampaigns = async () => {
-    console.log('userId', _id);
     setLoading(true);
     try {
       const url = getCampaigns;
       const body = {
-        expert: _id,
+        user: _id,
         campaignstatus: 'Pending',
       };
       const response = await APICaller.post(url, body);

@@ -44,13 +44,19 @@ type RowItemValueProps = {
 const AppointmentDetail: FC<Props> = ({navigation, route}) => {
   const {getAppointmentDetail, appointmentDetails} = useAppointmentDetails();
   const {appointmentId} = route.params;
-  const {createdAt, customerName, userId, bookingNumber, services} =
-    appointmentDetails || {};
+  const {
+    createdAt,
+    customerName,
+    userId,
+    bookingNumber,
+    services,
+    totalAmount,
+  } = appointmentDetails || {};
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
 
-  const date = moment(createdAt).format('DD MMMM YYYY, hh:mm');
+  const date = moment(createdAt).format('hh:mm A, DD MMMM YYYY');
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {
     return (
@@ -93,9 +99,12 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                 source={images.wom1}
               />
               <View style={styles.nameView}>
-                <RNText style={styles.title}>{'Harleen Kaur'}</RNText>
+                <RNText style={styles.title}>{customerName}</RNText>
                 <RNText style={styles.date}>{date}</RNText>
-                <RNText style={styles.bookingid}>{'Booking ID: 050'}</RNText>
+                <RNText
+                  style={
+                    styles.bookingid
+                  }>{`Booking ID: ${bookingNumber}`}</RNText>
                 <View style={styles.functionalityconatiner}>
                   <TouchableOpacity style={styles.buttons}>
                     <Image style={styles.iconstyle} source={images.chaticon} />
@@ -113,17 +122,22 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
             </View>
             <View style={styles.cardDetailRow}>
               <RNText style={styles.amount}>{`Total (INR)`}</RNText>
-              <RNText style={styles.amount}>{`₹400.00`}</RNText>
+              <RNText style={styles.amount}>{`₹${totalAmount}`}</RNText>
             </View>
             <View style={[styles.ellipse]}>
               <RNText style={styles.dashed}>{DASHED}</RNText>
             </View>
             <View style={styles.serviceContainer}>
               <RNText style={styles.services}>{'Services'}</RNText>
-              <RowItemValue title="Hair Cut" value="₹100.00" />
-              <RowItemValue title="Facial" value="₹100.00" />
-              <RowItemValue title="Beard Styling" value="₹100.00" />
-              <RowItemValue title="Face Massage" value="₹100.00" />
+              {services?.map(service => {
+                console.log('serws', service);
+                return (
+                  <RowItemValue
+                    title={service?.service_name}
+                    value={`₹ ${service?.price}`}
+                  />
+                );
+              })}
             </View>
           </ImageBackground>
           <View style={styles.otpcontainer}>
@@ -262,6 +276,7 @@ const styles = StyleSheet.create({
   serviceContainer: {
     paddingHorizontal: wp(20),
     marginBottom: hp(26),
+    minHeight: hp(180),
   },
   rowSpaceStyle: {
     flexDirection: 'row',
