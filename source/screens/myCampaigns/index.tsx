@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {w} from 'utils';
 import tw from 'rn-tailwind';
 import images from 'images';
@@ -19,6 +19,9 @@ import {
   screen_width,
   wp,
 } from '../../utils/dimentions';
+import {AppContext} from 'context';
+import {useAppDispatch} from 'store';
+import {campaignAccept} from '../../Actions/campaignsAction';
 
 const initialLayout = {
   height: 0,
@@ -40,6 +43,9 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
     getActiveCampaigns,
     getPendingCampaigns,
     getDeclineCampaigns,
+    setAcceptedCampaigns,
+    setDeclineCampaigns,
+    setPendingCampaigns,
   } = useMyCampaign();
 
   const [index, setIndex] = useState<number>(0);
@@ -51,10 +57,45 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
 
   useEffect(() => {
     getAcceptedCampaigns();
-    getActiveCampaigns();
     getPendingCampaigns();
     getDeclineCampaigns();
   }, []);
+
+  useEffect(() => {
+    setAcceptedCampaigns(acceptedCompaigns);
+    setDeclineCampaigns(declineCompaigns);
+    setPendingCampaigns(pendingCompaigns);
+  }, [getDeclineCampaigns, getPendingCampaigns, getAcceptedCampaigns]);
+
+  const {userDetails, setLoading} = useContext(AppContext);
+  const {_id} = userDetails || {};
+  const dispatch = useAppDispatch();
+
+  const submitCampaign = (status: any, id: any) => {
+    setLoading(true);
+    let obj = {
+      data: {
+        campaignId: id,
+        campaignstatus: status,
+        expertid: _id,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+        if (status === 'Pending') {
+          getPendingCampaigns();
+        } else if (status === 'Declined') {
+          getDeclineCampaigns();
+        } else if (status === 'Accepted') {
+          getAcceptedCampaigns();
+        }
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        console.log('Errrrr', Err?.data);
+      },
+    };
+    dispatch(campaignAccept(obj));
+  };
 
   const renderScene = (route: any) => {
     switch (route) {
@@ -87,6 +128,7 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
                     onPressCard={(campaignId: string) =>
                       navigation.navigate('CompaignDetail', {campaignId})
                     }
+                    onPressButton={submitCampaign}
                   />
                 );
               }}
@@ -120,6 +162,7 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
                     key={index}
                     data={item}
                     cardType="Accepted"
+                    onPressButton={submitCampaign}
                     onPressCard={(campaignId: string) =>
                       navigation.navigate('CompaignDetail', {campaignId})
                     }
@@ -156,6 +199,7 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
                     cardType="Decline"
                     key={index}
                     data={item}
+                    onPressButton={submitCampaign}
                     onPressCard={(campaignId: string) =>
                       navigation.navigate('CompaignDetail', {campaignId})
                     }
@@ -166,37 +210,37 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
           </View>
         );
       }
-      case 'Active': {
-        return (
-          <View style={styles.viewPager}>
-            <FlatList
-              bounces={false}
-              data={activeCompaigns}
-              maxToRenderPerBatch={20}
-              scrollEventThrottle={400}
-              contentContainerStyle={styles.listContainer}
-              alwaysBounceVertical={false}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={() => {
-                return <View style={styles.separator} />;
-              }}
-              renderItem={({item, index}) => {
-                return (
-                  <CompaignsCard
-                    cardType="Active"
-                    key={index}
-                    data={item}
-                    onPressCard={(campaignId: string) =>
-                      navigation.navigate('CompaignDetail', {campaignId})
-                    }
-                  />
-                );
-              }}
-            />
-          </View>
-        );
-      }
+      // case 'Active': {
+      //   return (
+      //     <View style={styles.viewPager}>
+      //       <FlatList
+      //         bounces={false}
+      //         data={activeCompaigns}
+      //         maxToRenderPerBatch={20}
+      //         scrollEventThrottle={400}
+      //         contentContainerStyle={styles.listContainer}
+      //         alwaysBounceVertical={false}
+      //         showsVerticalScrollIndicator={false}
+      //         keyExtractor={(item, index) => index.toString()}
+      //         ItemSeparatorComponent={() => {
+      //           return <View style={styles.separator} />;
+      //         }}
+      //         renderItem={({item, index}) => {
+      //           return (
+      //             <CompaignsCard
+      //               cardType="Active"
+      //               key={index}
+      //               data={item}
+      //               onPressCard={(campaignId: string) =>
+      //                 navigation.navigate('CompaignDetail', {campaignId})
+      //               }
+      //             />
+      //           );
+      //         }}
+      //       />
+      //     </View>
+      //   );
+      // }
       default:
         break;
     }

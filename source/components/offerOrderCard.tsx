@@ -1,15 +1,17 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import {Pressable, View} from 'react-native';
 import tw from 'rn-tailwind';
 import {Text, Image} from 'components';
 import images from 'images';
 import globalStyle from 'globalStyles';
+import moment from 'moment';
 
 interface Props {
   fullWidth?: boolean;
   homeScreen?: boolean;
   status: 'Pending' | 'Completed' | 'Cancelled';
   onPreeCard?: () => void;
+  data?: any;
 }
 
 const OfferOrderCard: FC<Props> = ({
@@ -17,7 +19,15 @@ const OfferOrderCard: FC<Props> = ({
   fullWidth = false,
   homeScreen = false,
   onPreeCard,
+  data,
 }) => {
+  const {bookingNumber, customerName, timeSlot, expertDetails} = data || {};
+  const date = moment(timeSlot?.[0]?.availableDate).format(
+    'DD MMMM YYYY, HH:MM A',
+  );
+  const {address} = expertDetails?.addresses?.[0] || {};
+  const {district} = expertDetails || {};
+
   return (
     <Pressable
       onPress={() => {
@@ -26,13 +36,13 @@ const OfferOrderCard: FC<Props> = ({
       style={[styles.upcomingItemContainer, fullWidth && styles.cardFullWidth]}>
       <View style={[styles.upcomingItemHeader]}>
         <Text size="sm" fontWeight="700">
-          Booking ID: #25
+          Booking ID: #{bookingNumber}
         </Text>
       </View>
       <View style={styles.cardDetailView}>
         <View style={styles.upcomingItemName}>
           <Text fontWeight="700" color="text-darkGrey" size="lg">
-            {'Nico Robin'}
+            {customerName}
           </Text>
           <View style={styles.upcomingDetails}>
             <Image
@@ -41,7 +51,9 @@ const OfferOrderCard: FC<Props> = ({
               source={images.LocationIcon}
             />
             <Text size="xs" color="text-darkGrey">
-              {'America, Las Vagas'}
+              {address?.sector}
+              {', '}
+              {district?.[0]?.district_name}
             </Text>
           </View>
           <View style={styles.upcomingDetails}>
@@ -51,7 +63,7 @@ const OfferOrderCard: FC<Props> = ({
               source={images.CalendarIcon}
             />
             <Text size="xs" color="text-darkGrey">
-              {'22 October 2023, 08:30'}
+              {date}
             </Text>
           </View>
         </View>

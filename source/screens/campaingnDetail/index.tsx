@@ -24,6 +24,7 @@ import {RootStackParamList} from '..';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
 import moment from 'moment';
+import {appConfig} from '../../../config';
 
 const initialLayout = {
   height: 0,
@@ -47,11 +48,13 @@ const CompaignDetail: FC<Props> = ({route}) => {
     featured_image,
     service_name,
     description,
+    fileName,
   } = campaignDetails;
 
   const sDate = moment(startDate).format('MMM DD, YYYY');
   const eDate = moment(endDate).format('MMM DD, YYYY');
   const services = service_name?.map(data => data.service_name) || '';
+  const {IMG_URL} = appConfig;
 
   const [index, setIndex] = useState<number>(0);
   const [routes, setRoutes] = useState<Array<Route>>([
@@ -74,9 +77,9 @@ const CompaignDetail: FC<Props> = ({route}) => {
               <View style={styles.profileView}>
                 <Image
                   style={styles.profileImage}
-                  resizeMode="contain"
+                  resizeMode="cover"
                   source={{
-                    uri: featured_image,
+                    uri: `${IMG_URL}/${fileName}`,
                   }}
                 />
                 <View style={styles.nameView}>

@@ -9,6 +9,7 @@ import DataAccess from '../dataAccess';
 import {
   BANNER_IMAGE,
   GET_OFFERS,
+  GET_OFFER_ORDER,
   PAST_APPOINTMENTS,
   UPCOMING_APPOINTMENTS,
 } from '../store/types';
@@ -49,8 +50,6 @@ export const generateOffer =
       'Content-Type': 'multipart/form-data',
       Authorization: await getAsyncToken(),
     };
-    console.log('dadadtadadad', request?.data);
-
     return makeAPIRequest({
       url: endPoints?.createExpertOffer,
       method: POST,
@@ -60,6 +59,31 @@ export const generateOffer =
       .then(async (response: any) => {
         if (response.status === 200 || response.status === 201) {
           if (request.onSuccess) request.onSuccess(response.data);
+        }
+      })
+      .catch(error => {
+        if (request.onFailure) request.onFailure(error.response);
+      });
+  };
+
+export const getOfferOrders =
+  (request?: any): ThunkAction<void, RootState, unknown, AnyAction> =>
+  async dispatch => {
+    let headers = {
+      'Content-Type': 'application/json',
+      Authorization: await getAsyncToken(),
+    };
+
+    return makeAPIRequest({
+      url: endPoints?.OfferOrders,
+      method: POST,
+      headers: headers,
+      data: request?.data,
+    })
+      .then(async (response: any) => {
+        if (response.status === 200 || response.status === 201) {
+          if (request.onSuccess) request.onSuccess(response.data);
+          dispatch({type: GET_OFFER_ORDER, payload: response?.data});
         }
       })
       .catch(error => {

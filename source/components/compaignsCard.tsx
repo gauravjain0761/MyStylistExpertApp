@@ -21,30 +21,36 @@ import {
 } from '../utils/dimentions';
 import Color from '../../assets/color';
 import images from 'images';
-import {DASHED} from 'AppConstants';
 import {appConfig} from '../../config';
 
 interface Props {
   cardType: 'Pending' | 'Accepted' | 'Decline' | 'Active';
   onPressCard?: (campaignId: string) => void;
   data: CampaignList;
+  onPressButton?: (status: string, id: string) => void;
 }
 
-const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
+const CompaignsCard: FC<Props> = ({
+  cardType,
+  data,
+  onPressCard,
+  onPressButton = () => {},
+}) => {
   const {IMG_URL} = appConfig;
 
   const {campaign, sub_services} = data || {};
-  const {title, campaignCode, startDate, endDate, fileName} = campaign || {};
-
-  console.log('datatatatata', fileName);
+  const {title, campaignCode, startDate, endDate, fileName, _id} =
+    campaign || {};
 
   const sDate = moment(startDate).format('MMM DD, YYYY');
   const eDate = moment(endDate).format('MMM DD, YYYY');
-  // const services = sub_services.map(data => data.service_name);
+  const services = sub_services.map(data => data.subService?.sub_service_name);
+  let Price = 0;
+  sub_services.forEach(item => (Price += item.price));
 
   return (
     <Pressable
-      onPress={() => onPressCard && onPressCard('')}
+      onPress={() => onPressCard && onPressCard(_id)}
       style={styles.compaingnsCard}>
       <ImageBackground
         resizeMode="stretch"
@@ -59,13 +65,13 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
           <View style={styles.nameView}>
             <RNText style={styles?.title}>{title}</RNText>
             <RNText style={styles.code}>{`Code: ${campaignCode}`}</RNText>
-            <RNText style={styles.price}>{`Price: ₹00`}</RNText>
+            <RNText style={styles.price}>{`Price: ₹${Price}`}</RNText>
           </View>
         </View>
         <View style={styles.cardDetailRow}>
           <View style={styles.cardDetail}>
             <RNText style={styles.servicelabel}>Services</RNText>
-            {/* <RNText style={styles.service}>{services.join(',')}</RNText> */}
+            <RNText style={styles.service}>{services.join(', ')}</RNText>
           </View>
         </View>
         <View style={styles.daterow}>
@@ -85,10 +91,14 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
           </View>
         </View>
         <View style={[styles.cardDetailRow, styles.btncontainer]}>
-          {(cardType === 'Pending' || cardType === 'Active') && (
+          {(cardType === 'Pending' || cardType === 'Accepted') && (
             <Button
-              onPress={() => {}}
-              lable={cardType === 'Active' ? 'Accepted' : 'Decline'}
+              onPress={() =>
+                cardType === 'Accepted'
+                  ? onPressButton('Accepted', _id)
+                  : onPressButton('Declined', _id)
+              }
+              lable={cardType === 'Accepted' ? 'Accepted' : 'Decline'}
               labelFontWeight="700"
               labelColor="text-darkGrey"
               style={tw`flex-1 w-full bg-borderDarkGrey`}
@@ -96,7 +106,7 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
           )}
           {cardType === 'Pending' && (
             <Button
-              onPress={() => {}}
+              onPress={() => onPressButton('Pending', _id)}
               lable={'Accept'}
               labelFontWeight="700"
               style={tw`flex-1 w-full bg-primary`}
@@ -104,7 +114,11 @@ const CompaignsCard: FC<Props> = ({cardType, data, onPressCard}) => {
           )}
           {(cardType === 'Accepted' || cardType === 'Decline') && (
             <Button
-              onPress={() => {}}
+              onPress={() =>
+                cardType === 'Accepted'
+                  ? onPressButton('Accepted', _id)
+                  : onPressButton('Declined', _id)
+              }
               lable={cardType}
               labelFontWeight="700"
               style={tw`flex-1 w-full bg-borderDarkGrey`}
@@ -155,6 +169,7 @@ const styles = StyleSheet.create({
   title: {
     ...commonFontStyle(fontFamily.semi_bold, 24, Color?.Black),
     lineHeight: hp(29.05),
+    maxWidth: wp(200),
   },
   code: {
     ...commonFontStyle(fontFamily.medium, 15, Color?.Grey6B),

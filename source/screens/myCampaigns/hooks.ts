@@ -51,7 +51,7 @@ const useMyCampaign = () => {
       const response = await APICaller.post(url, body);
       const {data} = response;
       const {status, campaigns} = data;
-      
+
       if (status === 200) {
         setActiveCampaigns(campaigns);
       }
@@ -116,6 +116,9 @@ const useMyCampaign = () => {
     getDeclineCampaigns,
     getActiveCampaigns,
     getPendingCampaigns,
+    setAcceptedCampaigns,
+    setDeclineCampaigns,
+    setPendingCampaigns,
   };
 };
 

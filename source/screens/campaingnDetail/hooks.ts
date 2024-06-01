@@ -10,9 +10,10 @@ const useCampaignDetails = () => {
     {} as Campaign,
   );
   const {userDetails} = useContext(AppContext);
-  const {userId} = userDetails;
+  const {_id} = userDetails;
 
   const getDetails = async (campaignId: string) => {
+    console.log('ididididid',campaignId);
     try {
       const url = `${getCampaignDetails}/${campaignId}`;
       const response = await APICaller.get(url);

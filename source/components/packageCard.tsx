@@ -11,7 +11,7 @@ import Color from '../../assets/color';
 interface Props {
   data: any;
   cardColor: string;
-  onPressCard: (offerId: string) => void;
+  onPressCard: any;
 }
 
 const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
@@ -23,6 +23,7 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
     number_of_package,
     rate,
     availed,
+    totalBookings,
   } = data;
   const categoryNames = service_name
     .map((item: any) => item?.sub_services)
@@ -50,13 +51,13 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Bookings</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {number_of_package}
+              {totalBookings}/{number_of_package}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Availed</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {availed}
+              {availed}/{availed}
             </Text>
           </View>
         </View>

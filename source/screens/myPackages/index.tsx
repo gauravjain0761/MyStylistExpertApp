@@ -10,7 +10,7 @@ import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import {Container, Text, Header, Image, PackageCard} from 'components';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useMyPackage from './hooks';
@@ -33,12 +33,13 @@ type Props = {
   route: RouteProp<RootStackParamList, 'MyPackages'>;
 };
 
-const MyPackages: FC<Props> = ({navigation}) => {
+const MyPackages: FC<Props> = () => {
   // const {myPackages, getmyPackages} = useMyPackage();
   const {getpackages} = useAppSelector(state => state?.packages);
   const [packages, setPackages] = useState(getpackages);
   const [page, setPage] = useState(1);
   const {userDetails, setLoading} = useContext(AppContext);
+  const navigation = useNavigation();
 
   const dispatch = useAppDispatch();
 
@@ -114,7 +115,7 @@ const MyPackages: FC<Props> = ({navigation}) => {
               return (
                 <PackageCard
                   data={item}
-                  onCardPress={(packageId: string) => {
+                  onPressCard={(packageId: any) => {
                     navigation.navigate('PackageDetail', {packageId});
                   }}
                   cardColor={cardsColor[colorIndex]}

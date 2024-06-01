@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import globalStyle from 'globalStyles';
@@ -24,6 +24,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
 import {RouteProp} from '@react-navigation/native';
 import moment from 'moment';
+import {useAppDispatch, useAppSelector} from 'store';
+import {getOfferOrders} from '../../Actions/offersAction';
+import {AppContext} from 'context';
 
 const initialLayout = {
   height: 0,
@@ -37,9 +40,10 @@ type Props = {
 
 const OfferDetail: FC<Props> = ({navigation, route}) => {
   const {offerDetails, getOfferDetail} = useOfferDetals();
+  const [page, setPage] = useState(1);
   const {
     service_name,
-    number_of_offers,
+    number_of_offers = 0,
     accepted_offers,
     start_date,
     end_date,
@@ -47,10 +51,12 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
     sub_services,
   } = offerDetails;
 
-  console.log('offerererer', sub_services);
-
   const startDate = moment(start_date).format('MMM DD, YYYY');
   const endDate = moment(end_date).format('MMM DD, YYYY');
+  const {getofferorder} = useAppSelector(state => state?.offers);
+  const {appointments} = getofferorder || {};
+
+  const [orders, setOrders] = useState([]);
 
   const {offerId} = route.params;
   const [index, setIndex] = useState<number>(0);
@@ -59,9 +65,38 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
     {key: 'Orders', title: 'Orders'},
   ]);
 
+  console.log(getofferorder);
+
+  const {userDetails} = useContext(AppContext);
+  const {_id} = userDetails;
+
   useEffect(() => {
+    getOrder();
     getOfferDetail(offerId);
   }, []);
+
+  useEffect(() => {
+    setOrders(appointments);
+  }, [getofferorder]);
+
+  const dispatch = useAppDispatch();
+
+  const getOrder = () => {
+    let obj = {
+      data: {
+        expertId: _id,
+        serviceType: 'Offer',
+        offerId: offerId,
+        page: page,
+        limit: 10,
+      },
+      onSuccess: (res: any) => {},
+      onFailure: (Err: any) => {
+        console.log('Errr', Err);
+      },
+    };
+    dispatch(getOfferOrders(obj));
+  };
 
   const renderScene = ({route}) => {
     switch (route.key) {
@@ -100,15 +135,11 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                 {'Services'}
               </Text>
               <View style={styles.servicesView}>
-                {service_name?.map((data, index) => {
-                  return (
-                    <View key={index} style={styles.serviceItem}>
-                      <Text size="sm" fontWeight="700" color="text-black">
-                        {data.service_name}
-                      </Text>
-                    </View>
-                  );
-                })}
+                <View key={index} style={styles.serviceItem}>
+                  <Text size="sm" fontWeight="700" color="text-black">
+                    {sub_services?.sub_service_id?.sub_service_name}
+                  </Text>
+                </View>
               </View>
               <Text
                 size="sm"
@@ -227,13 +258,13 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
         return (
           <View style={styles.pageView}>
             <FlatList
-              data={[1, 2, 3, 4, 5, 6]}
+              data={orders}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
               ListHeaderComponent={
                 <View style={styles.listHeader}>
                   <Text fontWeight="800" size="base">
-                    24 Bookings
+                    {orders?.length} Bookings
                   </Text>
                 </View>
               }
@@ -243,8 +274,9 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
               renderItem={({item, index}) => {
                 return (
                   <OfferOrderCard
-                    status={index == 3 ? 'Cancelled' : 'Pending'}
+                    status={item?.paymentStatus}
                     fullWidth={true}
+                    data={item}
                   />
                 );
               }}

@@ -40,7 +40,7 @@ const AppointmentCard: FC<Props> = ({
   onPreeCard,
 }) => {
   const {customerName, services, timeSlot, totalAmount, bookingNumber} = data;
-  const service = services.map(service => service?.service_name).toString();
+  const service = services.map(service => service?.service_name).join(', ');
   const {IMG_URL} = appConfig;
 
   const date = moment(timeSlot[0]?.availableDate).format('hh:mm A,DD MMM YYYY');

@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -46,6 +46,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   const {_id} = userDetails;
 
   const {createRoom} = endPoints;
+  const flatListRef = useRef<any>(null);
 
   const createChatRoom = async () => {
     try {
@@ -79,12 +80,19 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
     socket.emit('fetch_messages', joinRoom);
   };
 
+  const scrollToBottom = () => {
+    if (flatListRef?.current) {
+      setTimeout(() => {
+        flatListRef?.current?.scrollToEnd({animated: true});
+      }, 600);
+    }
+  };
+
   useEffect(() => {
     createChatRoom();
     socket.on('receive_message', (res: any) => {
-      console.log('receive_message', res);
       socket.emit('fetch_messages', roomId);
-      // setMessageList(list => [...list, res]);
+      setMessageList(list => [...list, res]);
     });
     socket.on('past_messages', (data: any) => {
       console.log('past_messages', data);

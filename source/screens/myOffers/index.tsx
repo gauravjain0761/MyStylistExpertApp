@@ -40,7 +40,7 @@ const MyOffers: FC<Props> = ({navigation}) => {
     let obj = {
       url: `${endPoints?.getAllOffersByUser}/${userDetails?._id}`,
       params: {
-        limit: 10,
+        limit: 4,
         page: 1,
       },
       onSuccess: (res: any) => {

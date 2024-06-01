@@ -5,7 +5,7 @@ import moment from 'moment';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
 import DatePicker from 'react-native-date-picker';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import {CreatePackageSheet, OrderplaceSheet, ServiceSheet} from 'bottomSheets';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
@@ -42,7 +42,7 @@ import {
 } from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {Purchase, offerData} from 'AppConstants';
-import {useAppSelector} from 'store';
+import {useAppDispatch, useAppSelector} from 'store';
 import FastImage from 'react-native-fast-image';
 import {appConfig} from '../../../config';
 import {AppContext} from 'context';
@@ -54,13 +54,18 @@ type Props = {
 };
 
 const CreatePackage: FC<Props> = () => {
+  const {userinfo} = useAppSelector(state => state?.common);
   const {bannerImage} = useAppSelector(state => state?.home);
   const [createPackageSheet, setCreatePackageSheet] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [orderPlaceSheet, setOrderPlaceSheet] = useState(false);
   const [banner, setBanner] = useState(bannerImage);
   const [selectDiscount, setSelectDiscount] = useState([]);
+  const {setLoading, userDetails} = useContext(AppContext);
   const {IMG_URL} = appConfig;
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+  const {state, district, city} = userinfo?.user || {};
 
   const {
     endDate,
@@ -80,7 +85,6 @@ const CreatePackage: FC<Props> = () => {
     subServicesSheet,
     additionalInfo,
     selectedSubServices,
-    createExpertPackage,
     setPrice,
     setEndDate,
     setDiscount,
@@ -101,8 +105,6 @@ const CreatePackage: FC<Props> = () => {
     removeServices,
     removeSubServices,
   } = useCreatePackage();
-
-  console.log('serviceaa', selectedServices, selectedSubServices);
 
   useEffect(() => {
     getAllServicesForMobile().then(() => {
@@ -130,6 +132,74 @@ const CreatePackage: FC<Props> = () => {
 
   const removeimage = () => {
     setSelectedImage([]);
+  };
+
+  const createExpertPackage = async () => {
+    setLoading(true);
+    try {
+      const services = selectedServices.map(service => {
+        const {service_name, _id} = service;
+        let subServicesList: Services[] = [];
+        selectedSubServices.forEach(element => {
+          const obj = {
+            sub_service_id: element._id,
+            sub_service_name: element.sub_service_name,
+          };
+          if (element.serviceId === _id) {
+            subServicesList.push(obj);
+          }
+        });
+        const item = {
+          service_id: _id,
+          service_name: service_name,
+          sub_services: subServicesList,
+        };
+        return item;
+      });
+
+      const sNamwe = JSON.stringify(services);
+      const sDate = moment(startDate).format('DD-MM-YYYY');
+      const eDate = moment(endDate).format('DD-MM-YYYY');
+
+      const body = new FormData();
+
+      body.append('expert_id', userDetails?._id);
+      body.append('package_name', packageName);
+      body.append('service_name', sNamwe);
+      body.append('number_of_package', purchaseLimit);
+      body.append('start_date', sDate);
+      body.append('end_date', eDate);
+      body.append('additional_information', additionalInfo);
+      body.append('status', 'Active');
+      body.append('discount', discount);
+      body.append('rate', price);
+      body.append('featured_image', {
+        uri: selectedImage?.uri,
+        name: selectedImage?.fileName,
+        type: selectedImage?.type,
+      });
+      body.append('state', JSON.stringify(state));
+      body.append('district', JSON.stringify(district));
+      body.append('city', JSON.stringify(city));
+      let obj = {
+        data: body,
+        onSuccess: (res: any) => {
+          setLoading(false);
+          NativeToast('Package created successfully');
+          navigation.goBack();
+        },
+        onFaliure: (Err: any) => {
+          setLoading(false);
+          console.log('Errrr', Err);
+          NativeToast('Something went wrong');
+        },
+      };
+      // dispatch(generatePackage(obj))
+    } catch (error) {
+      console.log('error of create offer', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

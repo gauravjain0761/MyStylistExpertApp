@@ -14,6 +14,10 @@ const usePackageDetail = () => {
     try {
       const url = `${getPackageDetails}/${packageId}`;
       const response = await APICaller.get(url);
+      const {data,status}=response||{}
+      if (status === 200 && data) {
+        setPackageDetails(data)
+      }
       console.log('response of getting package details', response);
     } catch (error) {
       console.log('response of getting package details', error);

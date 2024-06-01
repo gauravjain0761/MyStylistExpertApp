@@ -88,7 +88,8 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {name, addresses, district} = user?.user || {};
 
   const dispatch = useAppDispatch();
-  const {setLoading, userDetails, location} = useContext(AppContext);
+  const {setLoading, userDetails, location, setLocation} =
+    useContext(AppContext);
   const {IMG_URL} = appConfig;
   const {_id} = userDetails;
   const {appointments} = appointment || [];
@@ -119,6 +120,8 @@ const Home: FC<Props> = ({navigation, route}) => {
           async (res: any) => {
             console.log('ress', res?.results?.[0]?.formatted_address);
             await setAsyncLocation(res?.results?.[0]?.formatted_address);
+            setLocation(res?.results?.[0]?.formatted_address);
+            setVisible(false);
           },
           async (Err: any) => {
             console.log('Home screen Get Address', Err);

@@ -1,10 +1,9 @@
 export const appConfig = {
   mainDomain: 'https://api.mystylist.in/',
-  IMG_URL:"https://mystylist-media.s3.amazonaws.com",
-  user_work_images_url:'https://api.mystylist.in/uploads/user_work_images/resized/'
-
+  IMG_URL: 'https://mystylist-media.s3.amazonaws.com',
+  user_work_images_url:
+    'https://api.mystylist.in/uploads/user_work_images/resized/',
 };
-
 
 export const endPoints = {
   expertLogin: `user/expert-login`,
@@ -47,15 +46,17 @@ export const endPoints = {
   jobApply: `JobApplication/applyJobApplication`,
   getJobDetails: 'salonJob/getJobsDetails',
   getProductListItems: `/product/getAlllProductName`,
-  getAllBanner:`banner/getAllBannerForExpert/Top/Stylist`,
-  getUpcomingAppointments:`appointment/getUpcomingAppointments`,
-  getPastAppointments:`appointment/getPastAppointments`,
-  topService:`appointment/getTopServices`,
-  getExpertnewSeubServices:`demo/getAllServiceSubServices`,
-  getAllExpertTopReview:`review/getAllExpertTopReview`,
-  uploadSubService:`service/uploadSubServiceImage`,
-  stylistWorkImage:`stylistWorkImages/getStylistWorkImages`
+  getAllBanner: `banner/getAllBannerForExpert/Top/Stylist`,
+  getUpcomingAppointments: `appointment/getUpcomingAppointments`,
+  getPastAppointments: `appointment/getPastAppointments`,
+  topService: `appointment/getTopServices`,
+  getExpertnewSeubServices: `demo/getAllServiceSubServices`,
+  getAllExpertTopReview: `review/getAllExpertTopReview`,
+  uploadSubService: `service/uploadSubServiceImage`,
+  stylistWorkImage: `stylistWorkImages/getStylistWorkImages`,
+  campaignAccept: `campaign/campaignAcceptDecline`,
+  OfferOrders: `appointment/getOfferOrders`,
 };
 
-export const POST = "POST";
-export const GET = "GET";
+export const POST = 'POST';
+export const GET = 'GET';

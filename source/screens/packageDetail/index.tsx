@@ -37,8 +37,16 @@ type Props = {
 
 const PackageDetail: FC<Props> = ({route}) => {
   const {getPackageDetail, packageDetails} = usePackageDetail();
-  const {start_date, end_date, service_name, number_of_package} =
-    packageDetails;
+  const {
+    package_name,
+    service_name,
+    rate,
+    start_date,
+    end_date,
+    additional_information,
+    number_of_package = 0,
+    sub_services,
+  } = packageDetails?.packageData || {};
   const {packageId} = route.params;
   const [index, setIndex] = useState<number>(0);
   const [routes, setRoutes] = useState<Array<Route>>([
@@ -50,6 +58,8 @@ const PackageDetail: FC<Props> = ({route}) => {
   useEffect(() => {
     getPackageDetail(packageId);
   }, []);
+
+  console.log('pakdsssk odfxfdsd', service_name, sub_services);
 
   const renderScene = ({route}) => {
     switch (route.key) {
@@ -87,6 +97,17 @@ const PackageDetail: FC<Props> = ({route}) => {
                 fontWeight="700">
                 Services
               </Text>
+              <View style={styles.servicesView}>
+                {service_name?.map((data, index) => {
+                  return (
+                    <View key={index} style={styles.serviceItem}>
+                      <Text size="sm" fontWeight="800">
+                        {data.service_name}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
               <Text
                 size="sm"
                 color="text-darkGrey"
@@ -94,21 +115,8 @@ const PackageDetail: FC<Props> = ({route}) => {
                 fontWeight="700">
                 {'About this campaign'}
               </Text>
-              <View style={styles.servicesView}>
-                {service_name?.map((data, index) => {
-                  return (
-                    <View key={index} style={styles.serviceItem}>
-                      <Text size="sm" fontWeight="800">
-                        {data.category_name}
-                      </Text>
-                    </View>
-                  );
-                })}
-              </View>
               <Text size="sm" margin="mt-2" fontWeight="600">
-                {
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
-                }
+                {additional_information}
               </Text>
               <Text size="sm" margin="mt-5" fontWeight="600">
                 {'Maximum Limit Orders: '}
@@ -126,7 +134,7 @@ const PackageDetail: FC<Props> = ({route}) => {
                     {'Package price'}
                   </Text>
                   <Text size="base" fontWeight="800">
-                    {'$36'}
+                    ₹{rate}
                   </Text>
                 </View>
                 <View style={styles.detailViewSub}>
@@ -138,7 +146,7 @@ const PackageDetail: FC<Props> = ({route}) => {
                     {'Bookings'}
                   </Text>
                   <Text size="base" margin="mt-0.5" fontWeight="800">
-                    {`23/${number_of_package}`}
+                    {number_of_package}
                   </Text>
                 </View>
                 <View style={styles.detailViewSub}>
@@ -150,7 +158,7 @@ const PackageDetail: FC<Props> = ({route}) => {
                     {'Availed'}
                   </Text>
                   <Text size="base" fontWeight="800">
-                    {`15/${number_of_package}`}
+                    {number_of_package}
                   </Text>
                 </View>
               </View>

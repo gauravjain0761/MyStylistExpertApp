@@ -21,8 +21,15 @@ interface Props {
 }
 
 const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
-  const {_id, end_date, sub_services, offer_name, number_of_offers, availed} =
-    data;
+  const {
+    _id,
+    end_date,
+    sub_services,
+    offer_name,
+    number_of_offers,
+    availed,
+    totalBookings,
+  } = data;
   const expiryDate = moment(end_date).format('DD MMM, YYYY');
 
   return (
@@ -47,13 +54,13 @@ const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Bookings</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {number_of_offers}
+              {totalBookings}/{number_of_offers}
             </Text>
           </View>
           <View style={styles.priceView}>
             <RNText style={styles?.pricelable}>Availed</RNText>
             <Text size="lg" fontWeight={'700'} color="text-black">
-              {availed}
+              {availed}/{availed}
             </Text>
           </View>
         </View>
