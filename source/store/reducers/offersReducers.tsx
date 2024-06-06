@@ -8,10 +8,17 @@ const initialState = {
 export default function (state = initialState, action: any) {
   switch (action?.type) {
     case GET_OFFERS: {
-      return {
-        ...state,
-        getoffers: action.payload,
-      };
+      if (action?.payload?.page == 1) {
+        return {
+          ...state,
+          getoffers: action.payload?.offers,
+        };
+      } else {
+        return {
+          ...state,
+          getoffers: [...state?.getoffers, ...action?.payload?.offers],
+        };
+      }
     }
     case GET_OFFER_ORDER: {
       return {

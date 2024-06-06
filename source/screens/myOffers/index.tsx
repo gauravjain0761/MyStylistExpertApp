@@ -1,5 +1,12 @@
 import React, {FC, useContext, useEffect, useState} from 'react';
-import {Pressable, View, FlatList, StyleSheet, Text} from 'react-native';
+import {
+  Pressable,
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {Container, Header, Image, OffersCard} from 'components';
 import globalStyle from 'globalStyles';
 import tw from 'rn-tailwind';
@@ -34,6 +41,8 @@ const MyOffers: FC<Props> = ({navigation}) => {
   const {setLoading, userDetails} = useContext(AppContext);
   const {getoffers} = useAppSelector(state => state?.offers);
   const [offers, setOffers] = useState(getoffers);
+  const [page, setPage] = useState(1);
+  const [footerLoading, setFooterLoading] = useState(false);
 
   const getMyOffers = (isLoading: boolean) => {
     setLoading(isLoading);
@@ -41,17 +50,27 @@ const MyOffers: FC<Props> = ({navigation}) => {
       url: `${endPoints?.getAllOffersByUser}/${userDetails?._id}`,
       params: {
         limit: 4,
-        page: 1,
+        page: page,
       },
+      page: page,
       onSuccess: (res: any) => {
+        setPage(page + 1);
+        setFooterLoading(false);
         setLoading(false);
       },
       onFailure: (Err: any) => {
+        console.log('errrrr', Err);
+        setFooterLoading(false);
         setLoading(false);
-        NativeToast(Err?.data?.message);
       },
     };
     dispatch(getallOffers(obj));
+  };
+
+  const onScollEnd = () => {
+    console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+    setFooterLoading(true);
+    getMyOffers(false);
   };
 
   useEffect(() => {
@@ -69,13 +88,11 @@ const MyOffers: FC<Props> = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  console.log('offererere', offers);
-
   return (
     <Container>
       <View style={globalStyle.container}>
         <Header
-          title={`Offers (${offers?.offers?.length || '0'})`}
+          title={`Offers (${offers?.length || '0'})`}
           rightView={
             <View style={styles.headerRight}>
               <Pressable
@@ -101,10 +118,13 @@ const MyOffers: FC<Props> = ({navigation}) => {
         />
         <View style={styles.mainView}>
           <FlatList
-            data={offers?.offers}
+            data={offers}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listView}
+            style={{flexGrow: 1}}
             keyExtractor={(item, index) => index.toString()}
+            onEndReached={() => onScollEnd()}
+            onEndReachedThreshold={0.1}
             ListEmptyComponent={
               <Text size="base" style={tw`self-center mt-70`}>
                 {'No Offer found'}
@@ -125,6 +145,7 @@ const MyOffers: FC<Props> = ({navigation}) => {
               );
             }}
           />
+          {footerLoading && <ActivityIndicator />}
         </View>
       </View>
     </Container>

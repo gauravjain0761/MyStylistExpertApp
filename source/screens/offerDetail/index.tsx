@@ -65,8 +65,6 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
     {key: 'Orders', title: 'Orders'},
   ]);
 
-  console.log(getofferorder);
-
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 

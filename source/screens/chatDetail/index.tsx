@@ -78,13 +78,14 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
 
   const getoldMessages = (joinRoom: String) => {
     socket.emit('fetch_messages', joinRoom);
+    scrollToBottom();
   };
 
   const scrollToBottom = () => {
     if (flatListRef?.current) {
       setTimeout(() => {
         flatListRef?.current?.scrollToEnd({animated: true});
-      }, 600);
+      }, 300);
     }
   };
 
@@ -93,9 +94,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
     socket.on('receive_message', (res: any) => {
       socket.emit('fetch_messages', roomId);
       setMessageList(list => [...list, res]);
+      scrollToBottom();
     });
     socket.on('past_messages', (data: any) => {
-      console.log('past_messages', data);
       const messages = data?.messages.map((item: any) => {
         const messageData = {
           chatId: item.chat,
@@ -106,6 +107,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         return messageData;
       });
       setMessageList(messages);
+      scrollToBottom();
     });
 
     socket.on('user_typing', data => {
@@ -129,6 +131,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         time: new Date(),
       };
       socket.emit('send_message', messageData);
+      scrollToBottom();
       socket.emit('fetch_messages', roomId);
       setMessage('');
     }
@@ -202,6 +205,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
           <View style={styles.chatView}>
             <FlatList
               data={messageList}
+              ref={flatListRef}
               showsVerticalScrollIndicator={false}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderChatList}

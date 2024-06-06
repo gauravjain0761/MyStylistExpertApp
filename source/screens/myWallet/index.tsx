@@ -1,15 +1,64 @@
-import React, {FC} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
 import {NativeToast, h, w} from 'utils';
 import globalStyle from 'globalStyles';
 import {PLEASE_LOGIN, PHONE_NUMBER} from 'AppConstants';
 import {Image, Text, Container, Button, TextInput, Header} from 'components';
 import {style} from 'twrnc';
 import Color from '../../../assets/color';
+import {useAppDispatch, useAppSelector} from 'store';
+import {myWallet} from '../../Actions/walletAction';
+import {AppContext} from 'context';
+import moment from 'moment';
 
 const MyWallet: FC = () => {
+  const {userDetails, setLoading} = useContext(AppContext);
+  const {Wallet} = useAppSelector(state => state?.wallet);
+  const [footerLoading, setFooterLoading] = useState(false);
+  const [page, setpage] = useState(1);
+
+  const {_id} = userDetails;
+
+  const {
+    totalEarnings = 0,
+    averageEarningsByMonth = 0,
+    averageEarnings = 0,
+    totalClients = 0,
+    appointments = [],
+  } = Wallet.length || Object.values(Wallet).length ? Wallet : {};
+  const getMonth = moment(averageEarningsByMonth).format('MMMM');
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    getWallet(true);
+  }, []);
+
+  const getWallet = (isLoading: boolean) => {
+    setLoading(isLoading);
+    const obj = {
+      data: {
+        expertId: _id,
+        page: page,
+        limit: 10,
+      },
+      page: page,
+      onSuccess: (res: any) => {
+        setFooterLoading(false);
+        setLoading(false);
+        setpage(page + 1);
+      },
+      onFailure: (Err: any) => {
+        setFooterLoading(false);
+        setLoading(false);
+        console.log('Error', Err);
+      },
+    };
+    dispatch(myWallet(obj));
+  };
+
   const RenderList = ({item, index}: any) => {
     return (
       <View key={index} style={styles.transactionItem}>
@@ -22,17 +71,23 @@ const MyWallet: FC = () => {
         </View>
         <View style={styles.itemDetail}>
           <Text numberOfLines={1} size="sm" fontWeight="800">
-            {'Standard Charter'}
+            {item?.service_name}
           </Text>
           <Text size="xs" color="text-gray-500">
-            {'May 23, 2023'}
+            {moment(item?.time[0]?.availableDate).format('MMM DD, YYYY')}
           </Text>
         </View>
         <Text size="base" fontWeight="800">
-          {'₹ 3.59'}
+          {'₹ '}
+          {item?.price}
         </Text>
       </View>
     );
+  };
+
+  const onScollEnd = () => {
+    setFooterLoading(true);
+    getWallet(false);
   };
 
   return (
@@ -46,7 +101,7 @@ const MyWallet: FC = () => {
                 ₹
               </Text>
               <Text size="3xl" fontWeight="800">
-                10,000
+                {totalEarnings}
               </Text>
             </View>
             <Text size="xs" margin="" color="text-gray-500">
@@ -61,10 +116,16 @@ const MyWallet: FC = () => {
                 globalStyle.bothContentCenter,
               ]}>
               <Text size="lg" fontWeight="800">
-                {'₹ 2,304'}
+                {'₹ '}
+                {
+                  Object.values(
+                    !!averageEarningsByMonth && averageEarningsByMonth,
+                  )?.[0]
+                }
               </Text>
               <Text size="xs" margin="mt-1" color="text-gray-500">
-                {'October Earning'}
+                {getMonth}
+                {' Earning'}
               </Text>
             </View>
             <View
@@ -74,7 +135,8 @@ const MyWallet: FC = () => {
                 globalStyle.bothContentCenter,
               ]}>
               <Text size="lg" fontWeight="800">
-                {'₹ 23..09'}
+                {'₹ '}
+                {averageEarnings}
               </Text>
               <Text size="xs" margin="mt-1" color="text-gray-500">
                 {'Avg. Earning'}
@@ -87,7 +149,7 @@ const MyWallet: FC = () => {
                 globalStyle.bothContentCenter,
               ]}>
               <Text size="lg" fontWeight="800">
-                {'20'}
+                {totalClients}
               </Text>
               <Text size="xs" margin="mt-1" color="text-gray-500">
                 {'Total Clients'}
@@ -104,13 +166,20 @@ const MyWallet: FC = () => {
           </View>
           <View style={styles.listView}>
             <FlatList
-              data={[1, 2, 3, 4, 5]}
+              data={appointments?.flatMap(item =>
+                item?.services?.map(service => {
+                  return {...service, time: item?.timeSlot};
+                }),
+              )}
               renderItem={RenderList}
               contentContainerStyle={styles.listViewContainer}
               showsVerticalScrollIndicator={false}
+              onEndReached={onScollEnd}
+              onEndReachedThreshold={150}
               keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
+            {footerLoading && <ActivityIndicator />}
           </View>
         </View>
       </View>

@@ -32,14 +32,15 @@ export const getallOffers =
       .then(async (response: any) => {
         if (response.status === 200) {
           if (request.onSuccess) request.onSuccess(response.data);
+          const data = {...response?.data, page: request?.page};
           dispatch({
             type: GET_OFFERS,
-            payload: response?.data,
+            payload: data,
           });
         }
       })
       .catch(error => {
-        if (request.onFailure) request.onFailure(error.response);
+        if (request.onFailure) request.onFailure(error);
       });
   };
 

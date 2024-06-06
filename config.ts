@@ -56,6 +56,7 @@ export const endPoints = {
   stylistWorkImage: `stylistWorkImages/getStylistWorkImages`,
   campaignAccept: `campaign/campaignAcceptDecline`,
   OfferOrders: `appointment/getOfferOrders`,
+  MyWallet: `appointment/myWallet`,
 };
 
 export const POST = 'POST';

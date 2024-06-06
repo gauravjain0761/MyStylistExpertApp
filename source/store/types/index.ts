@@ -13,3 +13,4 @@ export const GET_EXPERTS_MEDIA = 'GET_EXPERTS_MEDIA';
 export const GET_TOP_REVIEWS = 'GET_TOP_REVIEWS';
 export const GET_SERVICES = 'GET_SERVICES';
 export const GET_OFFER_ORDER = 'GET_OFFER_ORDER';
+export const WALLET = 'WALLET';
