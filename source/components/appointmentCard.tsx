@@ -8,6 +8,7 @@ import {
   Button,
   TouchableOpacity,
   ImageBackground,
+  Linking,
 } from 'react-native';
 import tw from 'rn-tailwind';
 import {Image, Text} from 'components';
@@ -43,6 +44,10 @@ const AppointmentCard: FC<Props> = ({
   const service = services.map(service => service?.service_name).join(', ');
   const {IMG_URL} = appConfig;
 
+  const onPressCall = () => {
+    Linking.openURL('tel:+91 0123456789');
+  };
+
   const date = moment(timeSlot[0]?.availableDate).format('hh:mm A,DD MMM YYYY');
   return (
     <Pressable
@@ -69,7 +74,7 @@ const AppointmentCard: FC<Props> = ({
                 <Image style={styles.iconstyle} source={images.chaticon} />
                 <RNText style={styles.label}>Chat</RNText>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.buttons}>
+              <TouchableOpacity onPress={onPressCall} style={styles.buttons}>
                 <Image
                   style={[styles.callIconstyle]}
                   source={images.callicon}

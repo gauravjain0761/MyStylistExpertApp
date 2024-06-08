@@ -5,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
   Text as RNText,
+  ActivityIndicator,
 } from 'react-native';
 import tw from 'rn-tailwind';
 import images from 'images';
@@ -40,11 +41,11 @@ const MyPackages: FC<Props> = () => {
   const [page, setPage] = useState(1);
   const {userDetails, setLoading} = useContext(AppContext);
   const navigation = useNavigation();
+  const [footerLoading, setFooterLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log('okkkk', getpackages);
     if (getpackages.length || Object.values(getpackages).length > 0) {
       getmyPackages(false);
     } else {
@@ -64,22 +65,32 @@ const MyPackages: FC<Props> = () => {
         limit: 10,
         page: page,
       },
+      page: page,
       onSuccess: (res: any) => {
         setLoading(false);
-        console.log('resss', res);
+        setPage(page + 1);
+        setFooterLoading(false);
       },
       onFailure: (Err: any) => {
         setLoading(false);
+        setFooterLoading(false);
       },
     };
     dispatch(getAllPackage(obj));
+  };
+
+  const onScollEnd = () => {
+    if (packages?.packages?.length >= 5) {
+      setFooterLoading(true);
+      getmyPackages(false);
+    }
   };
 
   return (
     <Container>
       <View style={globalStyle.container}>
         <Header
-          title={`Packages (${packages?.packages?.length || '0'})`}
+          title={`Packages (${packages?.length || '0'})`}
           rightView={
             <View style={styles.headerRight}>
               <Pressable
@@ -105,9 +116,12 @@ const MyPackages: FC<Props> = () => {
         />
         <View style={styles.mainView}>
           <FlatList
-            data={packages?.packages}
+            data={packages}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listView}
+            style={{flex: 1}}
+            onEndReached={() => onScollEnd()}
+            onEndReachedThreshold={0.5}
             keyExtractor={(item, index) => index.toString()}
             ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
             renderItem={({item, index}) => {
@@ -123,6 +137,7 @@ const MyPackages: FC<Props> = () => {
               );
             }}
           />
+          {footerLoading && <ActivityIndicator />}
         </View>
       </View>
     </Container>

@@ -61,12 +61,6 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
     getDeclineCampaigns();
   }, []);
 
-  useEffect(() => {
-    setAcceptedCampaigns(acceptedCompaigns);
-    setDeclineCampaigns(declineCompaigns);
-    setPendingCampaigns(pendingCompaigns);
-  }, [getDeclineCampaigns, getPendingCampaigns, getAcceptedCampaigns]);
-
   const {userDetails, setLoading} = useContext(AppContext);
   const {_id} = userDetails || {};
   const dispatch = useAppDispatch();
@@ -179,11 +173,11 @@ const MyCampaigns: FC<Props> = ({navigation}) => {
             <FlatList
               bounces={false}
               data={declineCompaigns}
-              maxToRenderPerBatch={20}
-              scrollEventThrottle={400}
               contentContainerStyle={styles.listContainer}
               alwaysBounceVertical={false}
               showsVerticalScrollIndicator={false}
+              onEndReached={() => console.log('okoookoookokokokok')}
+              onEndReachedThreshold={0.5}
               ListEmptyComponent={
                 <View style={styles?.empty}>
                   <Text style={styles?.emptyTitle}>No Declined Campaigns</Text>

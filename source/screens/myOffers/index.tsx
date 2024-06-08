@@ -49,7 +49,7 @@ const MyOffers: FC<Props> = ({navigation}) => {
     let obj = {
       url: `${endPoints?.getAllOffersByUser}/${userDetails?._id}`,
       params: {
-        limit: 4,
+        limit: 10,
         page: page,
       },
       page: page,
@@ -68,7 +68,6 @@ const MyOffers: FC<Props> = ({navigation}) => {
   };
 
   const onScollEnd = () => {
-    console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
     setFooterLoading(true);
     getMyOffers(false);
   };

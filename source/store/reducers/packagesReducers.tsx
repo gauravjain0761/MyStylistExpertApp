@@ -7,10 +7,17 @@ const initialState = {
 export default function (state = initialState, action: any) {
   switch (action?.type) {
     case GET_PACKAGES: {
-      return {
-        ...state,
-        getpackages: action.payload,
-      };
+      if (action?.payload?.page == 1) {
+        return {
+          ...state,
+          getpackages: action?.payload?.packages,
+        };
+      } else {
+        return {
+          ...state,
+          getpackages: [...state?.getpackages, ...action?.payload?.packages],
+        };
+      }
     }
     default:
       return state;

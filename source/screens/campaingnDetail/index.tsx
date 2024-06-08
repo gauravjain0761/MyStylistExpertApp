@@ -49,7 +49,9 @@ const CompaignDetail: FC<Props> = ({route}) => {
     service_name,
     description,
     fileName,
-  } = campaignDetails;
+  } = campaignDetails || {};
+
+  console.log('oojojoojojoj', campaignDetails);
 
   const sDate = moment(startDate).format('MMM DD, YYYY');
   const eDate = moment(endDate).format('MMM DD, YYYY');

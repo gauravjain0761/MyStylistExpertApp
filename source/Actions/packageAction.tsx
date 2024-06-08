@@ -48,9 +48,10 @@ export const getAllPackage =
       .then(async (response: any) => {
         if (response.status === 200 || response.status === 201) {
           if (request.onSuccess) request.onSuccess(response.data);
+          const data = {...response?.data, page: request?.page};
           dispatch({
             type: GET_PACKAGES,
-            payload: response?.data,
+            payload: data,
           });
         }
       })

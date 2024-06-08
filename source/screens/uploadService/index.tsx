@@ -156,7 +156,6 @@ const ServiceUpload: FC = () => {
       },
       onFailure: (Err: any) => {
         console.log('Errrr', Err);
-
         setLoading(false);
         NativeToast(Err?.data?.message);
       },
