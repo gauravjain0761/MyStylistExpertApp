@@ -76,7 +76,7 @@ export const getOfferOrders =
     };
 
     return makeAPIRequest({
-      url: endPoints?.OfferOrders,
+      url: endPoints?.getOrders,
       method: POST,
       headers: headers,
       data: request?.data,
@@ -84,7 +84,8 @@ export const getOfferOrders =
       .then(async (response: any) => {
         if (response.status === 200 || response.status === 201) {
           if (request.onSuccess) request.onSuccess(response.data);
-          dispatch({type: GET_OFFER_ORDER, payload: response?.data});
+          const data = {...response?.data, page: request?.page};
+          dispatch({type: GET_OFFER_ORDER, payload: data});
         }
       })
       .catch(error => {

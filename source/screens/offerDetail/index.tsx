@@ -18,6 +18,7 @@ import {
   ScrollView,
   Pressable,
   Image as RnImage,
+  ActivityIndicator,
 } from 'react-native';
 import useOfferDetals from './hooks';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -40,6 +41,7 @@ type Props = {
 
 const OfferDetail: FC<Props> = ({navigation, route}) => {
   const {offerDetails, getOfferDetail} = useOfferDetals();
+  const [footerLoading, setFooterLoading] = useState(false);
   const [page, setPage] = useState(1);
   const {
     service_name,
@@ -88,12 +90,25 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
         page: page,
         limit: 10,
       },
-      onSuccess: (res: any) => {},
+      page: page,
+      onSuccess: (res: any) => {
+        setPage(page + 1);
+        setFooterLoading(false);
+        console.log('resssss', res);
+      },
       onFailure: (Err: any) => {
-        console.log('Errr', Err);
+        console.log('Errr', Err?.data?.message);
+        setFooterLoading(false);
       },
     };
     dispatch(getOfferOrders(obj));
+  };
+
+  const onEndReached = () => {
+    if (orders?.length > 5) {
+      setFooterLoading(true);
+      getOrder();
+    }
   };
 
   const renderScene = ({route}) => {
@@ -259,6 +274,9 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
               data={orders}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
+              style={{flex: 1}}
+              onEndReached={onEndReached}
+              onEndReachedThreshold={0.5}
               ListHeaderComponent={
                 <View style={styles.listHeader}>
                   <Text fontWeight="800" size="base">
@@ -279,6 +297,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                 );
               }}
             />
+            {footerLoading && <ActivityIndicator />}
           </View>
         );
       }

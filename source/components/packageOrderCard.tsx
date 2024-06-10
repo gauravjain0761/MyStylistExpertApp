@@ -4,12 +4,14 @@ import tw from 'rn-tailwind';
 import {Text, Image} from 'components';
 import images from 'images';
 import globalStyle from 'globalStyles';
+import moment from 'moment';
 
 interface Props {
   fullWidth?: boolean;
   homeScreen?: boolean;
   status: 'Pending' | 'Completed' | 'Cancelled';
   onPreeCard?: () => void;
+  data: any;
 }
 
 const PackageOrderCard: FC<Props> = ({
@@ -17,7 +19,21 @@ const PackageOrderCard: FC<Props> = ({
   fullWidth = false,
   homeScreen = false,
   onPreeCard,
+  data,
 }) => {
+  const {
+    bookingNumber,
+    customerName,
+    timeSlot,
+    status: Nstatus,
+    services,
+    expertDetails,
+  } = data || {};
+  const {availableDate, availableTime} = timeSlot?.[0];
+  const {addresses, district} = expertDetails || {};
+  const {address} = addresses?.[0] || {};
+  const {district_name} = district?.[0] || {};
+  const date = moment(availableDate).format('DD MMMM YYYY,');
   return (
     <Pressable
       onPress={() => {
@@ -26,13 +42,13 @@ const PackageOrderCard: FC<Props> = ({
       style={[styles.upcomingItemContainer, fullWidth && styles.cardFullWidth]}>
       <View style={[styles.upcomingItemHeader, !homeScreen && styles[status]]}>
         <Text size="sm" fontWeight="700">
-          Booking ID: #25
+          Booking ID: #{bookingNumber}
         </Text>
       </View>
       <View style={styles.cardDetailView}>
         <View style={styles.upcomingItemName}>
           <Text fontWeight="700" color="text-darkGrey" size="lg">
-            {'Nico Robin'}
+            {customerName}
           </Text>
           <View style={styles.upcomingDetails}>
             <Image
@@ -41,7 +57,9 @@ const PackageOrderCard: FC<Props> = ({
               source={images.LocationIcon}
             />
             <Text size="xs" color="text-darkGrey">
-              {'America, Las Vagas'}
+              {address?.sector}
+              {', '}
+              {district_name}
             </Text>
           </View>
           <View style={styles.upcomingDetails}>
@@ -51,14 +69,15 @@ const PackageOrderCard: FC<Props> = ({
               source={images.CalendarIcon}
             />
             <Text size="xs" color="text-darkGrey">
-              {'22 October 2023, 08:30'}
+              {date}
+              {availableTime}
             </Text>
           </View>
         </View>
         <View style={styles.pendingView}>
           <View style={[styles.statusView, globalStyle.bothContentCenter]}>
             <Text fontWeight="700" color="text-black" size="sm">
-              {status}
+              {Nstatus || status}
             </Text>
           </View>
         </View>
@@ -66,22 +85,18 @@ const PackageOrderCard: FC<Props> = ({
       <View style={styles.dotWrap}>
         <View style={[styles.dots, globalStyle.dotedLine]}></View>
       </View>
-      <View style={styles.serviceItems}>
-        <Text size="sm" fontWeight="700" color="text-darkGrey">
-          {'2X Haircutting'}
-        </Text>
-        <Text size="sm" fontWeight="800">
-          {'Complete'}
-        </Text>
-      </View>
-      <View style={styles.serviceItems}>
-        <Text size="sm" fontWeight="700" color="text-darkGrey">
-          {'2X Beard Trim'}
-        </Text>
-        <Text size="sm" fontWeight="800">
-          {'Pending'}
-        </Text>
-      </View>
+      {services?.map(service => {
+        return (
+          <View style={styles.serviceItems}>
+            <Text size="sm" fontWeight="700" color="text-darkGrey">
+              {service?.service_name}
+            </Text>
+            <Text size="sm" fontWeight="800">
+              {'Complete'}
+            </Text>
+          </View>
+        );
+      })}
     </Pressable>
   );
 };
@@ -107,7 +122,7 @@ const styles = {
     borderStyle: 'dashed',
     borderColor: 'grey',
   },
-  serviceItems: tw`w-full flex-row h-8 mt-1 items-center justify-between px-4`,
+  serviceItems: tw`w-full flex-row mt-1 py-1 items-center justify-between px-4`,
 };
 
 export default PackageOrderCard;

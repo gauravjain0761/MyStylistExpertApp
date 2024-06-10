@@ -78,7 +78,6 @@ const ServiceUpload: FC = () => {
             }));
             setSelectedImage([...selectedImage, ...newData]);
           }
-          // Data.map((item, index) => console.log('itemData', item));
         },
       );
     } catch (error) {
@@ -138,16 +137,21 @@ const ServiceUpload: FC = () => {
 
   const uploadImage = () => {
     let Data = new FormData();
+
+    let imageData = selectedMain.map((item, index) => {
+      return {
+        uri: selectedMain[index]?.uri,
+        name: selectedMain[index]?.name,
+        type: selectedMain[index]?.type,
+      };
+    });
     Data.append('user', _id);
     Data.append('service', data?.service_id);
     Data.append('sub_services', data?.sub_service_id);
-    selectedMain.map((item, index) => {
-      Data.append('userWorkimages', {
-        uri: selectedMain[index]?.uri,
-        name: selectedImage[index]?.name,
-        type: selectedImage[index]?.type,
-      });
-    });
+    Data.append('userWorkimages', imageData);
+
+    console.log('imagessss', imageData);
+
     let obj = {
       data: Data,
       onSuccess: (res: any) => {
@@ -165,7 +169,6 @@ const ServiceUpload: FC = () => {
     } else {
       setLoading(true);
       dispatch(uploadSubService(obj));
-      // console.log('okook', obj.data);
     }
   };
 
@@ -324,8 +327,9 @@ const styles = StyleSheet.create({
   imagecontainer: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-    marginHorizontal: wp(24),
+    marginLeft: wp(24),
     marginTop: hp(13),
+    marginRight: wp(16),
   },
   trashIcon: {
     width: wp(24),

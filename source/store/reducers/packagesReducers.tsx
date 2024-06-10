@@ -1,7 +1,8 @@
-import {GET_PACKAGES} from '../types';
+import {GET_PACKAGES, GET_PACKAGE_ORDER} from '../types';
 
 const initialState = {
   getpackages: [],
+  getpackageorder: [],
 };
 
 export default function (state = initialState, action: any) {
@@ -16,6 +17,22 @@ export default function (state = initialState, action: any) {
         return {
           ...state,
           getpackages: [...state?.getpackages, ...action?.payload?.packages],
+        };
+      }
+    }
+    case GET_PACKAGE_ORDER: {
+      if (action?.payload?.page == 1) {
+        return {
+          ...state,
+          getpackageorder: action?.payload?.appointments,
+        };
+      } else {
+        return {
+          ...state,
+          getpackageorder: [
+            ...state?.getpackageorder,
+            ...action?.payload?.appointments,
+          ],
         };
       }
     }

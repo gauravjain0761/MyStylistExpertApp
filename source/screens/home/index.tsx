@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text as RNText,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import React, {FC, useContext, useEffect, useState} from 'react';
 import Container from '../../components/container';
@@ -26,6 +27,7 @@ import {
   HomeHeader,
   Image,
   Locationmodal,
+  Text,
 } from 'components';
 import tw from 'rn-tailwind';
 import {
@@ -82,6 +84,8 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {userinfo} = useAppSelector(state => state?.common);
   const {appointment} = useAppSelector(state => state.home);
   const {topServices} = useAppSelector(state => state?.service);
+  const [footerLoading, setFooterLoading] = useState(false);
+  const [page, setPage] = useState(1);
 
   const [user, setUser] = useState(userinfo);
 
@@ -101,7 +105,7 @@ const Home: FC<Props> = ({navigation, route}) => {
       getUserDetail();
       getBanners();
       getAppointment();
-      getTopServices();
+      getTopServices(true);
     }, 1000);
     return () => {
       clearInterval(clean);
@@ -118,7 +122,6 @@ const Home: FC<Props> = ({navigation, route}) => {
         await getAddress(
           response,
           async (res: any) => {
-            console.log('ress', res?.results?.[0]?.formatted_address);
             await setAsyncLocation(res?.results?.[0]?.formatted_address);
             setLocation(res?.results?.[0]?.formatted_address);
             setVisible(false);
@@ -207,22 +210,29 @@ const Home: FC<Props> = ({navigation, route}) => {
     dispatch(getUserDetails(obj));
   };
 
-  const getTopServices = () => {
-    setLoading(true);
+  const getTopServices = (isLoading: boolean) => {
+    setLoading(isLoading);
     let obj = {
       data: {
         limit: 10,
-        page: 1,
+        page: page,
       },
       onSuccess: (res: any) => {
+        setPage(page + 1);
         setLoading(false);
+        setFooterLoading(false);
       },
       onFailure: (Err: any) => {
         setLoading(false);
         NativeToast(Err?.data?.message);
+        setFooterLoading(false);
       },
     };
     dispatch(TopService(obj));
+  };
+
+  const onEndReached = () => {
+    getTopServices(false);
   };
 
   return (
@@ -392,6 +402,11 @@ const Home: FC<Props> = ({navigation, route}) => {
                 horizontal={true}
                 contentContainerStyle={styles.horizontalList}
                 showsHorizontalScrollIndicator={false}
+                style={{flex: 1}}
+                ListFooterComponentStyle={styles?.footerStyle}
+                ListFooterComponent={footerLoading && <ActivityIndicator />}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.5}
                 ListHeaderComponent={<View style={styles.seprator}></View>}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => {
@@ -399,7 +414,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                     <View
                       style={[
                         styles.topServiceItemContainer,
-                        {backgroundColor: SERVIE_ARR[index % 4].bgColor},
+                        {backgroundColor: SERVIE_ARR[index % 4]?.bgColor},
                       ]}>
                       <RNText style={styles.servicetitle}>
                         {item?.serviceDetails?.sub_service_name}
@@ -515,7 +530,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     lineHeight: hp(17),
   },
-  horizontalList: tw`mr-4`,
+  horizontalList: tw`mr-0`,
   topServiceHeader: {
     ...tw`w-full h-19 flex-row justify-between items-center`,
     paddingLeft: wp(20),
@@ -602,6 +617,10 @@ const styles = StyleSheet.create({
   seprator: {
     width: wp(20),
     height: wp(20),
+  },
+  footerStyle: {
+    alignSelf: 'center',
+    bottom: hp(10),
   },
 });
 

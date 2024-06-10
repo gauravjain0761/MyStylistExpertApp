@@ -21,10 +21,17 @@ export default function (state = initialState, action: any) {
       }
     }
     case GET_OFFER_ORDER: {
-      return {
-        ...state,
-        getofferorder: action.payload,
-      };
+      if (action?.payload?.page == 1) {
+        return {
+          ...state,
+          getofferorder: action.payload,
+        };
+      } else {
+        return {
+          ...state,
+          getofferorder: [...state?.getofferorder, ...action?.payload],
+        };
+      }
     }
     default:
       return state;

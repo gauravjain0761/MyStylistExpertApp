@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import globalStyle from 'globalStyles';
@@ -25,6 +25,9 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RouteProp} from '@react-navigation/native';
 import moment from 'moment';
 import {appConfig} from '../../../config';
+import {AppContext} from 'context';
+import {useAppDispatch, useAppSelector} from 'store';
+import {getCampaignsOrders} from '../../Actions/campaignsAction';
 
 const initialLayout = {
   height: 0,
@@ -38,7 +41,10 @@ type Props = {
 
 const CompaignDetail: FC<Props> = ({route}) => {
   const {campaignId} = route.params;
+  const dispatch = useAppDispatch();
   const {getDetails, campaignDetails} = useCampaignDetails();
+  const [footerLoading, setFooterLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const {
     _id,
     title,
@@ -51,12 +57,13 @@ const CompaignDetail: FC<Props> = ({route}) => {
     fileName,
   } = campaignDetails || {};
 
-  console.log('oojojoojojoj', campaignDetails);
-
   const sDate = moment(startDate).format('MMM DD, YYYY');
   const eDate = moment(endDate).format('MMM DD, YYYY');
+  const {campaignOrder} = useAppSelector(state => state?.campaign);
   const services = service_name?.map(data => data.service_name) || '';
   const {IMG_URL} = appConfig;
+  const {userDetails} = useContext(AppContext);
+  const {_id: userID} = userDetails || {};
 
   const [index, setIndex] = useState<number>(0);
   const [routes, setRoutes] = useState<Array<Route>>([
@@ -66,7 +73,28 @@ const CompaignDetail: FC<Props> = ({route}) => {
 
   useEffect(() => {
     getDetails(campaignId);
+    getOrder();
   }, []);
+
+  const getOrder = () => {
+    let obj = {
+      data: {
+        expertId: userID,
+        serviceType: 'Campaign',
+        offerId: campaignId,
+        page: page,
+        limit: 10,
+      },
+      page: page,
+      onSuccess: (res: any) => {
+        console.log('reerererereer', res);
+      },
+      onFailure: (Err: any) => {
+        console.log('Errr', Err);
+      },
+    };
+    dispatch(getCampaignsOrders(obj));
+  };
 
   const renderScene = ({route}) => {
     switch (route.key) {
@@ -232,6 +260,7 @@ const CompaignDetail: FC<Props> = ({route}) => {
             <FlatList
               data={[1, 2, 3, 4, 5, 6]}
               keyExtractor={(item, index) => index.toString()}
+              style={{flex: 1}}
               showsVerticalScrollIndicator={false}
               ListHeaderComponent={
                 <View style={styles.listHeader}>

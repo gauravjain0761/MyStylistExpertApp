@@ -8,6 +8,7 @@ import packagesReducers from './packagesReducers';
 import offersReducers from './offersReducers';
 import reviewReducers from './reviewReducers';
 import walletReducers from './walletReducers';
+import campaignReducers from './campaignReducers';
 
 const rootReducer = combineReducers({
   user: user,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   offers: offersReducers,
   review: reviewReducers,
   wallet: walletReducers,
+  campaign: campaignReducers,
 });
 
 export default rootReducer;

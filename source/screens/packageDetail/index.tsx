@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
@@ -21,9 +21,13 @@ import {
   Pressable,
   ScrollView,
   Image as RnImage,
+  ActivityIndicator,
 } from 'react-native';
 import usePackageDetail from './hooks';
 import moment from 'moment';
+import {AppContext} from 'context';
+import {useAppDispatch, useAppSelector} from 'store';
+import {getPackageOrders} from '../../Actions/packageAction';
 
 const initialLayout = {
   height: 0,
@@ -37,6 +41,9 @@ type Props = {
 
 const PackageDetail: FC<Props> = ({route}) => {
   const {getPackageDetail, packageDetails} = usePackageDetail();
+  const {getpackageorder} = useAppSelector(state => state?.packages);
+  const [footerLoading, setFooterLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const {
     package_name,
     service_name,
@@ -55,11 +62,45 @@ const PackageDetail: FC<Props> = ({route}) => {
   ]);
   const startDate = moment(start_date).format('MMM DD, YYYY');
   const endDate = moment(end_date).format('MMM DD, YYYY');
+  const {userDetails} = useContext(AppContext);
+  const {_id} = userDetails;
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     getPackageDetail(packageId);
+    getOrders();
   }, []);
 
-  console.log('pakdsssk odfxfdsd', service_name, sub_services);
+  const getOrders = () => {
+    let obj = {
+      data: {
+        expertId: _id,
+        serviceType: 'Package',
+        offerId: packageId,
+        page: page,
+        limit: 10,
+      },
+      page: page,
+      onSuccess: (res: any) => {
+        setFooterLoading(false);
+        setPage(page + 1);
+        console.log('resssss', res);
+      },
+      onFailure: (Err: any) => {
+        setFooterLoading(false);
+
+        console.log('Errr', Err?.data?.message);
+      },
+    };
+    dispatch(getPackageOrders(obj));
+  };
+
+  const onEndReached = () => {
+    if (getpackageorder?.length > 3) {
+      setFooterLoading(true);
+      getOrders();
+    }
+  };
 
   const renderScene = ({route}) => {
     switch (route.key) {
@@ -224,14 +265,17 @@ const PackageDetail: FC<Props> = ({route}) => {
         return (
           <View style={styles.pageView}>
             <FlatList
-              data={[1, 2, 3, 4, 5, 6]}
+              data={getpackageorder}
               contentContainerStyle={styles.scrollView}
+              style={{flex: 1}}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
+              onEndReached={onEndReached}
+              onEndReachedThreshold={0.5}
               ListHeaderComponent={
                 <View style={styles.listHeader}>
                   <Text fontWeight="800" size="base">
-                    24 Bookings
+                    {getpackageorder?.length} Bookings
                   </Text>
                 </View>
               }
@@ -239,9 +283,16 @@ const PackageDetail: FC<Props> = ({route}) => {
                 <View style={styles.itemSeparator} />
               )}
               renderItem={({item, index}) => {
-                return <PackageOrderCard status={'Pending'} fullWidth={true} />;
+                return (
+                  <PackageOrderCard
+                    data={item}
+                    status={'Pending'}
+                    fullWidth={true}
+                  />
+                );
               }}
             />
+            {footerLoading && <ActivityIndicator />}
           </View>
         );
       }

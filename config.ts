@@ -55,7 +55,7 @@ export const endPoints = {
   uploadSubService: `service/uploadSubServiceImage`,
   stylistWorkImage: `stylistWorkImages/getStylistWorkImages`,
   campaignAccept: `campaign/campaignAcceptDecline`,
-  OfferOrders: `appointment/getOfferOrders`,
+  getOrders: `appointment/getOfferOrders`,
   MyWallet: `appointment/myWallet`,
 };
 

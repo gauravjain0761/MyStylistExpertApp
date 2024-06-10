@@ -14,3 +14,5 @@ export const GET_TOP_REVIEWS = 'GET_TOP_REVIEWS';
 export const GET_SERVICES = 'GET_SERVICES';
 export const GET_OFFER_ORDER = 'GET_OFFER_ORDER';
 export const WALLET = 'WALLET';
+export const GET_PACKAGE_ORDER = 'GET_PACKAGE_ORDER';
+export const GET_CAMPAIGN_ORDER = 'GET_CAMPAIGN_ORDER';
