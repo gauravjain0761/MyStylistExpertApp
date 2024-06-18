@@ -2,13 +2,14 @@ import {
   Image,
   ImageBackground,
   Linking,
+  PermissionsAndroid,
   Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {FC, useContext, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import images from 'images';
 import {
   commonFontStyle,
@@ -36,6 +37,7 @@ import {useAppDispatch} from 'store';
 import {expertLogin} from '../../Actions/authAction';
 import {NativeToast} from '../../utils/toast';
 import DataAccess from '../../dataAccess';
+import messaging from '@react-native-firebase/messaging';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -46,9 +48,68 @@ const Login: FC<Props> = ({navigation}) => {
   const [name, setname] = useState('');
   const [passwords, setPasswords] = useState('');
   const dispatch = useAppDispatch();
+  const [DeviceToken, setDeviceToken] = useState();
 
   const {setLoading, setIsLogin, setUserDetails} = useContext(AppContext);
   const {setUserLoginToStorage, setUserDetailsToStorage} = DataAccess();
+
+  async function requestNotificationUserPermission() {
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+    }
+
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      if (authStatus === 1) {
+        if (Platform.OS === 'ios') {
+          await messaging()
+            .registerDeviceForRemoteMessages()
+            .then(async () => {
+              getFirebaseToken();
+            })
+            .catch(() => {
+              getFirebaseToken();
+            });
+        } else {
+          getFirebaseToken();
+        }
+      } else {
+        await messaging().requestPermission();
+      }
+    } else {
+      await messaging().requestPermission();
+      NativeToast('Please allow to notifications permission');
+    }
+  }
+
+  const getFirebaseToken = async () => {
+    await messaging()
+      .getToken()
+      .then((fcmToken: any) => {
+        if (fcmToken) {
+          console.log('---fcmToken---:', fcmToken);
+          console.log(fcmToken.toString());
+          setDeviceToken(fcmToken);
+        } else {
+          NativeToast('[FCMService] User does not have a device token');
+        }
+      })
+      .catch((error: any) => {
+        let err = `FCm token get error${error}`;
+        // infoToast(error.toString());
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    requestNotificationUserPermission();
+  }, []);
 
   const onLoginPress = () => {
     const obj = {

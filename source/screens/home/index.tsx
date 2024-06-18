@@ -114,6 +114,7 @@ const Home: FC<Props> = ({navigation, route}) => {
 
   const GetStatus = () => {
     location ? setVisible(false) : setVisible(true);
+    // setVisible(false);
   };
 
   const getCurrentLocation = async () => {
@@ -122,14 +123,19 @@ const Home: FC<Props> = ({navigation, route}) => {
         await getAddress(
           response,
           async (res: any) => {
-            await setAsyncLocation(res?.results?.[0]?.formatted_address);
-            setLocation(res?.results?.[0]?.formatted_address);
+            console.log('ressss', res);
+            // await setAsyncLocation(res?.results?.[0]?.formatted_address);
+            await setAsyncLocation('Mohali, Punjab');
+            setLocation('Mohali, Punjab');
+            // setLocation(res?.results?.[0]?.formatted_address);
             setVisible(false);
           },
           async (Err: any) => {
             console.log('Home screen Get Address', Err);
           },
-        );
+        ).catch(Err => {
+          console.log('Home Location API', Err);
+        });
       },
       err => {
         console.log('Home Location API', err);

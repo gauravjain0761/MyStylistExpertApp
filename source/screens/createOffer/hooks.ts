@@ -7,19 +7,18 @@ import moment from 'moment';
 import {Asset} from 'react-native-image-picker';
 import {NativeToast} from '../../utils/toast';
 import {useNavigation} from '@react-navigation/native';
-import { useAppDispatch, useAppSelector } from 'store';
-import { generateOffer } from '../../Actions/offersAction';
-const {getExpertServices, getExpertnewSeubServices, createExpertOffer} = endPoints;
+import {useAppDispatch, useAppSelector} from 'store';
+import {generateOffer} from '../../Actions/offersAction';
+const {getAllServiceSubServices} = endPoints;
 
 const useCreateOffer = () => {
   const navigation = useNavigation();
-  const {userinfo}=useAppSelector(state=>state?.common)
-  const {state,district,city}=userinfo?.user
-  
-  
+  const {userinfo} = useAppSelector(state => state?.common);
+  const {state, district, city} = userinfo?.user;
+
   const {userDetails, setLoading} = useContext(AppContext);
   const {_id} = userDetails;
-  const userId=_id
+  const userId = _id;
   const [endDate, setEndDate] = useState<any>();
   const [startDate, setStartDate] = useState<Date>();
   const [selectedImage, setSelectedImage] = useState<Asset>();
@@ -38,16 +37,15 @@ const useCreateOffer = () => {
   const [purchaseLimit, setPurchaseLimit] = useState<number>(10);
   const [additionalInfo, setAdditionalInfo] = useState<string>('');
   const [offerName, setOfferName] = useState<string>('');
-  
 
   const getAllServicesForMobile = async () => {
     setLoading(true);
     try {
-      const url = `${getExpertServices}`;
+      const url = `${getAllServiceSubServices}/${_id}`;
       const response = await APICaller.get(url);
       const {data} = response;
       const {status, services} = data;
-      if (status === 200) {
+      if (status === 200 || services) {
         setAllServices(services);
       }
       console.log('response of getting expert services', response);
@@ -59,29 +57,8 @@ const useCreateOffer = () => {
   };
 
   const getSubServices = async (items: Array<Services>) => {
-    setLoading(true);
-    try {
-      const url = `${getExpertnewSeubServices}/${_id}`;
-      const response = await APICaller.get(url);
-      const {data,status} = response;
-      const {services} = data;
-      console.log('daadadada',status); 
-      if (status === 200 && services) {
-        const allServices = services?.map(data => {
-          return data?.sub_services?.map(item=>{
-            const obj = {...item};
-            obj['service_name'] = obj.sub_service_name;
-            return obj;
-          })
-        });        
-        setAllSubServices(allServices?.flat());
-      }
-      console.log('response of getting expert sub services', response);
-    } catch (error) {
-      console.log('error of getting expert sub services', error);
-    } finally {
-      setLoading(false);
-    }
+    let subServices = items.map(item => item?.sub_services);
+    setAllSubServices(subServices?.flat());
   };
 
   return {
@@ -117,12 +94,11 @@ const useCreateOffer = () => {
     setSubServicesSheet,
     setSelectedSubServices,
     getAllServicesForMobile,
-    setLoading
+    setLoading,
   };
 };
 
 export default useCreateOffer;
-
 
 // import {useContext, useState} from 'react';
 // import {endPoints} from '../../../config';

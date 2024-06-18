@@ -109,7 +109,7 @@ const CreatePackageSheet: FC<Props> = ({
               Discount:
             </Text>
             <Text size="sm" fontWeight="800">
-              {`${discount}`}
+              {`${discount}%`}
             </Text>
           </View>
           <View style={styles.itemsView}>
@@ -131,10 +131,10 @@ const CreatePackageSheet: FC<Props> = ({
           <View style={styles.line1} />
           <View style={styles.priceView}>
             <Text size="sm" color="text-gray-400" fontWeight="700">
-              Total Price (USD):
+              Total Price (INR):
             </Text>
             <Text size="sm" fontWeight="800">
-              {price}
+              ₹{price}
             </Text>
           </View>
           <View style={styles.buttonsView}>

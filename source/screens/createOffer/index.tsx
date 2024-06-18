@@ -112,9 +112,9 @@ const CreateOffer: FC<Props> = () => {
     try {
       const services = {};
       selectedServices.forEach(service => {
-        const {service_name, _id} = service;
+        const {service_name, service_id} = service;
         const item = {
-          service_id: _id,
+          service_id: service_id,
           service_name: service_name,
         };
         Object.assign(services, item);
@@ -168,7 +168,6 @@ const CreateOffer: FC<Props> = () => {
       dispatch(generateOffer(obj));
     } catch (error) {
       console.log('error of create offer', error);
-    } finally {
     }
   };
 
@@ -274,11 +273,11 @@ const CreateOffer: FC<Props> = () => {
               label="Sub Service"
               data={allSubServices || []}
               placeholder="Select sub service"
-              labelField={'service_name'}
-              valueField={'service_name'}
+              labelField={'sub_service_name'}
+              valueField={'sub_service_name'}
               value={subService}
               onChange={(t: any) => {
-                setSubService(t.service_name);
+                setSubService(t.sub_service_name);
                 setSelectedSubServices([t]);
               }}
               containerStyle={styles.fildsContainerStyle}
@@ -466,7 +465,7 @@ const CreateOffer: FC<Props> = () => {
           setVisibility={setOrderPlaceSheet}
           onSuccess={() => createOffer()}
           onPressCancel={() => setOrderPlaceSheet(!orderPlaceSheet)}
-          title="Creating your Packages"
+          title="Creating your Offers"
           discription="We need access to your location to show you relevant Stylists, Offers and Packages"
         />
       </View>

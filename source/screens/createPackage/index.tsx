@@ -47,6 +47,7 @@ import FastImage from 'react-native-fast-image';
 import {appConfig} from '../../../config';
 import {AppContext} from 'context';
 import {Services} from 'types';
+import {generatePackage} from '../../Actions/packageAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'CreatePackage'>;
@@ -138,19 +139,19 @@ const CreatePackage: FC<Props> = () => {
     setLoading(true);
     try {
       const services = selectedServices.map(service => {
-        const {service_name, _id} = service;
+        const {service_name, service_id} = service;
         let subServicesList: Services[] = [];
         selectedSubServices.forEach(element => {
           const obj = {
-            sub_service_id: element._id,
+            sub_service_id: element.sub_service_id,
             sub_service_name: element.sub_service_name,
           };
-          if (element.serviceId === _id) {
+          if (element.service_id === service_id) {
             subServicesList.push(obj);
           }
         });
         const item = {
-          service_id: _id,
+          service_id: service_id,
           service_name: service_name,
           sub_services: subServicesList,
         };
@@ -194,11 +195,9 @@ const CreatePackage: FC<Props> = () => {
           NativeToast('Something went wrong');
         },
       };
-      // dispatch(generatePackage(obj))
+      dispatch(generatePackage(obj));
     } catch (error) {
       console.log('error of create offer', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -289,11 +288,11 @@ const CreatePackage: FC<Props> = () => {
                     resizeMode="stretch"
                     style={[styles.serviceItem]}>
                     <Text style={styles.badgeTitle}>
-                      {data?.service_name || ''}
+                      {data?.service_name || '-'}
                     </Text>
                     <TouchableOpacity
                       onPress={() => {
-                        removeServices(data?._id);
+                        removeServices(data?.service_id);
                       }}>
                       <RnImage
                         tintColor={'#000000'}
@@ -328,7 +327,7 @@ const CreatePackage: FC<Props> = () => {
                     resizeMode="stretch"
                     style={[styles.serviceItem]}>
                     <Text style={styles.badgeTitle}>
-                      {data?.service_name || '-'}
+                      {data?.sub_service_name || '-'}
                     </Text>
                     <TouchableOpacity onPress={() => removeSubServices(data)}>
                       <RnImage
@@ -495,6 +494,7 @@ const CreatePackage: FC<Props> = () => {
             visibility={servicesSheet}
             selectedServices={selectedServices}
             setVisibility={setServicesSheet}
+            ServiceIdLabel="service_id"
             onSave={(items: Array<Services>) => {
               setSelectedServices(items);
               getSubServices(items);
@@ -508,6 +508,7 @@ const CreatePackage: FC<Props> = () => {
             listData={allSubServices}
             visibility={subServicesSheet}
             selectedServices={selectedSubServices}
+            ServiceIdLabel="sub_service_id"
             setVisibility={setSubServicesSheet}
             onSave={(items: Array<Services>) => {
               setSelectedSubServices(items);

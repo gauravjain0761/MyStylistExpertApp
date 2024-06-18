@@ -8,11 +8,10 @@ const {getUsersList} = endPoints;
 
 const useChat = () => {
   const [chatUsers, setChatUsers] = useState<Array<ChatUser>>([]);
-  const {userDetails, setLoading} = useContext(AppContext);
+  const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
   const getAllUserList = async () => {
-    setLoading(true);
     try {
       const url = `${getUsersList}/${_id}`;
       const response = await APICaller.get(url);
@@ -24,8 +23,6 @@ const useChat = () => {
       console.log('response of get user list', response);
     } catch (error) {
       console.log('error of get user list', error);
-    } finally {
-      setLoading(false);
     }
   };
 

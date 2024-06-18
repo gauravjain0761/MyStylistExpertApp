@@ -120,7 +120,7 @@ const CreatePackageSheet: FC<Props> = ({
           <View style={styles.line1} />
           <View style={styles.priceView}>
             <Text size="sm" color="text-gray-400" fontWeight="700">
-              Total Price (USD):
+              Total Price (IRN):
             </Text>
             <Text size="sm" fontWeight="800">
               ₹{subService[0]?.price}

@@ -11,7 +11,7 @@ import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
-import {RouteProp, useNavigation} from '@react-navigation/native';
+import {RouteProp, useIsFocused, useNavigation} from '@react-navigation/native';
 import {Container, Text, Header, Image, PackageCard} from 'components';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useMyPackage from './hooks';
@@ -46,11 +46,14 @@ const MyPackages: FC<Props> = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (getpackages.length || Object.values(getpackages).length > 0) {
-      getmyPackages(false);
-    } else {
-      getmyPackages(true);
-    }
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (getpackages.length || Object.values(getpackages).length > 0) {
+        getmyPackages(false);
+      } else {
+        getmyPackages(true);
+      }
+    });
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const MyPackages: FC<Props> = () => {
   };
 
   const onScollEnd = () => {
-    if (packages?.packages?.length >= 5) {
+    if (packages.length >= 5) {
       setFooterLoading(true);
       getmyPackages(false);
     }

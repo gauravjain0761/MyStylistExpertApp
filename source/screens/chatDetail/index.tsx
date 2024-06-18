@@ -24,6 +24,7 @@ import APICaller from '../../service/apiCaller';
 import {appConfig, endPoints} from '../../../config';
 import {AppContext} from 'context';
 import {io} from 'socket.io-client';
+import {useAppDispatch} from 'store';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ChatDetail'>;
@@ -39,13 +40,14 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   const [messageList, setMessageList] = useState([]);
 
   const {mainDomain} = appConfig;
+  const dispatch = useAppDispatch();
 
   const socket = io(mainDomain);
 
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
-  const {createRoom} = endPoints;
+  const {createRoom, messagesReads} = endPoints;
   const flatListRef = useRef<any>(null);
 
   const createChatRoom = async () => {
@@ -96,6 +98,14 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
       setMessageList(list => [...list, res]);
       scrollToBottom();
     });
+    socket.on('update_online_users', data => {
+      data.map((data: any) => {
+        if (data?.name === receiverId) {
+          setUserOnline(true);
+          return;
+        }
+      });
+    });
     socket.on('past_messages', (data: any) => {
       const messages = data?.messages.map((item: any) => {
         const messageData = {
@@ -106,10 +116,11 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         };
         return messageData;
       });
+      messagesRead(messages[0]?.chatId);
+      console.log('message message', messages);
       setMessageList(messages);
       scrollToBottom();
     });
-
     socket.on('user_typing', data => {
       if (data?.username === receiverId) {
         setUserTyping(true);
@@ -122,8 +133,25 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
     });
   }, []);
 
+  const messagesRead = async (item: string) => {
+    try {
+      const url = `${messagesReads}`;
+      const body = {
+        messageId: item,
+      };
+      const response = await APICaller.post(url, body);
+      const {data} = response;
+    } catch (error) {
+      console.log('error of room', error);
+    }
+  };
+
   const sendMessage = async () => {
     if (message !== '') {
+      socket.emit('typing_end', {
+        chatId: roomId,
+        username: _id,
+      });
       const messageData = {
         chatId: roomId,
         senderId: _id,
@@ -190,7 +218,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
                   {receiverName}
                 </Text>
                 <Text size="xs" color="text-gray-500" fontWeight="600">
-                  Online
+                  {userTyping ? 'Typing..' : userOnline ? 'Online' : 'Offline'}
                 </Text>
               </View>
             </View>
@@ -217,7 +245,20 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
                 placeholder="Type here..."
                 style={styles.input}
                 value={message}
-                onChangeText={value => setMessage(value)}
+                onChangeText={value => {
+                  setMessage(value);
+                  if (value.trim().length > 0) {
+                    socket.emit('typing_start', {
+                      chatId: roomId,
+                      username: _id,
+                    });
+                  } else {
+                    socket.emit('typing_end', {
+                      chatId: roomId,
+                      username: _id,
+                    });
+                  }
+                }}
               />
               {/* <Pressable style={styles.inputButton}>
                 <Image
@@ -270,7 +311,7 @@ const styles = StyleSheet.create({
   nameView: tw`h-full justify-center pl-3`,
   onlineView: tw`w-3.5 h-3.5 right--1 bottom-1 bg-[#4ade80] rounded-full absolute`,
   chatView: tw`flex-1 w-full h-full bg-cultured`,
-  inputWrapper: tw`w-full items-center px-4`,
+  inputWrapper: {...tw`w-full items-center px-4`, paddingTop: hp(10)},
   wrapper: {
     backgroundColor: Color?.InputGrey,
     flexDirection: 'row',

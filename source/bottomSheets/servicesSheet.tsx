@@ -26,6 +26,7 @@ interface Props {
   selectedServices: Array<Services>;
   onSave: (items: Array<Services>) => void;
   setVisibility: Dispatch<SetStateAction<boolean>>;
+  ServiceIdLabel: string;
 }
 
 const SHEET_HEIGHT = h(60);
@@ -36,6 +37,7 @@ const ServiceSheet: FC<Props> = ({
   listData,
   visibility,
   selectedServices,
+  ServiceIdLabel,
 }) => {
   const [selectedItems, setSelectedItems] = useState<Array<Services>>([]);
   const translateY = useSharedValue(SHEET_HEIGHT);
@@ -66,8 +68,9 @@ const ServiceSheet: FC<Props> = ({
   const setItem = (item: Services) => {
     const selectedItemsNew = selectedItems?.length ? [...selectedItems] : [];
     const checkIsExist: any = selectedItemsNew?.findIndex(
-      data => data._id === item._id,
+      data => data[ServiceIdLabel] === item[ServiceIdLabel],
     );
+
     if (checkIsExist > -1) {
       selectedItemsNew.splice(checkIsExist, 1);
     } else {
@@ -100,7 +103,7 @@ const ServiceSheet: FC<Props> = ({
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => {
                 const checkIsExist = selectedItems?.findIndex(
-                  data => data._id === item._id,
+                  data => data[ServiceIdLabel] === item[ServiceIdLabel],
                 );
                 return (
                   <Pressable
@@ -108,7 +111,7 @@ const ServiceSheet: FC<Props> = ({
                     onPress={() => setItem(item)}
                     style={styles.itemContainer}>
                     <Text style={tw`capitalize`} size={'base'}>
-                      {item.service_name}
+                      {item.service_name || item.sub_service_name}
                     </Text>
                     <View
                       style={[styles.checkBox, globalStyle.bothContentCenter]}>

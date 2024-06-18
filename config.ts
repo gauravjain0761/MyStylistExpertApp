@@ -57,6 +57,8 @@ export const endPoints = {
   campaignAccept: `campaign/campaignAcceptDecline`,
   getOrders: `appointment/getOfferOrders`,
   MyWallet: `appointment/myWallet`,
+  getAllServiceSubServices: `demo/getAllServiceSubServices`,
+  messagesReads: `chat/messagesRead`,
 };
 
 export const POST = 'POST';

@@ -1,9 +1,11 @@
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import {View, Image as RNImage} from 'react-native';
 import tw from 'rn-tailwind';
 import {Image, Text} from 'components';
 import images from 'images';
 import moment from 'moment';
+import {AppContext} from 'context';
+import {appConfig} from '../../config';
 
 interface Props {
   data: any;
@@ -50,6 +52,9 @@ const BubbleOther: FC<BubbleProps> = ({message, receiverName, time}) => {
 };
 
 const BubbleMine: FC<BubbleProps> = ({message, receiverName, time}) => {
+  const {userDetails} = useContext(AppContext);
+  const {image} = userDetails?.user_profile_images[0];
+  const {IMG_URL} = appConfig;
   return (
     <View style={styles.chatBubble}>
       <View style={styles.mineTimeView}>
@@ -60,7 +65,7 @@ const BubbleMine: FC<BubbleProps> = ({message, receiverName, time}) => {
           style={styles.userImage}
           resizeMode="cover"
           source={{
-            uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            uri: `${IMG_URL}/${image}`,
           }}
         />
       </View>

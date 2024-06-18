@@ -142,7 +142,7 @@ export const getAddress = async (
   const headersList = {};
 
   fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${region.latitude},${region.longitude}&key=AIzaSyAtgC47qVsVhvtu_GgKNQfSIEtq1a9hPAU`,
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${region.latitude},${region.longitude}&key=AIzaSyDEjeEjROHSLP3YfRln7Sk1GxUQSTGOGCI`,
     {
       method: 'GET',
       headers: headersList,

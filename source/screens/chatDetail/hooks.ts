@@ -5,7 +5,7 @@ import APICaller from '../../service/apiCaller';
 import io from 'socket.io-client';
 import {connect} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import { NativeToast } from '../../utils/toast';
+import {NativeToast} from '../../utils/toast';
 const SOCKET_URL = 'https://api.mystylist.in/';
 
 const socket = io(SOCKET_URL);
@@ -21,7 +21,7 @@ const useChatDetail = (props: any) => {
   const [userOnline, setUserOnline] = useState<boolean>(false);
   const [messageList, setMessageList] = useState([]);
   const [roomId, setRoomId] = useState<string>('');
-  const {receiverId}=useRoute()?.params
+  const {receiverId} = useRoute()?.params;
 
   const createChatRoom = async () => {
     try {
@@ -39,20 +39,20 @@ const useChatDetail = (props: any) => {
       }
     } catch (error) {
       console.log('error of create room', error);
-      NativeToast(error?.data?.message)
+      NativeToast(error?.data?.message);
     }
-  }
+  };
 
-    const getoldMessages = (joinRoom: String) => {
+  const getoldMessages = (joinRoom: String) => {
     socket.emit('fetch_messages', roomId);
-        socket.on('receive_message', (data: any) => {
+    socket.on('receive_message', (data: any) => {
       console.log('recive massage');
       console.log('message', data);
       // setMessageList(list => [...list, data]);
     });
   };
 
-    const joinRoom = (roomId: string) => {
+  const joinRoom = (roomId: string) => {
     if (roomId !== '') {
       socket.emit('join_room', roomId);
       socket.emit('user_online', {chatid: roomId, name: _id});
@@ -60,7 +60,7 @@ const useChatDetail = (props: any) => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     socket.on('receive_message', (data: any) => {
       console.log('recive massage');
       console.log('message', data);
@@ -78,8 +78,7 @@ const useChatDetail = (props: any) => {
     //   //   };
     //   //   return messageData;
     //   });
-
-  },[roomId])
+  }, [roomId]);
 
   // const getoldMessages = (joinRoom: String) => {
   //   socket.emit('fetch_messages', roomId);
@@ -176,7 +175,6 @@ const useChatDetail = (props: any) => {
 };
 
 export default useChatDetail;
-
 
 // import {useContext, useEffect, useState} from 'react';
 // import {endPoints} from '../../../config';

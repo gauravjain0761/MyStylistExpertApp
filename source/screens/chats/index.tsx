@@ -28,7 +28,10 @@ const Chats: FC<Props> = ({navigation}) => {
   const [activeTab, setActiveTab] = useState<string>('All');
 
   useEffect(() => {
-    getAllUserList();
+    const unsubscribe = navigation.addListener('focus', () => {
+      getAllUserList();
+    });
+    return unsubscribe;
   }, []);
 
   return (

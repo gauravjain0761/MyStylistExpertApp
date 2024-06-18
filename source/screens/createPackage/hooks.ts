@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {endPoints} from '../../../config';
 import APICaller from '../../service/apiCaller';
 import {AppContext} from 'context';
@@ -14,6 +14,7 @@ const {
   getExpertSeubServices,
   createPackage,
   getExpertnewSeubServices,
+  getAllServiceSubServices,
 } = endPoints;
 
 const useCreatePackage = () => {
@@ -44,19 +45,27 @@ const useCreatePackage = () => {
 
   const {_id} = userDetails;
 
+  useEffect(() => {
+    let initialPrice = 0;
+    const Price = selectedSubServices.reduce((acc, service) => {
+      return acc + service.price;
+    }, initialPrice);
+    setPrice(Price);
+  }, [selectedSubServices]);
+
   const getAllServicesForMobile = async () => {
     setLoading(true);
     try {
-      const url = `${getExpertServices}`;
+      const url = `${getAllServiceSubServices}/${_id}`;
       const response = await APICaller.get(url);
       const {data} = response;
       const {status, services} = data;
-      if (status === 200) {
+      if (status === 200 || services) {
         setAllServices(services);
       }
       console.log('response of getting expert services', response);
     } catch (error) {
-      console.log('error of getting expert services', error);
+      console.log('error of getting expert services', error?.response);
     } finally {
       setLoading(false);
     }
@@ -64,11 +73,11 @@ const useCreatePackage = () => {
 
   const removeServices = (selectedid: any) => {
     let newSelected = selectedServices.filter(
-      services => services?._id != selectedid,
+      services => services?.service_id != selectedid,
     );
     if (selectedSubServices.length > 0) {
       let removesubServices = selectedSubServices.filter(
-        services => services?.serviceId != selectedid,
+        services => services?.service_id != selectedid,
       );
       setSelectedSubServices(removesubServices);
     }
@@ -78,13 +87,12 @@ const useCreatePackage = () => {
   const removeSubServices = (selectedid: any) => {
     let data: any = [];
     let newSelected = selectedSubServices.filter(
-      services => services?._id != selectedid?._id,
+      services => services?.sub_service_id != selectedid?.sub_service_id,
     );
     setSelectedSubServices(newSelected);
-
     selectedServices.map(services => {
       let newselected = newSelected.every(
-        item => item?.serviceId != services?._id,
+        item => item?.service_id != services?.service_id,
       );
       if (!newselected) {
         data.push(services);
@@ -94,29 +102,8 @@ const useCreatePackage = () => {
   };
 
   const getSubServices = async (items: Array<Services>) => {
-    setLoading(true);
-    try {
-      const url = `${getExpertnewSeubServices}/${_id}`;
-      const response = await APICaller.get(url);
-      const {data, status} = response;
-      const {services} = data;
-      console.log('okkoko', data);
-      if (status === 200 && services) {
-        const allServices = services.map(data => {
-          return data?.sub_services?.map(item => {
-            const obj = {...item};
-            obj['service_name'] = obj.sub_service_name;
-            return obj;
-          });
-        });
-        setAllSubServices(allServices?.flat());
-      }
-      console.log('response of getting expert sub services', response);
-    } catch (error) {
-      console.log('error of getting expert sub services', error);
-    } finally {
-      setLoading(false);
-    }
+    let subServices = items.map(item => item?.sub_services);
+    setAllSubServices(subServices?.flat());
   };
 
   return {
