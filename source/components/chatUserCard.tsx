@@ -16,10 +16,7 @@ interface Props {
 
 const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
   const {lastMessage, name, time, user_profile_images} = data;
-
-  const {image_medium} = user_profile_images.length
-    ? user_profile_images[0]
-    : {};
+  const {image} = user_profile_images.length ? user_profile_images[0] : {};
   const messageTime = time ? moment(time).format('hh:mm') : '';
   return (
     <Pressable onPress={onPressCard} style={styles.chatCard}>
@@ -29,7 +26,7 @@ const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
             style={styles.profileImage}
             resizeMode="cover"
             source={{
-              uri: image_medium,
+              uri: image,
               priority: FastImage?.priority?.high,
             }}
           />
@@ -51,7 +48,7 @@ const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
       </View>
       <View style={styles.nameView}>
         <Text size="sm" fontWeight="800">
-          {name}
+          {name || 'Unknown User'}
         </Text>
         {lastMessage && (
           <Text size="xs" color="text-gray-500" fontWeight="600">
@@ -60,7 +57,7 @@ const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
         )}
       </View>
       <View style={styles.timeView}>
-        <Text size="xs">{messageTime}</Text>
+        <Text size="xs">{messageTime || '00:00'}</Text>
         {index === 0 ? (
           <Image
             tintColor={'#BEBEBE'}

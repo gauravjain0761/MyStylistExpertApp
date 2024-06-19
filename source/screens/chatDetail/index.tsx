@@ -25,6 +25,7 @@ import {appConfig, endPoints} from '../../../config';
 import {AppContext} from 'context';
 import {io} from 'socket.io-client';
 import {useAppDispatch} from 'store';
+import {getAsyncDevice_token} from '../../dataAccess';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'ChatDetail'>;
@@ -39,13 +40,13 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   const [userOnline, setUserOnline] = useState<boolean>(false);
   const [messageList, setMessageList] = useState([]);
 
-  const {mainDomain} = appConfig;
+  const {mainDomain, IMG_URL} = appConfig;
   const dispatch = useAppDispatch();
 
   const socket = io(mainDomain);
 
   const {userDetails} = useContext(AppContext);
-  const {_id} = userDetails;
+  const {_id, user_profile_images} = userDetails;
 
   const {createRoom, messagesReads} = endPoints;
   const flatListRef = useRef<any>(null);
@@ -147,6 +148,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   };
 
   const sendMessage = async () => {
+    let token = await getAsyncDevice_token();
     if (message !== '') {
       socket.emit('typing_end', {
         chatId: roomId,
@@ -157,6 +159,8 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         senderId: _id,
         content: message,
         time: new Date(),
+        device_token: token,
+        user_image: `${IMG_URL}/${user_profile_images?.[0]?.image}`,
       };
       socket.emit('send_message', messageData);
       scrollToBottom();

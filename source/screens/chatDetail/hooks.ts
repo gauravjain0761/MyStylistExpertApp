@@ -47,8 +47,8 @@ const useChatDetail = (props: any) => {
     socket.emit('fetch_messages', roomId);
     socket.on('receive_message', (data: any) => {
       console.log('recive massage');
-      console.log('message', data);
-      // setMessageList(list => [...list, data]);
+      // console.log('message', data);
+      setMessageList(list => [...list, data]);
     });
   };
 

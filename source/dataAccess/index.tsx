@@ -10,6 +10,7 @@ export const asyncKeys = {
   user_info: '@user_info',
   location: '@location',
   Coord: '@coord',
+  device_token: '@device_token',
   // no clear in logout time
 };
 
@@ -78,6 +79,19 @@ export const getAsyncCoord = async () => {
   const locationCoord = await AsyncStorage.getItem(asyncKeys.Coord);
   if (locationCoord) {
     return JSON.parse(locationCoord);
+  } else {
+    return null;
+  }
+};
+
+export const setAsyncDevice_token = async (token: any) => {
+  await AsyncStorage.setItem(asyncKeys.device_token, JSON.stringify(token));
+};
+
+export const getAsyncDevice_token = async () => {
+  const device_token = await AsyncStorage.getItem(asyncKeys.device_token);
+  if (device_token) {
+    return device_token;
   } else {
     return null;
   }

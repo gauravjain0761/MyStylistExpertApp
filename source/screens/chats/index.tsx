@@ -116,7 +116,7 @@ const Chats: FC<Props> = ({navigation}) => {
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               renderItem={({item, index}) => {
                 const {_id, name, user_profile_images} = item;
-                const {image_medium} = user_profile_images.length
+                const {image} = user_profile_images.length
                   ? user_profile_images?.[0]
                   : {};
                 return (
@@ -127,7 +127,7 @@ const Chats: FC<Props> = ({navigation}) => {
                       navigation.navigate('ChatDetail', {
                         receiverId: _id,
                         receiverName: name,
-                        receiverImage: image_medium,
+                        receiverImage: image,
                       })
                     }
                   />

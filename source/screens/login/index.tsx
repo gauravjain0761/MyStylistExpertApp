@@ -36,7 +36,7 @@ import {AppContext} from 'context';
 import {useAppDispatch} from 'store';
 import {expertLogin} from '../../Actions/authAction';
 import {NativeToast} from '../../utils/toast';
-import DataAccess from '../../dataAccess';
+import DataAccess, {setAsyncDevice_token} from '../../dataAccess';
 import messaging from '@react-native-firebase/messaging';
 
 type Props = {
@@ -91,10 +91,11 @@ const Login: FC<Props> = ({navigation}) => {
   const getFirebaseToken = async () => {
     await messaging()
       .getToken()
-      .then((fcmToken: any) => {
+      .then(async (fcmToken: any) => {
         if (fcmToken) {
           console.log('---fcmToken---:', fcmToken);
           console.log(fcmToken.toString());
+          await setAsyncDevice_token(fcmToken.toString());
           setDeviceToken(fcmToken);
         } else {
           NativeToast('[FCMService] User does not have a device token');
@@ -116,6 +117,7 @@ const Login: FC<Props> = ({navigation}) => {
       data: {
         username: name.trim(),
         password: passwords.trim(),
+        device_token: DeviceToken,
       },
       onSuccess: (res: any) => {
         setUserDetails(res);

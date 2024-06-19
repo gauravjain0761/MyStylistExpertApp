@@ -13,7 +13,7 @@ const useChat = () => {
 
   const getAllUserList = async () => {
     try {
-      const url = `${getUsersList}/${_id}`;
+      const url = `${getUsersList}/${_id}?role=user`;
       const response = await APICaller.get(url);
       const {data} = response;
       const {status, users} = data;
