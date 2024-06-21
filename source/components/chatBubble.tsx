@@ -19,7 +19,8 @@ interface BubbleProps {
   receiverName?: string;
 }
 
-const BubbleOther: FC<BubbleProps> = ({message, receiverName, time}) => {
+const BubbleOther: FC<BubbleProps> = ({message, receiverName, time, image}) => {
+  const {IMG_URL} = appConfig;
   return (
     <View style={styles.chatBubble}>
       <View style={styles.otherTimeView}>
@@ -27,7 +28,7 @@ const BubbleOther: FC<BubbleProps> = ({message, receiverName, time}) => {
           style={styles.userImage}
           resizeMode="cover"
           source={{
-            uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            uri: `${IMG_URL}/${image}`,
           }}
         />
         <Text color="text-gray-400" margin="ml-2" size="xs">
@@ -86,9 +87,8 @@ const BubbleMine: FC<BubbleProps> = ({message, receiverName, time}) => {
   );
 };
 
-const ChatBubble: FC<Props> = ({userId, receiverName, data}) => {
+const ChatBubble: FC<Props> = ({userId, receiverName, data, image}) => {
   const {senderId, content, time} = data;
-  // console.log('senderererer', senderId, data);
 
   const messageTime = moment(time).format('h:mm');
   if (senderId === userId) {
@@ -99,6 +99,7 @@ const ChatBubble: FC<Props> = ({userId, receiverName, data}) => {
       message={content}
       time={messageTime}
       receiverName={receiverName}
+      image={image}
     />
   );
 };

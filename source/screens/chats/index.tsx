@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import images from 'images';
 import tw from 'rn-tailwind';
 import {RootStackParamList} from '..';
@@ -16,6 +16,10 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useChat from './hooks';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
+import {endPoints} from '../../../config';
+import APICaller from '../../service/apiCaller';
+import {NativeToast} from '../../utils/toast';
+import {AppContext} from 'context';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Chats'>;
@@ -26,6 +30,9 @@ const Chats: FC<Props> = ({navigation}) => {
   const {chatUsers, getAllUserList} = useChat();
 
   const [activeTab, setActiveTab] = useState<string>('All');
+  const {createRoom, messagesReads} = endPoints;
+  const {userDetails} = useContext(AppContext);
+  const {_id} = userDetails;
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -33,6 +40,44 @@ const Chats: FC<Props> = ({navigation}) => {
     });
     return unsubscribe;
   }, []);
+
+  const onPressCart = async (item: any) => {
+    try {
+      const url = `${createRoom}`;
+      const body = {
+        participants: [item?._id, _id],
+      };
+      const response = await APICaller.post(url, body);
+      const {data} = response;
+      const {roomId} = data;
+      if (data && roomId) {
+        console.log('room id', data);
+        messagesRead(roomId);
+        navigation.navigate('ChatDetail', {
+          roomId: roomId,
+          receiverId: item?._id,
+          receiverImage: item?.user_profile_images,
+          device_token: item?.device_token,
+          receiverName: item?.name,
+        });
+      }
+    } catch (error) {
+      console.log('error of create room', error);
+    }
+  };
+
+  const messagesRead = async (item: string) => {
+    try {
+      const url = `${messagesReads}`;
+      const body = {
+        messageId: item,
+      };
+      const response = await APICaller.post(url, body);
+      const {data} = response;
+    } catch (error) {
+      console.log('error of room', error);
+    }
+  };
 
   return (
     <Container>
@@ -123,13 +168,7 @@ const Chats: FC<Props> = ({navigation}) => {
                   <ChatUserCard
                     data={item}
                     index={index}
-                    onPressCard={() =>
-                      navigation.navigate('ChatDetail', {
-                        receiverId: _id,
-                        receiverName: name,
-                        receiverImage: image,
-                      })
-                    }
+                    onPressCard={() => onPressCart(item)}
                   />
                 );
               }}

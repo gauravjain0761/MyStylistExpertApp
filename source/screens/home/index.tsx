@@ -55,7 +55,7 @@ import {getUpcomingAppointment} from '../../Actions/appointmentAction';
 import {TopService} from '../../Actions/servicesAction';
 import {io} from 'socket.io-client';
 import {socketConnect} from '../Socket';
-import messaging from '@react-native-firebase/messaging';
+
 import {
   getAddress,
   requestLocationPermission,
@@ -98,20 +98,6 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {IMG_URL} = appConfig;
   const {_id} = userDetails;
   const {appointments} = appointment || [];
-
-  useEffect(() => {
-    getNotification();
-  }, []);
-
-  const getNotification = async () => {
-    await messaging()
-      .getInitialNotification()
-      .then(async remoteMessage => {
-        if (remoteMessage) {
-          console.log('remoteMessage', remoteMessage);
-        }
-      });
-  };
 
   useEffect(() => {
     GetStatus();

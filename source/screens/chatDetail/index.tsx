@@ -33,7 +33,13 @@ type Props = {
 };
 
 const ChatDetail: FC<Props> = ({route, navigation}) => {
-  const {receiverId, receiverName, receiverImage} = route.params;
+  const {
+    receiverId,
+    receiverName,
+    receiverImage,
+    device_token,
+    roomId: RoomID,
+  } = route.params;
   const [roomId, setRoomId] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [userTyping, setUserTyping] = useState<boolean>(false);
@@ -46,30 +52,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   const socket = io(mainDomain);
 
   const {userDetails} = useContext(AppContext);
-  const {_id, user_profile_images} = userDetails;
+  const {_id, user_profile_images, name} = userDetails;
 
-  const {createRoom, messagesReads} = endPoints;
   const flatListRef = useRef<any>(null);
-
-  const createChatRoom = async () => {
-    try {
-      const url = `${createRoom}`;
-      const body = {
-        participants: [receiverId, _id],
-      };
-      const response = await APICaller.post(url, body);
-      console.log('response of create room', response);
-      const {data} = response;
-      const {roomId} = data;
-      if (data && roomId) {
-        setRoomId(roomId);
-        joinRoom(roomId);
-      }
-    } catch (error) {
-      console.log('error of create room', error);
-      NativeToast(error?.data?.message);
-    }
-  };
 
   const joinRoom = (roomId: string) => {
     if (roomId !== '') {
@@ -93,7 +78,8 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   };
 
   useEffect(() => {
-    createChatRoom();
+    joinRoom(RoomID);
+    setRoomId(RoomID);
     socket.on('receive_message', (res: any) => {
       socket.emit('fetch_messages', roomId);
       setMessageList(list => [...list, res]);
@@ -117,12 +103,11 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         };
         return messageData;
       });
-      messagesRead(messages[0]?.chatId);
-      console.log('message message', messages);
       setMessageList(messages);
       scrollToBottom();
     });
     socket.on('user_typing', data => {
+      console.log('user_typing', data?.username, receiverId);
       if (data?.username === receiverId) {
         setUserTyping(true);
       }
@@ -132,23 +117,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         setUserTyping(false);
       }
     });
-  }, []);
-
-  const messagesRead = async (item: string) => {
-    try {
-      const url = `${messagesReads}`;
-      const body = {
-        messageId: item,
-      };
-      const response = await APICaller.post(url, body);
-      const {data} = response;
-    } catch (error) {
-      console.log('error of room', error);
-    }
-  };
+  }, [receiverId, roomId]);
 
   const sendMessage = async () => {
-    let token = await getAsyncDevice_token();
     if (message !== '') {
       socket.emit('typing_end', {
         chatId: roomId,
@@ -159,8 +130,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         senderId: _id,
         content: message,
         time: new Date(),
-        device_token: token,
-        user_image: `${IMG_URL}/${user_profile_images?.[0]?.image}`,
+        device_token: device_token,
+        user_image: user_profile_images?.[0]?.image,
+        name: name,
       };
       socket.emit('send_message', messageData);
       scrollToBottom();
@@ -176,6 +148,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         key={index}
         userId={_id}
         receiverName={receiverName}
+        image={receiverImage[0]?.image || {}}
       />
     );
   };
@@ -204,7 +177,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
                   style={styles.profileImage}
                   resizeMode="cover"
                   source={{
-                    uri: receiverImage,
+                    uri: `${IMG_URL}/${receiverImage[0]?.image}`,
                   }}
                 />
                 <View
@@ -252,9 +225,11 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
                 onChangeText={value => {
                   setMessage(value);
                   if (value.trim().length > 0) {
+                    console.log('typing_start typing_start', _id);
                     socket.emit('typing_start', {
                       chatId: roomId,
                       username: _id,
+                      userType: 'stylist',
                     });
                   } else {
                     socket.emit('typing_end', {
