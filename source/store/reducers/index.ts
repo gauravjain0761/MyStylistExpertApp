@@ -9,6 +9,7 @@ import offersReducers from './offersReducers';
 import reviewReducers from './reviewReducers';
 import walletReducers from './walletReducers';
 import campaignReducers from './campaignReducers';
+import notificationReducers from './notificationReducers';
 
 const rootReducer = combineReducers({
   user: user,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   review: reviewReducers,
   wallet: walletReducers,
   campaign: campaignReducers,
+  notification: notificationReducers,
 });
 
 export default rootReducer;

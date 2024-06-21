@@ -75,6 +75,7 @@ const Appointments: FC<Props> = ({navigation}) => {
     let obj = {
       data: {
         expertId: _id,
+        // exportId: '660d930204d57ad52b33d6bb',
         limit: 10,
         page: upcommingPage,
       },
@@ -95,6 +96,7 @@ const Appointments: FC<Props> = ({navigation}) => {
     let obj = {
       data: {
         expertId: _id,
+        // exportId: '660d930204d57ad52b33d6bb',
         limit: 10,
         page: pastPage,
       },

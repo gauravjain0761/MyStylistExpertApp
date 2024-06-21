@@ -59,6 +59,7 @@ export const endPoints = {
   MyWallet: `appointment/myWallet`,
   getAllServiceSubServices: `demo/getAllServiceSubServices`,
   messagesReads: `chat/messagesRead`,
+  notification: `notification/getAllNotifications`,
 };
 
 export const POST = 'POST';

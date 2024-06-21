@@ -81,7 +81,6 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
     joinRoom(RoomID);
     setRoomId(RoomID);
     socket.on('receive_message', (res: any) => {
-      socket.emit('fetch_messages', roomId);
       setMessageList(list => [...list, res]);
       scrollToBottom();
     });
@@ -117,7 +116,14 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         setUserTyping(false);
       }
     });
-  }, [receiverId, roomId]);
+    return () => {
+      socket.off('receive_message');
+      socket.off('update_online_users');
+      socket.off('past_messages');
+      socket.off('user_typing');
+      socket.off('user_stopped_typing');
+    };
+  }, [roomId]);
 
   const sendMessage = async () => {
     if (message !== '') {
@@ -135,9 +141,8 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         name: name,
       };
       socket.emit('send_message', messageData);
-      scrollToBottom();
-      socket.emit('fetch_messages', roomId);
       setMessage('');
+      scrollToBottom();
     }
   };
 

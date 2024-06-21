@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Pressable,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   Text as RNText,
+  TouchableOpacity,
 } from 'react-native';
 import {Text, Container, Header, Image} from 'components';
 import globalStyle from 'globalStyles';
@@ -13,11 +14,54 @@ import tw from 'rn-tailwind';
 import images from 'images';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
+import {AppContext} from 'context';
+import {err} from 'react-native-svg';
+import {useAppDispatch, useAppSelector} from 'store';
+import {getAllNotification} from '../../Actions/notificationAction';
+import {appConfig} from '../../../config';
+import moment from 'moment';
 
-const segments = ['All', 'Offer', 'Promotion', 'Appoinment'];
+const segments = ['All', 'Offer', 'Promotion', 'Appointment'];
 
 const Notifications: FC = () => {
   const [activeSegment, setSegment] = useState<string>('All');
+  const {notificationsList} = useAppSelector(state => state?.notification);
+  const [notification, setNotification] = useState(
+    notificationsList?.notifications || [],
+  );
+  const {userDetails, setLoading} = useContext(AppContext);
+  const {_id, user_profile_images} = userDetails || {};
+  const dispatch = useAppDispatch();
+  const {IMG_URL} = appConfig;
+
+  const {image} = user_profile_images?.[0] || [];
+
+  useEffect(() => {
+    getNotification('all');
+  }, []);
+
+  useEffect(() => {
+    setNotification(notificationsList?.notifications);
+  }, [notificationsList]);
+
+  const getNotification = async (segment: string) => {
+    setLoading(true);
+    const obj = {
+      data: {
+        userId: _id,
+        // userId: '660d930204d57ad52b33d6bb',
+        notification_type: segment,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFaliure: (Err: any) => {
+        setLoading(false);
+        console.log('Err', err);
+      },
+    };
+    dispatch(getAllNotification(obj));
+  };
   return (
     <Container>
       <View style={globalStyle.container}>
@@ -27,7 +71,9 @@ const Notifications: FC = () => {
             {segments.map((data, index) => {
               return (
                 <Pressable
-                  onPress={() => setSegment(data)}
+                  onPress={() => {
+                    getNotification(data?.toLowerCase()), setSegment(data);
+                  }}
                   key={index}
                   style={[
                     styles.inactiveSegment,
@@ -72,29 +118,30 @@ const Notifications: FC = () => {
         </View>
         <View style={styles.notificationList}>
           <FlatList
-            data={[1, 2, 3, 4, 5, 6, 7, 8]}
+            data={notification}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.list}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) => {
               return (
-                <View style={styles.notificationItem}>
+                <TouchableOpacity style={styles.notificationItem}>
                   <Image
                     style={styles.userImage}
                     resizeMode="cover"
                     source={{
-                      uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dXNlcnxlbnwwfHwwfHx8MA%3D%3D',
+                      uri: `${IMG_URL}/${image}`,
                     }}
                   />
                   <View style={styles.titleView}>
                     <RNText style={styles.notificationtitle}>
-                      {'Your appointment has been successfully schedule with'}
-                      <RNText style={styles.username}>{' Nickson John'}</RNText>
+                      {item?.message}
                     </RNText>
-                    <RNText style={styles.time}>{'1 hr ago'}</RNText>
+                    <RNText style={styles.time}>
+                      {moment(item?.createdAt).format('HH:MM:A')}
+                    </RNText>
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             }}
           />
