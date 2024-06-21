@@ -165,7 +165,7 @@ const Profile: FC<Props> = ({navigation}) => {
                 <View style={styles.devider} />
                 <RNText style={styles.abouttitle}>About {user?.name}</RNText>
                 <RNText style={styles.aboutsection}>
-                  {user_information[0]?.aboutMe}
+                  {user_information?.[0]?.aboutMe}
                 </RNText>
               </View>
             </View>

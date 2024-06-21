@@ -14,6 +14,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1F76EA802C25AA8200AEE66D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F76EA7F2C25AA8200AEE66D /* GoogleService-Info.plist */; };
 		3F25B51D67584D49B5DD8C93 /* Inter-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F5552CDB53547D59EC8C5D0 /* Inter-Black.ttf */; };
 		67C4C4184DE248E4BC73586E /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1F68AE0A9A34537B74A31A7 /* Roboto-LightItalic.ttf */; };
 		7699B88040F8A987B510C191 /* libPods-MyStylistExpert-MyStylistExpertTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-MyStylistExpert-MyStylistExpertTests.a */; };
@@ -59,6 +60,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MyStylistExpert/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-MyStylistExpert-MyStylistExpertTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyStylistExpert-MyStylistExpertTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E2A5EB47A764BBCA7EABA24 /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
+		1F76EA7F2C25AA8200AEE66D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1F9B635C2C21C49700FFF5E8 /* MyStylistExpert.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MyStylistExpert.entitlements; path = MyStylistExpert/MyStylistExpert.entitlements; sourceTree = "<group>"; };
 		29202DCAB3C047999E02AF65 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-MyStylistExpert.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyStylistExpert.debug.xcconfig"; path = "Target Support Files/Pods-MyStylistExpert/Pods-MyStylistExpert.debug.xcconfig"; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				1F76EA7F2C25AA8200AEE66D /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* MyStylistExpert */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* MyStylistExpertTests */,
@@ -332,6 +335,7 @@
 				9289E623B2DA43E0BF300BCE /* Roboto-BoldItalic.ttf in Resources */,
 				BCD07DE03C624B0F8A284E5A /* Roboto-Italic.ttf in Resources */,
 				8F11D4495E7540B7BA4E2A57 /* Roboto-Light.ttf in Resources */,
+				1F76EA802C25AA8200AEE66D /* GoogleService-Info.plist in Resources */,
 				67C4C4184DE248E4BC73586E /* Roboto-LightItalic.ttf in Resources */,
 				02E6D6436ADF4A48ABB94C65 /* Roboto-Medium.ttf in Resources */,
 				EBE5FBF3A19C41EDB322B3FC /* Roboto-MediumItalic.ttf in Resources */,
