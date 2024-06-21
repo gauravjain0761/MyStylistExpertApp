@@ -23,6 +23,7 @@ type HomeProps = {
   location?: any;
   edges?: any;
   containerStyle?: ViewStyle;
+  badge?: boolean;
 };
 
 const HomeHeader: FC<HomeProps> = ({
@@ -30,6 +31,7 @@ const HomeHeader: FC<HomeProps> = ({
   onPressProfile,
   location = null,
   containerStyle,
+  badge = false,
 }) => {
   const {navigate} = useNavigation();
   const {userinfo} = useAppSelector(state => state?.common);
@@ -86,7 +88,7 @@ const HomeHeader: FC<HomeProps> = ({
       <View style={styles?.header_service_container}>
         <TouchableOpacity onPress={onPressBell}>
           <Image source={images?.HomeBell} style={styles?.icons} />
-          <View style={styles?.badge}></View>
+          {badge && <View style={styles?.badge}></View>}
         </TouchableOpacity>
       </View>
     </View>

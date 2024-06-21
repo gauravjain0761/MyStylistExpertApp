@@ -39,6 +39,11 @@ function AppNavigator() {
         receiverName: remoteMessage?.data?.name,
       });
     }
+    if (type == 'appointment_notification') {
+      navigation.navigate('AppointmentDetail', {
+        appointmentId: remoteMessage?.data?.value,
+      });
+    }
   };
   return (
     <Drawer.Navigator

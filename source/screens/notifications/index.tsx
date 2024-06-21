@@ -1,4 +1,4 @@
-import React, {FC, useContext, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Pressable,
@@ -20,6 +20,7 @@ import {useAppDispatch, useAppSelector} from 'store';
 import {getAllNotification} from '../../Actions/notificationAction';
 import {appConfig} from '../../../config';
 import moment from 'moment';
+import {useNavigation} from '@react-navigation/native';
 
 const segments = ['All', 'Offer', 'Promotion', 'Appointment'];
 
@@ -33,35 +34,48 @@ const Notifications: FC = () => {
   const {_id, user_profile_images} = userDetails || {};
   const dispatch = useAppDispatch();
   const {IMG_URL} = appConfig;
+  const navigation = useNavigation();
 
   const {image} = user_profile_images?.[0] || [];
 
   useEffect(() => {
-    getNotification('all');
+    getNotification('');
   }, []);
 
   useEffect(() => {
     setNotification(notificationsList?.notifications);
   }, [notificationsList]);
 
-  const getNotification = async (segment: string) => {
-    setLoading(true);
-    const obj = {
-      data: {
-        userId: _id,
-        // userId: '660d930204d57ad52b33d6bb',
-        notification_type: segment,
-      },
-      onSuccess: (res: any) => {
-        setLoading(false);
-      },
-      onFaliure: (Err: any) => {
-        setLoading(false);
-        console.log('Err', err);
-      },
-    };
-    dispatch(getAllNotification(obj));
+  const getNotification = useCallback(
+    async (segment: string) => {
+      setLoading(true);
+      const obj = {
+        data: {
+          userId: _id,
+          notification_type: segment == 'all' ? '' : segment,
+        },
+        onSuccess: (res: any) => {
+          setLoading(false);
+        },
+        onFaliure: (Err: any) => {
+          setLoading(false);
+          console.log('Err', err);
+        },
+      };
+      dispatch(getAllNotification(obj));
+    },
+    [activeSegment],
+  );
+
+  const onPressNotification = (item: any) => {
+    const type = item?.notification_type;
+    if (type == 'appointment') {
+      navigation.navigate('AppointmentDetail', {
+        appointmentId: item?.actionId,
+      });
+    }
   };
+
   return (
     <Container>
       <View style={globalStyle.container}>
@@ -125,7 +139,9 @@ const Notifications: FC = () => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) => {
               return (
-                <TouchableOpacity style={styles.notificationItem}>
+                <TouchableOpacity
+                  onPress={() => onPressNotification(item)}
+                  style={styles.notificationItem}>
                   <Image
                     style={styles.userImage}
                     resizeMode="cover"

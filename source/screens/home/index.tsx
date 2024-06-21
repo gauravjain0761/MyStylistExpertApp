@@ -61,6 +61,7 @@ import {
   requestLocationPermission,
 } from '../../utils/locationHandler';
 import {setAsyncLocation} from '../../dataAccess';
+import {getAllNotification} from '../../Actions/notificationAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -85,12 +86,15 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {userinfo} = useAppSelector(state => state?.common);
   const {appointment} = useAppSelector(state => state.home);
   const {topServices} = useAppSelector(state => state?.service);
+  const {notificationsList} = useAppSelector(state => state?.notification);
   const [footerLoading, setFooterLoading] = useState(false);
   const [page, setPage] = useState(1);
 
   const [user, setUser] = useState(userinfo);
 
   const {name, addresses, district} = user?.user || {};
+
+  const {notifications} = notificationsList || [];
 
   const dispatch = useAppDispatch();
   const {setLoading, userDetails, location, setLocation} =
@@ -104,6 +108,7 @@ const Home: FC<Props> = ({navigation, route}) => {
     socketConnect(dispatch);
     let clean = setTimeout(() => {
       getUserDetail();
+      getNotification('');
       getBanners();
       getAppointment();
       getTopServices(true);
@@ -112,6 +117,24 @@ const Home: FC<Props> = ({navigation, route}) => {
       clearInterval(clean);
     };
   }, []);
+
+  const getNotification = async (segment: string) => {
+    setLoading(true);
+    const obj = {
+      data: {
+        userId: _id,
+        notification_type: segment == 'all' ? '' : segment,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFaliure: (Err: any) => {
+        setLoading(false);
+        console.log('Err', err);
+      },
+    };
+    dispatch(getAllNotification(obj));
+  };
 
   const GetStatus = () => {
     location ? setVisible(false) : setVisible(true);
@@ -158,7 +181,7 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {expertusers} = expertMedia || {};
 
   const {user_profile_images, user_work_images, expert_profile_videos} =
-    expertusers?.length ? expertusers[0] : {};
+    expertusers?.length ? expertusers?.[0] : {};
   const onSnapToItem = (index: React.SetStateAction<number>) => {
     setActiveIndex(index);
   };
@@ -250,6 +273,7 @@ const Home: FC<Props> = ({navigation, route}) => {
           onPresslocation={() => {}}
           location={location}
           onPressProfile={onPressProfile}
+          badge={notifications?.length}
         />
         <View style={styles?.mainView}>
           <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>

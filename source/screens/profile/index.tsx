@@ -159,7 +159,7 @@ const Profile: FC<Props> = ({navigation}) => {
                   <RNText numberOfLines={1} style={styles.addressText}>
                     {sector}
                     {', '}
-                    {user?.district[0]?.district_name}
+                    {user?.district?.[0]?.district_name}
                   </RNText>
                 </View>
                 <View style={styles.devider} />
@@ -172,7 +172,7 @@ const Profile: FC<Props> = ({navigation}) => {
 
             <View style={styles.gridView}>
               <View style={styles.gridViewHeader}>
-                <RNText style={styles.ViewTitle}>{`Majid Khan Work`}</RNText>
+                <RNText style={styles.ViewTitle}>{`${user?.name} Work`}</RNText>
                 <RNText style={styles.viewAll}>{`View All`}</RNText>
               </View>
 
