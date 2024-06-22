@@ -52,7 +52,7 @@ const Notifications: FC = () => {
       const obj = {
         data: {
           userId: _id,
-          notification_type: segment == 'all' ? '' : segment,
+          notification_type: '',
         },
         onSuccess: (res: any) => {
           setLoading(false);
