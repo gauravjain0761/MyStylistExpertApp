@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
@@ -13,6 +13,7 @@ import {
   Text as RNText,
   StyleSheet,
   ImageBackground,
+  ScrollView,
 } from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useAppointmentDetails from './hooks';
@@ -27,6 +28,12 @@ import {
 } from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {DASHED} from 'AppConstants';
+import {
+  CodeField,
+  Cursor,
+  useBlurOnFulfill,
+  useClearByFocusCell,
+} from 'react-native-confirmation-code-field';
 
 type Props = {
   navigation: NativeStackNavigationProp<
@@ -41,8 +48,16 @@ type RowItemValueProps = {
   value: string;
 };
 
+const CELL_COUNT = 6;
+
 const AppointmentDetail: FC<Props> = ({navigation, route}) => {
   const {getAppointmentDetail, appointmentDetails} = useAppointmentDetails();
+  const [value, setValue] = useState<string>('');
+  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
+    value,
+    setValue,
+  });
   const {appointmentId} = route.params;
   const {
     createdAt,
@@ -50,11 +65,13 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     userId,
     bookingNumber,
     services,
-    totalAmount,
+    totalAmount = 0,
   } = appointmentDetails || {};
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
+
+  const [start, setStart] = useState(false);
 
   const date = moment(createdAt).format('hh:mm A, DD MMMM YYYY');
 
@@ -87,7 +104,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
             </View>
           }
         />
-        <View style={styles.mainView}>
+        <ScrollView style={styles.mainView}>
           <ImageBackground
             resizeMode="stretch"
             style={styles.cardbg}
@@ -130,7 +147,6 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
             <View style={styles.serviceContainer}>
               <RNText style={styles.services}>{'Services'}</RNText>
               {services?.map(service => {
-                console.log('serws', service);
                 return (
                   <RowItemValue
                     title={service?.service_name}
@@ -145,17 +161,34 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
               <RNText style={styles.otptitle}>
                 {'Enter OTP to start the service'}
               </RNText>
-              <RNText style={styles.input}>{'-  -  -  -  -  -'}</RNText>
+              <CodeField
+                ref={ref}
+                {...props}
+                onBlur={() => {}}
+                value={value}
+                onChangeText={setValue}
+                cellCount={CELL_COUNT}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                renderCell={({index, symbol, isFocused}) => (
+                  <RNText
+                    key={index}
+                    style={[styles.cell]}
+                    onLayout={getCellOnLayoutHandler(index)}>
+                    {symbol || (isFocused ? <Cursor /> : '-')}
+                  </RNText>
+                )}
+              />
             </View>
             <Pressable style={styles.button}>
               <RNText style={styles.bottontitle}>{'Submit'}</RNText>
             </Pressable>
           </View>
-        </View>
+        </ScrollView>
         <View style={styles.bottompart}>
           <PrimaryButton
             containerStyle={styles.primarybutton}
-            label="Done"
+            label={start ? 'Done' : 'Start'}
             onPress={() => {}}
           />
         </View>
@@ -165,7 +198,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
 };
 
 const styles = StyleSheet.create({
-  mainView: tw`flex-1 w-full h-full bg-cultured`,
+  mainView: tw` w-full bg-cultured`,
   rightView: tw`flex-1 w-full h-full items-end justify-center`,
   rightIconButton: tw`w-10 h-10 items-end justify-end`,
   rightIcon: tw`w-6.5 h-6.5`,
@@ -343,6 +376,15 @@ const styles = StyleSheet.create({
   },
   primarybutton: {
     borderRadius: wp(6),
+  },
+  cell: {
+    width: 30,
+    height: 30,
+    textAlign: 'center',
+    marginTop: hp(11),
+    ...commonFontStyle(fontFamily.medium, 22, Color?.Green2F),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

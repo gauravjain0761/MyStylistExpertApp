@@ -40,6 +40,7 @@ function AppNavigator() {
       });
     }
     if (type == 'appointment_notification') {
+      console.log('kokkokoko', remoteMessage?.data?.value);
       navigation.navigate('AppointmentDetail', {
         appointmentId: remoteMessage?.data?.value,
       });
