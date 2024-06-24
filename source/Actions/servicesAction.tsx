@@ -30,7 +30,7 @@ export const TopService =
     })
       .then(async (response: any) => {
         if (response.status === 200) {
-          if (request.onSuccess) request.onSuccess(response.data);
+          if (request.onSuccess) request.onSuccess(response?.data);
           dispatch({
             type: TOPSERVICESOLD,
             payload: response?.data?.topServices,
@@ -38,7 +38,7 @@ export const TopService =
         }
       })
       .catch(error => {
-        if (request.onFailure) request.onFailure(error.response);
+        if (request.onFailure) request.onFailure(error?.response);
       });
   };
 

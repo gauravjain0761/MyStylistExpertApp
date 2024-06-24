@@ -44,12 +44,6 @@ const Appointments: FC<Props> = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [upcommingPage, setUpcomingPage] = useState(1);
   const [pastPage, setPastPage] = useState(1);
-  const [upcomingAppointment, setUpcomingAppointment] = useState(
-    appointment || [],
-  );
-  const [pastAppointment, setPastAppointment] = useState(
-    past_appointment || [],
-  );
   const {appointments} = appointment || {};
   const {appointments: PastAppo} = past_appointment || {};
 
@@ -61,11 +55,6 @@ const Appointments: FC<Props> = ({navigation}) => {
     getAllPastAppointments(true);
     getAllUpcommingAppointments(false);
   }, []);
-
-  useEffect(() => {
-    setUpcomingAppointment(appointments);
-    setPastAppointment(PastAppo);
-  }, [appointment, past_appointment]);
 
   const onPressFilter = () => {
     setVisible(!visible);
@@ -177,7 +166,7 @@ const Appointments: FC<Props> = ({navigation}) => {
           </View>
           {activeTab == 'Upcoming' ? (
             <FlatList
-              data={upcomingAppointment}
+              data={appointments}
               showsVerticalScrollIndicator={false}
               ItemSeparatorComponent={() => {
                 return <View style={styles.listSeparator} />;
@@ -198,7 +187,10 @@ const Appointments: FC<Props> = ({navigation}) => {
                     key={index}
                     fullWidth={true}
                     onPreeCard={(appointmentId: string) =>
-                      navigation.navigate('AppointmentDetail', {appointmentId})
+                      navigation.navigate('AppointmentDetail', {
+                        appointmentId,
+                        image: item?.services?.[0]?.subServiceFileNames,
+                      })
                     }
                     status={activeTab === 'Upcoming' ? 'Upcoming' : 'Past'}
                   />
@@ -207,7 +199,7 @@ const Appointments: FC<Props> = ({navigation}) => {
             />
           ) : (
             <FlatList
-              data={pastAppointment}
+              data={PastAppo}
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={
                 <View style={styles?.empty}>
@@ -222,6 +214,7 @@ const Appointments: FC<Props> = ({navigation}) => {
               contentContainerStyle={styles.listContainer}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => {
+                console.log('item', item);
                 return (
                   <AppointmentCard
                     data={item}

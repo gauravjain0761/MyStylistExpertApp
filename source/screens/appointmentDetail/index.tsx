@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
@@ -34,6 +34,11 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
+import {useAppDispatch} from 'store';
+import {verifyAppointment} from '../../Actions/appointmentAction';
+import {appConfig} from '../../../config';
+import {AppContext} from 'context';
+import {NativeToast} from '../../utils/toast';
 
 type Props = {
   navigation: NativeStackNavigationProp<
@@ -58,20 +63,21 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     value,
     setValue,
   });
-  const {appointmentId} = route.params;
+  const {setLoading} = useContext(AppContext);
+  const dispatch = useAppDispatch();
+  const {appointmentId, image} = route.params;
+  const {IMG_URL} = appConfig;
   const {
     createdAt,
     customerName,
     userId,
-    bookingNumber,
+    bookingNumber = '',
     services,
     totalAmount = 0,
   } = appointmentDetails || {};
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
-
-  const [start, setStart] = useState(false);
 
   const date = moment(createdAt).format('hh:mm A, DD MMMM YYYY');
 
@@ -85,6 +91,26 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
         <RNText style={styles.valueTextStyle}>{value}</RNText>
       </View>
     );
+  };
+
+  const onPressSubmit = () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        appointmentId: appointmentId,
+        otp: value,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+        NativeToast(res?.message);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.error);
+        console.log('Errrr', Err?.data?.error);
+      },
+    };
+    dispatch(verifyAppointment(obj));
   };
 
   return (
@@ -113,7 +139,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
               <RnImage
                 resizeMode="contain"
                 style={styles.cardProfile}
-                source={images.wom1}
+                source={{uri: `${IMG_URL}/${image}`}}
               />
               <View style={styles.nameView}>
                 <RNText style={styles.title}>{customerName}</RNText>
@@ -180,7 +206,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                 )}
               />
             </View>
-            <Pressable style={styles.button}>
+            <Pressable onPress={onPressSubmit} style={styles.button}>
               <RNText style={styles.bottontitle}>{'Submit'}</RNText>
             </Pressable>
           </View>
@@ -188,7 +214,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
         <View style={styles.bottompart}>
           <PrimaryButton
             containerStyle={styles.primarybutton}
-            label={start ? 'Done' : 'Start'}
+            label={'Done'}
             onPress={() => {}}
           />
         </View>

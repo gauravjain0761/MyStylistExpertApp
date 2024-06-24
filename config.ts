@@ -60,6 +60,7 @@ export const endPoints = {
   getAllServiceSubServices: `demo/getAllServiceSubServices`,
   messagesReads: `chat/messagesRead`,
   notification: `notification/getAllNotifications`,
+  verifyAppointment: `appointment/verifyAppointment`,
 };
 
 export const POST = 'POST';

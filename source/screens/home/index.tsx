@@ -254,7 +254,6 @@ const Home: FC<Props> = ({navigation, route}) => {
       },
       onFailure: (Err: any) => {
         setLoading(false);
-        NativeToast(Err?.data?.message);
         setFooterLoading(false);
       },
     };

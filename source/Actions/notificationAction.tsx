@@ -24,7 +24,10 @@ export const getAllNotification =
       .then(async (response: any) => {
         if (response.status === 200) {
           if (request.onSuccess) request.onSuccess(response.data);
-          dispatch({type: GET_NOTIFICATION_LIST, payload: response.data});
+          dispatch({
+            type: GET_NOTIFICATION_LIST,
+            payload: response.data?.notifications,
+          });
         }
       })
       .catch(error => {

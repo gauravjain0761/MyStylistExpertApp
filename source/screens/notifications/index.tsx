@@ -15,7 +15,6 @@ import images from 'images';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {AppContext} from 'context';
-import {err} from 'react-native-svg';
 import {useAppDispatch, useAppSelector} from 'store';
 import {getAllNotification} from '../../Actions/notificationAction';
 import {appConfig} from '../../../config';
@@ -43,29 +42,25 @@ const Notifications: FC = () => {
   }, []);
 
   useEffect(() => {
-    setNotification(notificationsList?.notifications);
+    setNotification(notificationsList);
   }, [notificationsList]);
 
-  const getNotification = useCallback(
-    async (segment: string) => {
-      setLoading(true);
-      const obj = {
-        data: {
-          userId: _id,
-          notification_type: '',
-        },
-        onSuccess: (res: any) => {
-          setLoading(false);
-        },
-        onFaliure: (Err: any) => {
-          setLoading(false);
-          console.log('Err', err);
-        },
-      };
-      dispatch(getAllNotification(obj));
-    },
-    [activeSegment],
-  );
+  const getNotification = async (segment: string) => {
+    const obj = {
+      data: {
+        userId: _id,
+        notification_type: segment == 'all' ? '' : segment,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        console.log('Err', Err);
+      },
+    };
+    dispatch(getAllNotification(obj));
+  };
 
   const onPressNotification = (item: any) => {
     const type = item?.notification_type;
@@ -84,7 +79,7 @@ const Notifications: FC = () => {
           <View style={[styles.buttonWrapper]}>
             {segments.map((data, index) => {
               return (
-                <Pressable
+                <TouchableOpacity
                   onPress={() => {
                     getNotification(data?.toLowerCase()), setSegment(data);
                   }}
@@ -104,7 +99,7 @@ const Notifications: FC = () => {
                     ]}>
                     {data}
                   </RNText>
-                </Pressable>
+                </TouchableOpacity>
               );
             })}
           </View>

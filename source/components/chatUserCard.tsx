@@ -7,16 +7,24 @@ import globalStyle from 'globalStyles';
 import {ChatUser} from 'types';
 import moment from 'moment';
 import FastImage from 'react-native-fast-image';
+import {appConfig} from '../../config';
 
 interface Props {
   index: number;
   data: ChatUser;
   onPressCard: () => void;
+  unreadMessageCount: number;
 }
 
-const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
-  const {lastMessage, name, time, user_profile_images} = data;
+const ChatUserCard: FC<Props> = ({
+  index,
+  data,
+  onPressCard,
+  unreadMessageCount = 0,
+}) => {
+  const {lastMessage, name, time, user_profile_images} = data || {};
   const {image} = user_profile_images.length ? user_profile_images[0] : {};
+  const {IMG_URL} = appConfig;
   const messageTime = time ? moment(time).format('hh:mm') : '';
   return (
     <Pressable onPress={onPressCard} style={styles.chatCard}>
@@ -26,7 +34,7 @@ const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
             style={styles.profileImage}
             resizeMode="cover"
             source={{
-              uri: image,
+              uri: `${IMG_URL}/${image}`,
               priority: FastImage?.priority?.high,
             }}
           />
@@ -57,18 +65,19 @@ const ChatUserCard: FC<Props> = ({index, data, onPressCard}) => {
         )}
       </View>
       <View style={styles.timeView}>
-        <Text size="xs">{messageTime || '00:00'}</Text>
-        {index === 0 ? (
+        {messageTime && <Text size="xs">{messageTime}</Text>}
+        {lastMessage && (
           <Image
-            tintColor={'#BEBEBE'}
+            tintColor={'#34B7F1'}
             source={images.SeenIcon}
             style={styles.seenIcon}
             resizeMode="contain"
           />
-        ) : (
+        )}
+        {unreadMessageCount > 0 && (
           <View style={[styles.messageCount, globalStyle.bothContentCenter]}>
             <Text size="xs" color="text-white">
-              {'2'}
+              {unreadMessageCount}
             </Text>
           </View>
         )}

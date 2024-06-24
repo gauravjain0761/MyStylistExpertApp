@@ -33,6 +33,7 @@ const Chats: FC<Props> = ({navigation}) => {
   const {createRoom, messagesReads} = endPoints;
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
+  const count = chatUsers.filter(user => user?.isRead == false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -124,19 +125,21 @@ const Chats: FC<Props> = ({navigation}) => {
                   ]}>
                   Unread Messages
                 </RNText>
-                <View
-                  style={[
-                    styles.messageCount,
-                    globalStyle.bothContentCenter,
-                    {
-                      backgroundColor:
-                        activeTab == 'Unread Messages'
-                          ? Color?.White
-                          : Color?.Green,
-                    },
-                  ]}>
-                  <RNText style={styles.countTitle}>{'12'}</RNText>
-                </View>
+                {count.length > 0 && (
+                  <View
+                    style={[
+                      styles.messageCount,
+                      globalStyle.bothContentCenter,
+                      {
+                        backgroundColor:
+                          activeTab == 'Unread Messages'
+                            ? Color?.White
+                            : Color?.Green,
+                      },
+                    ]}>
+                    <RNText style={styles.countTitle}>{count.length}</RNText>
+                  </View>
+                )}
               </Pressable>
             </View>
           </View>
@@ -153,26 +156,50 @@ const Chats: FC<Props> = ({navigation}) => {
             </Text>
           </View>
           <View style={styles.listView}>
-            <FlatList
-              data={chatUsers}
-              contentContainerStyle={styles.list}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-              renderItem={({item, index}) => {
-                const {_id, name, user_profile_images} = item;
-                const {image} = user_profile_images.length
-                  ? user_profile_images?.[0]
-                  : {};
-                return (
-                  <ChatUserCard
-                    data={item}
-                    index={index}
-                    onPressCard={() => onPressCart(item)}
-                  />
-                );
-              }}
-            />
+            {activeTab == 'All' ? (
+              <FlatList
+                data={chatUsers}
+                contentContainerStyle={styles.list}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                renderItem={({item, index}) => {
+                  return (
+                    <ChatUserCard
+                      data={item}
+                      index={index}
+                      onPressCard={() => onPressCart(item)}
+                      unreadMessageCount={item?.unreadMessageCount}
+                    />
+                  );
+                }}
+              />
+            ) : (
+              <FlatList
+                data={chatUsers}
+                contentContainerStyle={styles.list}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={item =>
+                  !item?.leadingItem?.isRead && (
+                    <View style={styles.separator} />
+                  )
+                }
+                renderItem={({item, index}) => {
+                  return (
+                    !item?.isRead && (
+                      <ChatUserCard
+                        data={item}
+                        index={index}
+                        onPressCard={() => onPressCart(item)}
+                        unreadMessageCount={item?.unreadMessageCount}
+                      />
+                    )
+                  );
+                }}
+                rende
+              />
+            )}
           </View>
         </View>
         <BottomTab />
@@ -195,7 +222,7 @@ const styles = StyleSheet.create({
   messageIcon: tw`w-3.5 h-3.5`,
   listView: tw`w-full h-full flex-1 px-4`,
   separator: tw`w-full h-0.3 bg-gray-200`,
-  list: tw`pb-4`,
+  list: {...tw`pb-4`, flex: 1},
   topButtons: {
     ...tw`w-full items-center`,
     marginTop: hp(24),
