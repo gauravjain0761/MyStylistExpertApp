@@ -66,7 +66,7 @@ const ChatUserCard: FC<Props> = ({
       </View>
       <View style={styles.timeView}>
         {messageTime && <Text size="xs">{messageTime}</Text>}
-        {lastMessage && (
+        {lastMessage && unreadMessageCount == 0 && (
           <Image
             tintColor={'#34B7F1'}
             source={images.SeenIcon}
