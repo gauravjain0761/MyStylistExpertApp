@@ -73,13 +73,13 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     userId,
     bookingNumber = '',
     services,
+    timeSlot,
     totalAmount = 0,
   } = appointmentDetails || {};
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
-
-  const date = moment(createdAt).format('hh:mm A, DD MMMM YYYY');
+  const {availableDate, availableTime} = timeSlot?.[0] || [];
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {
     return (
@@ -143,7 +143,11 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
               />
               <View style={styles.nameView}>
                 <RNText style={styles.title}>{customerName}</RNText>
-                <RNText style={styles.date}>{date}</RNText>
+                <RNText style={styles.date}>
+                  {`${availableTime}, ${moment(availableDate)?.format(
+                    'DD MMM YYYY',
+                  )}`}
+                </RNText>
                 <RNText
                   style={
                     styles.bookingid

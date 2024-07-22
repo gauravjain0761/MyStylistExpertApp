@@ -40,15 +40,15 @@ const AppointmentCard: FC<Props> = ({
   data,
   onPreeCard,
 }) => {
-  const {customerName, services, timeSlot, totalAmount, bookingNumber} = data;
+  const {customerName, services, timeSlot, totalAmount, bookingNumber} =
+    data || {};
   const service = services.map(service => service?.service_name).join(', ');
   const {IMG_URL} = appConfig;
+  const {availableDate, availableTime} = timeSlot?.[0] || [];
 
   const onPressCall = () => {
     Linking.openURL('tel:+91 0123456789');
   };
-
-  const date = moment(timeSlot[0]?.availableDate).format('hh:mm A,DD MMM YYYY');
   return (
     <Pressable
       onPress={() => onPreeCard && onPreeCard(data?._id)}
@@ -65,7 +65,9 @@ const AppointmentCard: FC<Props> = ({
           />
           <View style={styles.nameView}>
             <RNText style={styles.title}>{customerName}</RNText>
-            <RNText style={styles.date}>{date}</RNText>
+            <RNText style={styles.date}>{`${availableTime},${moment(
+              availableDate,
+            )?.format('DD MMM YYYY')}`}</RNText>
             <RNText style={styles.service}>
               {service.length > 30 ? `${service.substring(0, 22)}...` : service}
             </RNText>
