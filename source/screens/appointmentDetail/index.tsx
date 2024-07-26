@@ -4,16 +4,16 @@ import images from 'images';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
 import {RouteProp} from '@react-navigation/native';
-import {Header, Container, Image, Text, PrimaryButton} from 'components';
+import {Header, Container, Image, PrimaryButton} from 'components';
 import {
   Pressable,
   View,
   Image as RnImage,
   TouchableOpacity,
-  Text as RNText,
   StyleSheet,
   ImageBackground,
   ScrollView,
+  Text,
 } from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useAppointmentDetails from './hooks';
@@ -39,6 +39,7 @@ import {verifyAppointment} from '../../Actions/appointmentAction';
 import {appConfig} from '../../../config';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
+import AppointmentDetailCard from '../../components/AppointmentDetailCard';
 
 type Props = {
   navigation: NativeStackNavigationProp<
@@ -63,9 +64,9 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     value,
     setValue,
   });
-  const {setLoading} = useContext(AppContext);
+  const {setLoading, loading} = useContext(AppContext);
   const dispatch = useAppDispatch();
-  const {appointmentId, image} = route.params;
+  const {appointmentId} = route.params;
   const {IMG_URL} = appConfig;
   const {
     createdAt,
@@ -74,21 +75,25 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     bookingNumber = '',
     services,
     timeSlot,
+    discount,
     totalAmount = 0,
+    tax,
+    paymentType,
   } = appointmentDetails || {};
+
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
   const {availableDate, availableTime} = timeSlot?.[0] || [];
+  const {image} = userId?.user_profile_images?.[0] || [];
+
+  const Appointment = {};
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {
     return (
       <View style={styles.rowSpaceStyle}>
-        <View style={styles.leftcontainer}>
-          <View style={styles.leftdote}></View>
-          <RNText style={styles.greyTitleTextStyle}>{title}</RNText>
-        </View>
-        <RNText style={styles.valueTextStyle}>{value}</RNText>
+        <Text style={styles.greyTitleTextStyle}>{title}</Text>
+        <Text style={styles.valueTextStyle}>{value}</Text>
       </View>
     );
   };
@@ -115,7 +120,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
 
   return (
     <Container>
-      <View style={globalStyle.container}>
+      <View style={[globalStyle.container, {backgroundColor: '#f2f2f2'}]}>
         <Header
           title="Appointments Detail"
           rightView={
@@ -130,98 +135,98 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
             </View>
           }
         />
-        <ScrollView style={styles.mainView}>
-          <ImageBackground
-            resizeMode="stretch"
-            style={styles.cardbg}
-            source={images.cardbg3}>
-            <View style={styles.cardProfileView}>
-              <RnImage
-                resizeMode="contain"
-                style={styles.cardProfile}
-                source={{uri: `${IMG_URL}/${image}`}}
-              />
-              <View style={styles.nameView}>
-                <RNText style={styles.title}>{customerName}</RNText>
-                <RNText style={styles.date}>
-                  {`${availableTime}, ${moment(availableDate)?.format(
-                    'DD MMM YYYY',
-                  )}`}
-                </RNText>
-                <RNText
-                  style={
-                    styles.bookingid
-                  }>{`Booking ID: ${bookingNumber}`}</RNText>
-                <View style={styles.functionalityconatiner}>
-                  <TouchableOpacity style={styles.buttons}>
-                    <Image style={styles.iconstyle} source={images.chaticon} />
-                    <RNText style={styles.label}>Chat</RNText>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.buttons}>
-                    <Image
-                      style={[styles.callIconstyle]}
-                      source={images.callicon}
-                    />
-                    <RNText style={styles.label}>Call</RNText>
-                  </TouchableOpacity>
+        {!loading ? (
+          <>
+            <ScrollView>
+              <View style={styles.card_container}>
+                <AppointmentDetailCard
+                  imgBaseURL={IMG_URL}
+                  userImg={image}
+                  name={customerName}
+                  phoneNumber={Appointment?.expertId?.phone}
+                  location={
+                    Appointment?.expertId?.addresses?.[0].address?.houseNumber +
+                    ',' +
+                    Appointment?.expertId?.addresses?.[0].address?.sector +
+                    ',' +
+                    Appointment?.expertId?.addresses?.[0].address?.landmark
+                  }
+                  date={moment(availableDate).format('DD MMM,YYYY')}
+                  time={availableTime}
+                  onPressChat={() => {}}
+                  bookingID={bookingNumber}
+                />
+              </View>
+              <View style={styles.otp_conatiner}>
+                <Text style={styles.otp_title}>
+                  {'OTP to start the service'}
+                </Text>
+                <View style={styles.leftpart}>
+                  <CodeField
+                    ref={ref}
+                    {...props}
+                    onBlur={() => {}}
+                    value={value}
+                    onChangeText={setValue}
+                    cellCount={CELL_COUNT}
+                    keyboardType="number-pad"
+                    textContentType="oneTimeCode"
+                    renderCell={({index, symbol, isFocused}) => (
+                      <View key={index} style={[styles.cell]}>
+                        <Text
+                          key={index}
+                          style={{
+                            ...commonFontStyle(
+                              fontFamily.medium,
+                              20,
+                              Color?.Green2F,
+                            ),
+                          }}
+                          onLayout={getCellOnLayoutHandler(index)}>
+                          {symbol || (isFocused ? <Cursor /> : '-')}
+                        </Text>
+                      </View>
+                    )}
+                  />
                 </View>
               </View>
-            </View>
-            <View style={styles.cardDetailRow}>
-              <RNText style={styles.amount}>{`Total (INR)`}</RNText>
-              <RNText style={styles.amount}>{`₹${totalAmount}`}</RNText>
-            </View>
-            <View style={[styles.ellipse]}>
-              <RNText style={styles.dashed}>{DASHED}</RNText>
-            </View>
-            <View style={styles.serviceContainer}>
-              <RNText style={styles.services}>{'Services'}</RNText>
-              {services?.map(service => {
-                return (
-                  <RowItemValue
-                    title={service?.service_name}
-                    value={`₹ ${service?.price}`}
-                  />
-                );
-              })}
-            </View>
-          </ImageBackground>
-          <View style={styles.otpcontainer}>
-            <View style={styles.leftpart}>
-              <RNText style={styles.otptitle}>
-                {'Enter OTP to start the service'}
-              </RNText>
-              <CodeField
-                ref={ref}
-                {...props}
-                onBlur={() => {}}
-                value={value}
-                onChangeText={setValue}
-                cellCount={CELL_COUNT}
-                keyboardType="number-pad"
-                textContentType="oneTimeCode"
-                renderCell={({index, symbol, isFocused}) => (
-                  <RNText
-                    key={index}
-                    style={[styles.cell]}
-                    onLayout={getCellOnLayoutHandler(index)}>
-                    {symbol || (isFocused ? <Cursor /> : '-')}
-                  </RNText>
-                )}
+
+              <View style={{...styles.whiteContainer, marginTop: 0}}>
+                <Text style={styles.titleStyle}>{'Bill Details'}</Text>
+                {services?.map((item: any) => {
+                  return (
+                    <RowItemValue
+                      title={item?.service_name}
+                      value={`₹ ${item?.price}`}
+                    />
+                  );
+                })}
+                <RowItemValue
+                  title={`Discount of Service`}
+                  value={`₹ ${discount}`}
+                />
+                <RowItemValue
+                  title="Tax"
+                  value={`₹ ${Number(tax).toFixed(2)}`}
+                />
+                <RowItemValue title="Payment Method" value={paymentType} />
+                <View style={styles.lineStyle} />
+                <View style={styles.rowSpaceStyle}>
+                  <Text style={styles.valueTextStyle}>{'Total (INR)'}</Text>
+                  <Text
+                    style={styles.valueTextStyle}>{`₹ ${totalAmount}`}</Text>
+                </View>
+              </View>
+            </ScrollView>
+            <View style={styles.bottompart}>
+              <PrimaryButton
+                containerStyle={styles.primarybutton}
+                label={'Submit'}
+                onPress={() => onPressSubmit()}
               />
             </View>
-            <Pressable onPress={onPressSubmit} style={styles.button}>
-              <RNText style={styles.bottontitle}>{'Submit'}</RNText>
-            </Pressable>
-          </View>
-        </ScrollView>
-        <View style={styles.bottompart}>
-          <PrimaryButton
-            containerStyle={styles.primarybutton}
-            label={'Done'}
-            onPress={() => {}}
-          />
-        </View>
+          </>
+        ) : null}
       </View>
     </Container>
   );
@@ -408,13 +413,98 @@ const styles = StyleSheet.create({
     borderRadius: wp(6),
   },
   cell: {
-    width: 30,
-    height: 30,
+    width: wp(25),
+    height: wp(30),
     textAlign: 'center',
-    marginTop: hp(11),
-    ...commonFontStyle(fontFamily.medium, 22, Color?.Green2F),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  conatiner: {
+    flex: 1,
+  },
+  card_container: {
+    marginTop: hp(25),
+  },
+  otp_conatiner: {
+    marginVertical: hp(19),
+    backgroundColor: Color?.GreenCC,
+    paddingVertical: hp(10),
+    paddingHorizontal: wp(20),
+    marginHorizontal: hp(15),
+    borderRadius: wp(8),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  otp_title: {
+    ...commonFontStyle(fontFamily.medium, 16, Color.Green2F),
+  },
+  otp_number: {
+    ...commonFontStyle(fontFamily.medium, 20, Color.Green2F),
+    letterSpacing: wp(5),
+  },
+  otp_detail_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  whiteContainer: {
+    margin: 20,
+    borderRadius: 8,
+    padding: wp(13),
+    backgroundColor: Color.White,
+    marginBottom: hp(40),
+    marginHorizontal: hp(15),
+  },
+  titleStyle: {
+    ...commonFontStyle(fontFamily.semi_bold, 18, Color.Black),
+    marginBottom: hp(10),
+  },
+  lineStyle: {
+    borderBottomWidth: 1,
+    borderColor: Color.GreyDE,
+    marginVertical: hp(10),
+  },
+  // rowSpaceStyle: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   justifyContent: "space-between",
+  //   marginVertical: hp(10),
+  // },
+  // valueTextStyle: {
+  //   ...commonFontStyle(fontFamily.semi_bold, 16, Color.black),
+  // },
+  // greyTitleTextStyle: {
+  //   ...commonFontStyle(fontFamily.regular, 16, Color.gery_6),
+  // },
+  elevationStyle: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 10,
+    backgroundColor: Color.white,
+    padding: wp(20),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  priceTextStyle: {
+    ...commonFontStyle(fontFamily.semi_bold, 24, Color.black_2),
+    flex: 1,
+    textAlign: 'center',
+  },
+  cartBtnStyle: {
+    height: hp(60),
+    width: wp(160),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  goTextStyle: {
+    ...commonFontStyle(fontFamily.semi_bold, 18, Color.black_2),
   },
 });
 

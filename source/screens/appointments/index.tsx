@@ -13,7 +13,7 @@ import {
 import {Header, Image, AppointmentCard, Container, Button} from 'components';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useFocusEffect} from '@react-navigation/native';
 import useAppointment from './hooks';
 import {
   commonFontStyle,
@@ -59,6 +59,12 @@ const Appointments: FC<Props> = ({navigation}) => {
   const onPressFilter = () => {
     setVisible(!visible);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      getAllUpcommingAppointments(false);
+    }, []),
+  );
 
   const getAllUpcommingAppointments = useCallback((isLogin: boolean) => {
     let obj = {
