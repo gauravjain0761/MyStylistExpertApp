@@ -120,8 +120,6 @@ function BusyMode() {
           setAfternoonDates(afternoon);
           setEveningDates(evening);
           setMorningDates(morning);
-          // console.log(' data?.[selected]', data?.[selected]);
-          // setDates(calData?.[selected]);
         }
       })
       .catch(error => {
@@ -329,65 +327,6 @@ function BusyMode() {
                   paddingRight: 0,
                 }}
               />
-              {/* <Calendar
-                minDate={minDate}
-                theme={{
-                  dayTextColor: 'black',
-                  selectedDayBackgroundColor: '#89E3DC',
-                  selectedDayTextColor: 'black',
-                  todayTextColor: '#2F7973',
-                }}
-                onDayLongPress={date => {
-                  const dateString = date['dateString'];
-                  const dateFormat = moment(dateString).format('YYYY-MM-DD');
-                  console.log('onDayLongPress', dateFormat);
-                  setSelected(dateFormat);
-                  setDates([]);
-                }}
-                onDayPress={date => {
-                  //   const dateString = date['dateString'];
-                  //   const dateFormat = moment(dateString).format('YYYY-MM-DD');
-                  //   console.log('onDayPress', dateFormat);
-                  //   setSelected(dateFormat);
-                  //   setDates([]);
-                  onDayPress(date);
-                }}
-                markingType="period"
-                markedDates={period}
-                style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  backgroundColor: 'green',
-                  padding: 0,
-                }}
-                headerStyle={{
-                  padding: 0,
-                  width: '100%',
-                }}
-                // renderHeader={() => <Text>hi</Text>}
-                renderArrow={direction =>
-                  direction == 'left' ? (
-                    <View style={styles.arrow}>
-                      <Image
-                        resizeMode="contain"
-                        source={images?.Back}
-                        style={styles.backicon}
-                      />
-                    </View>
-                  ) : (
-                    <View style={styles.arrow}>
-                      <Image
-                        resizeMode="contain"
-                        source={images?.Back}
-                        style={[
-                          styles.backicon,
-                          {transform: [{rotate: '180deg'}]},
-                        ]}
-                      />
-                    </View>
-                  )
-                }
-              /> */}
             </View>
             <View
               style={{

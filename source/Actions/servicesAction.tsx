@@ -31,9 +31,13 @@ export const TopService =
       .then(async (response: any) => {
         if (response.status === 200) {
           if (request.onSuccess) request.onSuccess(response?.data);
+          let data = {
+            ...response?.data,
+            page: request?.data?.page,
+          };
           dispatch({
             type: TOPSERVICESOLD,
-            payload: response?.data?.topServices,
+            payload: data,
           });
         }
       })

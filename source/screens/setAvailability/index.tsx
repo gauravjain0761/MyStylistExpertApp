@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import globalStyle from 'globalStyles';
@@ -15,7 +15,7 @@ import {Header, Image, Container, Button, PrimaryButton} from 'components';
 import moment from 'moment';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import Color from '../../../assets/color';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 
@@ -25,8 +25,14 @@ type Props = {
 };
 
 const SetAvailability: FC<Props> = ({navigation}) => {
-  const [fromTime, setFromTime] = useState<Date>();
-  const [toTime, setToTime] = useState<any>();
+  const {params} = useRoute();
+  const {time} = params || {};
+  const [fromTime, setFromTime] = useState<any>(
+    moment(time?.startat, 'hh:mma')?.toISOString(),
+  );
+  const [toTime, setToTime] = useState<any>(
+    moment(time?.endat, 'hh:mma')?.toISOString(),
+  );
   const [fromTimePicker, setFromTimePicker] = useState<boolean>(false);
   const [toTimePicker, setToTimePicker] = useState<boolean>(false);
 
@@ -72,10 +78,10 @@ const SetAvailability: FC<Props> = ({navigation}) => {
           <DatePicker
             mode="time"
             modal={true}
-            date={fromTime || new Date()}
+            minimumDate={new Date()}
+            date={new Date()}
             open={fromTimePicker}
             onConfirm={date => {
-              setToTime('');
               setFromTime(date);
               setFromTimePicker(false);
             }}
@@ -86,8 +92,8 @@ const SetAvailability: FC<Props> = ({navigation}) => {
           <DatePicker
             mode="time"
             modal={true}
-            minimumDate={fromTime || new Date()}
-            date={toTime || new Date()}
+            minimumDate={new Date()}
+            date={new Date()}
             open={toTimePicker}
             onConfirm={date => {
               setToTime(date);
@@ -97,16 +103,6 @@ const SetAvailability: FC<Props> = ({navigation}) => {
               setToTimePicker(false);
             }}
           />
-          {/* <View style={[styles.addMoreView, globalStyle.bothContentCenter]}>
-            <Pressable style={[styles.addMore, globalStyle.bothContentCenter]}>
-              <Image
-                style={styles.plusIcon}
-                resizeMode="contain"
-                source={images.PlusIcon}
-              />
-              <Text size="sm">Add More</Text>
-            </Pressable>
-          </View> */}
         </View>
         <View style={[styles.bottomButtonView, globalStyle.bothContentCenter]}>
           <PrimaryButton
@@ -117,9 +113,6 @@ const SetAvailability: FC<Props> = ({navigation}) => {
             containerLabelStyle={styles.btntitle}
             containerStyle={{borderRadius: wp(6)}}
           />
-          <TouchableOpacity style={styles.cancelbtn}>
-            <Text>{'Cancel Changes'}</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </Container>
@@ -128,7 +121,10 @@ const SetAvailability: FC<Props> = ({navigation}) => {
 
 const styles = StyleSheet.create({
   mainView: {...tw`w-full h-full flex-1 bg-white px-4`, marginTop: hp(25)},
-  bottomButtonView: tw`w-full items-center bg-cultured justify-center px-4`,
+  bottomButtonView: {
+    ...tw`w-full items-center bg-cultured justify-center px-4`,
+    marginBottom: hp(20),
+  },
   timeBoxView: tw`flex-row w-full gap-4`,
   boxWrapper: tw`flex-1 w-full h-full`,
   timeBox: {

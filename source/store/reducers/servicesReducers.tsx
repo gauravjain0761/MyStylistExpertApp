@@ -8,10 +8,17 @@ const initialState = {
 export default function (state = initialState, action: any) {
   switch (action?.type) {
     case TOPSERVICESOLD: {
-      return {
-        ...state,
-        topServices: action.payload,
-      };
+      if (action?.payload?.page == 1) {
+        return {
+          ...state,
+          topServices: action.payload?.topServices,
+        };
+      } else {
+        return {
+          ...state,
+          topServices: [...state?.topServices, ...action.payload?.topServices],
+        };
+      }
     }
     case GET_SERVICES: {
       return {

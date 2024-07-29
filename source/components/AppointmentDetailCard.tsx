@@ -107,7 +107,7 @@ const AppointmentDetailCard = ({
               <FastImage
                 resizeMode="cover"
                 source={{
-                  uri: imgBaseURL + '/' + userImg,
+                  uri: userImg,
                   priority: FastImage.priority.high,
                 }}
                 style={styles.img}
@@ -123,12 +123,11 @@ const AppointmentDetailCard = ({
               </View>
               <VerifyIcon width={14} height={14} />
             </View>
-            {/* <View style={styles.location_container}>
+            <View style={styles.location_container}>
               <Text numberOfLines={1} style={styles.location_title}>
                 {location}
               </Text>
-            </View> */}
-            {/* <Text style={styles.service_title}>{service}</Text> */}
+            </View>
           </View>
         </View>
         <View style={styles.facility_conatiner}>
@@ -144,7 +143,7 @@ const AppointmentDetailCard = ({
           </TouchableOpacity>
           <TouchableOpacity onPress={onPressNumber} style={styles.service_btn}>
             <CallIcon />
-            <Text style={styles.btn_title}>{'Call Stylist'}</Text>
+            <Text style={styles.btn_title}>{'Call'}</Text>
           </TouchableOpacity>
         </View>
         <View style={{flexDirection: 'row'}}>
@@ -213,6 +212,7 @@ const styles = StyleSheet.create({
   },
   name_container: {
     alignItems: 'center',
+    flex: 1,
   },
   barber_name: {
     ...commonFontStyle(fontFamily.bold, 28, Colors.black),
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   facility_conatiner: {
     flexDirection: 'row',
-    marginBottom: hp(15),
+    marginVertical: hp(15),
     justifyContent: 'space-between',
   },
   service_btn: {
@@ -341,6 +341,7 @@ const styles = StyleSheet.create({
     gap: wp(17),
     flexDirection: 'row',
     width: '100%',
+    alignItems: 'center',
   },
   previous_container: {
     flexDirection: 'row',

@@ -86,8 +86,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
   }, []);
   const {availableDate, availableTime} = timeSlot?.[0] || [];
   const {image} = userId?.user_profile_images?.[0] || [];
-
-  const Appointment = {};
+  const address = userId?.addresses?.[0];
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {
     return (
@@ -118,6 +117,8 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     dispatch(verifyAppointment(obj));
   };
 
+  console.log(address?.address?.houseNumber);
+
   return (
     <Container>
       <View style={[globalStyle.container, {backgroundColor: '#f2f2f2'}]}>
@@ -143,13 +144,13 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                   imgBaseURL={IMG_URL}
                   userImg={image}
                   name={customerName}
-                  phoneNumber={Appointment?.expertId?.phone}
+                  phoneNumber={userId?.phone}
                   location={
-                    Appointment?.expertId?.addresses?.[0].address?.houseNumber +
+                    address?.address?.houseNumber +
                     ',' +
-                    Appointment?.expertId?.addresses?.[0].address?.sector +
+                    address?.address?.sector +
                     ',' +
-                    Appointment?.expertId?.addresses?.[0].address?.landmark
+                    address?.address?.landmark
                   }
                   date={moment(availableDate).format('DD MMM,YYYY')}
                   time={availableTime}
@@ -161,34 +162,33 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                 <Text style={styles.otp_title}>
                   {'OTP to start the service'}
                 </Text>
-                <View style={styles.leftpart}>
-                  <CodeField
-                    ref={ref}
-                    {...props}
-                    onBlur={() => {}}
-                    value={value}
-                    onChangeText={setValue}
-                    cellCount={CELL_COUNT}
-                    keyboardType="number-pad"
-                    textContentType="oneTimeCode"
-                    renderCell={({index, symbol, isFocused}) => (
-                      <View key={index} style={[styles.cell]}>
-                        <Text
-                          key={index}
-                          style={{
-                            ...commonFontStyle(
-                              fontFamily.medium,
-                              20,
-                              Color?.Green2F,
-                            ),
-                          }}
-                          onLayout={getCellOnLayoutHandler(index)}>
-                          {symbol || (isFocused ? <Cursor /> : '-')}
-                        </Text>
-                      </View>
-                    )}
-                  />
-                </View>
+                <CodeField
+                  ref={ref}
+                  {...props}
+                  onBlur={() => {}}
+                  value={value}
+                  blurOnSubmit={true}
+                  onChangeText={setValue}
+                  cellCount={CELL_COUNT}
+                  keyboardType="number-pad"
+                  textContentType="oneTimeCode"
+                  renderCell={({index, symbol, isFocused}) => (
+                    <View key={index} style={[styles.cell]}>
+                      <Text
+                        key={index}
+                        style={{
+                          ...commonFontStyle(
+                            fontFamily.medium,
+                            20,
+                            Color?.Green2F,
+                          ),
+                        }}
+                        onLayout={getCellOnLayoutHandler(index)}>
+                        {symbol || (isFocused ? <Cursor /> : '-')}
+                      </Text>
+                    </View>
+                  )}
+                />
               </View>
 
               <View style={{...styles.whiteContainer, marginTop: 0}}>

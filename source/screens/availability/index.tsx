@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Container from '../../components/container';
 import Header from '../../components/header';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import images from 'images';
 import Color from '../../../assets/color';
 import {useNavigation} from '@react-navigation/native';
+import moment from 'moment';
 
 const timeData = [
   {
@@ -76,7 +77,9 @@ const Availability: FC = () => {
             renderItem={({item, index}) => {
               return (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('SetAvailability')}
+                  onPress={() =>
+                    navigation.navigate('SetAvailability', {time: item})
+                  }
                   style={styles.listcontainer}>
                   <Text style={styles.day}>{item?.day}</Text>
                   <View style={styles?.rightcontainer}>

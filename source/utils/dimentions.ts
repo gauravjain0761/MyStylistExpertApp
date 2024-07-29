@@ -1,6 +1,15 @@
-import {Dimensions, PixelRatio, Platform, TextStyle, useWindowDimensions} from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
+import {
+  Dimensions,
+  PixelRatio,
+  Platform,
+  TextStyle,
+  useWindowDimensions,
+} from 'react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
 
 const w = (widthPercent: any) => {
   const screenWidth = Dimensions.get('window').width;
@@ -54,12 +63,12 @@ export const hp = (val: number) => {
 
 export const fontSize = (val: number) => RFValue(val, 812);
 
-export const isIos = Platform.OS === "ios";
+export const isIos = Platform.OS === 'ios';
 
 export function commonFontStyle(
   fontFamily: string,
   size: number,
-  color: string
+  color: string,
 ): TextStyle {
   return {
     fontFamily: fontFamily,
@@ -70,24 +79,18 @@ export function commonFontStyle(
 }
 
 export const fontFamily = {
-  regular: "Inter-Regular",
-  black: "Inter-Black",
-  bold: "Inter-Bold",
-  extra_bold: "Inter-ExtraBold",
-  extra_light: "Inter-ExtraLight",
-  light: "Inter-Light",
-  medium: "Inter-Medium",
-  semi_bold: "Inter-SemiBold",
-  thin: "Inter-Thin",
-  RobotoRegular:'Roboto-Regular',
-  RobotoMedium:'Roboto-Medium',
-  RobotoBold:'Roboto-Bold',
-  RobotoLight:'Roboto-Light',
-  RobotoBlack:'Roboto-Black',
-  RobotoThin:'Roboto-Thin',
-  RobotoSemiBold:'Roboto-SemiBold',
-  RobotoExtraBold:'Roboto-ExtraBold',
-
+  regular: 'Poppins-Regular',
+  black: 'Poppins-Black',
+  bold: 'Poppins-Bold',
+  extra_bold: 'Poppins-ExtraBold',
+  medium: 'Poppins-Medium',
+  semi_bold: 'Poppins-SemiBold',
+  RobotoRegular: 'Poppins-Regular',
+  RobotoMedium: 'Poppins-Medium',
+  RobotoBold: 'Poppins-Bold',
+  RobotoBlack: 'Poppins-Black',
+  RobotoSemiBold: 'Poppins-SemiBold',
+  RobotoExtraBold: 'Poppins-ExtraBold',
 };
 
 export {w, h, f};

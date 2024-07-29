@@ -248,6 +248,7 @@ const Home: FC<Props> = ({navigation, route}) => {
         page: page,
       },
       onSuccess: (res: any) => {
+        console.log('ressss', res);
         setPage(page + 1);
         setLoading(false);
         setFooterLoading(false);
@@ -458,42 +459,6 @@ const Home: FC<Props> = ({navigation, route}) => {
                   );
                 }}
               />
-            </View>
-            <View style={styles.grapView}>
-              <View style={styles.topServiceHeader}>
-                <RNText style={styles.ViewTitle}>{'Weelkly Stats'}</RNText>
-                <View
-                  style={[
-                    styles.serviceDropdownView,
-                    globalStyle.bothContentCenter,
-                  ]}>
-                  <RNText style={styles.dropdownTitle}>{'Weekly'}</RNText>
-                  <Image
-                    style={styles.dropdownArrow}
-                    resizeMode="contain"
-                    source={images.DownArrow}
-                  />
-                </View>
-              </View>
-              <View>
-                <FlatList
-                  data={graphData}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.horizontalList}
-                  ListHeaderComponent={<View style={styles.seprator}></View>}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({item, index}) => {
-                    return (
-                      <BarChart
-                        graphTitle={'Weekly Search Result appearance'}
-                        key={index}
-                        graphContainerStyle={styles.chartcontainer}
-                      />
-                    );
-                  }}
-                />
-              </View>
             </View>
           </ScrollView>
           <BottomTab />
