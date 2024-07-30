@@ -3,7 +3,7 @@ import {useContext, useState} from 'react';
 import {Appointment} from 'types';
 import {endPoints} from '../../../config';
 import APICaller from '../../service/apiCaller';
-const {getUserDetails, getUpcomingAppointments} = endPoints;
+const {getUserDetails} = endPoints;
 
 const useAppointment = () => {
   const {userDetails, setLoading} = useContext(AppContext);
@@ -13,7 +13,7 @@ const useAppointment = () => {
 
   const getAllAppointments = async () => {
     setLoading(true);
-    const endpoint = `${getUpcomingAppointments}`;
+    const endpoint = `${}`;
     try {
       const response: any = await APICaller.post(endpoint);
       console.log('response of gettig appointments', response);

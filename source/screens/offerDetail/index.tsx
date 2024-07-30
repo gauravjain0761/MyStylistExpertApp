@@ -94,7 +94,6 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
       onSuccess: (res: any) => {
         setPage(page + 1);
         setFooterLoading(false);
-        console.log('resssss', res);
       },
       onFailure: (Err: any) => {
         console.log('Errr', Err?.data?.message);

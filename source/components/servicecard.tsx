@@ -99,6 +99,5 @@ const styles = StyleSheet.create({
   },
   btntitle: {
     ...commonFontStyle(fontFamily.medium, 12, Color?.Green35),
-    lineHeight: hp(20),
   },
 });

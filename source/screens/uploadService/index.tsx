@@ -150,8 +150,6 @@ const ServiceUpload: FC = () => {
     Data.append('sub_services', data?.sub_service_id);
     Data.append('userWorkimages', imageData);
 
-    console.log('imagessss', imageData);
-
     let obj = {
       data: Data,
       onSuccess: (res: any) => {

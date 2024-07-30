@@ -38,13 +38,10 @@ import {AppContext} from 'context';
 
 const {getAllDatesOFUser, markAsBusy, markAsUnBusy} = endPoints;
 
-function OfferItems(props) {
-  const [selected, setSelected] = useState(false);
-
+function OfferItems(props: any) {
   const {index, data, selectedValuee, setkeyword} = props;
-  console.log('CouponItems', data);
   const {time, color, status, _id} = data || {};
-  console.log('selectedValue', selectedValuee, time);
+
   return (
     <View style={styles.itemContainer}>
       <Pressable
@@ -53,11 +50,11 @@ function OfferItems(props) {
         }}
         style={{
           backgroundColor:
-            status === 'unavailable' && selectedValuee === _id
+            status === 'unavailable' && selectedValuee?.includes(_id)
               ? Color.Blue
               : status === 'unavailable'
               ? 'red'
-              : selectedValuee === _id
+              : selectedValuee?.includes(_id)
               ? Color.Green
               : Color.DimGrey,
           padding: w(2),
@@ -73,7 +70,6 @@ function OfferItems(props) {
 
 function BusyMode() {
   const navigation = useNavigation();
-  const [getDates, setDates] = useState([]);
   const [getMorningDates, setMorningDates] = useState([]);
   const [getEveningDates, setEveningDates] = useState([]);
   const [getAfternoonDates, setAfternoonDates] = useState([]);
@@ -90,14 +86,9 @@ function BusyMode() {
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
-  const [period, setPeriod] = useState({});
 
   const minDate = moment().format('YYYY-MM-DD');
   const maxDate = moment().format('YYYY-MM-DD');
-  useEffect(() => {
-    getAllDates();
-  }, []);
-
   useEffect(() => {
     getAllDates();
   }, [selected]);
@@ -128,7 +119,6 @@ function BusyMode() {
   };
 
   const markBusy = () => {
-    console.log('selectedValue', selectedValue);
     const method = 'POST';
     const endpoint = `${markAsBusy}`;
     const body = {
@@ -395,9 +385,17 @@ function BusyMode() {
                         index={index}
                         key={index.toString()}
                         setkeyword={(index, value, id) => {
-                          setSelectedTime(id);
+                          setSelectedTime((previousData: any) => {
+                            return previousData.includes(id)
+                              ? previousData.filter((item: any) => item !== id)
+                              : [...previousData, id];
+                          });
                           setSelectedValue(value);
-                          setSelectedId(id);
+                          setSelectedId((previousData: any) => {
+                            return previousData.includes(id)
+                              ? previousData.filter((item: any) => item !== id)
+                              : [...previousData, id];
+                          });
                         }}
                         selectedValuee={selectedTime}
                       />
@@ -434,7 +432,11 @@ function BusyMode() {
                         index={index}
                         key={index.toString()}
                         setkeyword={(index, value, id) => {
-                          setSelectedTime(id);
+                          setSelectedTime((previousData: any) => {
+                            return previousData.includes(id)
+                              ? previousData.filter((item: any) => item !== id)
+                              : [...previousData, id];
+                          });
                           setSelectedValue(value);
                           setSelectedId(id);
                         }}
@@ -473,7 +475,11 @@ function BusyMode() {
                         index={index}
                         key={index.toString()}
                         setkeyword={(index, value, id) => {
-                          setSelectedTime(id);
+                          setSelectedTime((previousData: any) => {
+                            return previousData.includes(id)
+                              ? previousData.filter((item: any) => item !== id)
+                              : [...previousData, id];
+                          });
                           setSelectedValue(value);
                           setSelectedId(id);
                         }}

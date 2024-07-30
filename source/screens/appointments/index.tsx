@@ -27,33 +27,45 @@ import FilterSheet from '../../bottomSheets/filterSheet';
 import {useAppDispatch, useAppSelector} from 'store';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
-import {
-  getPastAppointment,
-  getUpcomingAppointment,
-} from '../../Actions/appointmentAction';
+import {getAppointments} from '../../Actions/appointmentAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Appointments'>;
   route: RouteProp<RootStackParamList, 'Appointments'>;
 };
 
+export const appointmentFilter = [
+  {
+    id: 1,
+    title: 'Upcoming',
+  },
+  {
+    id: 2,
+    title: 'Reschedule',
+  },
+  {
+    id: 3,
+    title: 'Cancelled',
+  },
+  {
+    id: 4,
+    title: 'Completed',
+  },
+];
+
 const Appointments: FC<Props> = ({navigation}) => {
   const {appointment} = useAppSelector(state => state?.home);
-  const {past_appointment} = useAppSelector(state => state?.appointment);
   const [activeTab, setActiveTab] = useState<string>('Upcoming');
   const [visible, setVisible] = useState(false);
   const [upcommingPage, setUpcomingPage] = useState(1);
-  const [pastPage, setPastPage] = useState(1);
-  const {appointments} = appointment || {};
-  const {appointments: PastAppo} = past_appointment || {};
+  const [footerLoading, setFooterLoading] = useState(false);
 
   const dispatch = useAppDispatch();
   const {setLoading, userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
   useEffect(() => {
-    getAllPastAppointments(true);
-    getAllUpcommingAppointments(false);
+    getAllAppointments(true);
   }, []);
 
   const onPressFilter = () => {
@@ -62,48 +74,38 @@ const Appointments: FC<Props> = ({navigation}) => {
 
   useFocusEffect(
     useCallback(() => {
-      getAllUpcommingAppointments(false);
+      getAllAppointments(false);
     }, []),
   );
 
-  const getAllUpcommingAppointments = useCallback((isLogin: boolean) => {
-    let obj = {
-      data: {
-        expertId: _id,
-        limit: 10,
-        page: upcommingPage,
-      },
-      onSuccess: (res: any) => {
-        setUpcomingPage(upcommingPage + 1);
-        setLoading(false);
-      },
-      onFailure: (Err: any) => {
-        setLoading(false);
-        NativeToast(Err?.data?.message);
-      },
-    };
-    dispatch(getUpcomingAppointment(obj));
-  }, []);
+  const getAllAppointments = useCallback(
+    (isLogin: boolean, status = 'upcoming') => {
+      setLoading(isLogin);
+      let obj = {
+        data: {
+          expertId: _id,
+          limit: 10,
+          page: upcommingPage,
+          status: status?.toLowerCase(),
+        },
+        onSuccess: (res: any) => {
+          setUpcomingPage(upcommingPage + 1);
+          setLoading(false);
+        },
+        onFailure: (Err: any) => {
+          setLoading(false);
+          NativeToast(Err?.data?.message);
+        },
+      };
+      dispatch(getAppointments(obj));
+    },
+    [activeTab],
+  );
 
-  const getAllPastAppointments = useCallback((isLogin: boolean) => {
-    setLoading(isLogin);
-    let obj = {
-      data: {
-        expertId: _id,
-        limit: 10,
-        page: pastPage,
-      },
-      onSuccess: (res: any) => {
-        setPastPage(pastPage + 1);
-        setLoading(false);
-      },
-      onFailure: (Err: any) => {
-        setLoading(false);
-        NativeToast(Err?.data?.message);
-      },
-    };
-    dispatch(getPastAppointment(obj));
-  }, []);
+  const onEndReached = () => {
+    setFooterLoading(true);
+    getAllAppointments(false, activeTab);
+  };
 
   return (
     <Container>
@@ -132,109 +134,65 @@ const Appointments: FC<Props> = ({navigation}) => {
         <View style={styles.mainView}>
           <View style={styles.topButtons}>
             <View style={[styles.buttonWrapper, globalStyle.bothContentCenter]}>
-              <Pressable
-                onPress={() => {
-                  setActiveTab('Upcoming');
-                }}
-                style={[
-                  tw`bg-${
-                    activeTab === 'Upcoming' ? 'primary' : 'transparent'
-                  } flex-1 h-10`,
-                  styles.buttoncontainer,
-                ]}>
-                <Text
-                  style={[
-                    activeTab === 'Upcoming'
-                      ? styles.focuselabel
-                      : styles.label,
-                  ]}>
-                  Upcoming
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  setActiveTab('Past');
-                }}
-                style={[
-                  tw`bg-${
-                    activeTab === 'Past' ? 'primary' : 'transparent'
-                  } flex-1 h-10`,
-                  styles.buttoncontainer,
-                ]}>
-                <Text
-                  style={[
-                    activeTab === 'Past' ? styles.focuselabel : styles.label,
-                  ]}>
-                  Past
-                </Text>
-              </Pressable>
+              {appointmentFilter?.map((item, index) => {
+                return (
+                  <Pressable
+                    onPress={() => {
+                      setActiveTab(item?.title);
+                      getAllAppointments(true, item?.title);
+                    }}
+                    style={{
+                      ...styles.buttoncontainer,
+                      backgroundColor:
+                        activeTab == item?.title ? Color?.Green : 'transparent',
+                    }}>
+                    <Text
+                      style={[
+                        activeTab == item?.title
+                          ? styles.focuselabel
+                          : styles.label,
+                      ]}>
+                      {item?.title}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
-          {activeTab == 'Upcoming' ? (
-            <FlatList
-              data={appointments}
-              showsVerticalScrollIndicator={false}
-              ItemSeparatorComponent={() => {
-                return <View style={styles.listSeparator} />;
-              }}
-              ListEmptyComponent={
-                <View style={styles?.empty}>
-                  <Text style={styles?.emptyTitle}>
-                    No Upcoming Appointments found
-                  </Text>
-                </View>
-              }
-              contentContainerStyle={styles.listContainer}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item, index}) => {
-                return (
-                  <AppointmentCard
-                    data={item}
-                    key={index}
-                    fullWidth={true}
-                    onPreeCard={(appointmentId: string) =>
-                      navigation.navigate('AppointmentDetail', {
-                        appointmentId,
-                        image: item?.services?.[0]?.subServiceFileNames,
-                      })
-                    }
-                    status={activeTab === 'Upcoming' ? 'Upcoming' : 'Past'}
-                  />
-                );
-              }}
-            />
-          ) : (
-            <FlatList
-              data={PastAppo}
-              showsVerticalScrollIndicator={false}
-              ListEmptyComponent={
-                <View style={styles?.empty}>
-                  <Text style={styles?.emptyTitle}>
-                    No Past Appointments found
-                  </Text>
-                </View>
-              }
-              ItemSeparatorComponent={() => {
-                return <View style={styles.listSeparator} />;
-              }}
-              contentContainerStyle={styles.listContainer}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item, index}) => {
-                console.log('item', item);
-                return (
-                  <AppointmentCard
-                    data={item}
-                    key={index}
-                    fullWidth={true}
-                    onPreeCard={(appointmentId: string) =>
-                      navigation.navigate('AppointmentDetail', {appointmentId})
-                    }
-                    status={activeTab === 'Upcoming' ? 'Upcoming' : 'Past'}
-                  />
-                );
-              }}
-            />
-          )}
+          <FlatList
+            data={appointment}
+            showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => {
+              return <View style={styles.listSeparator} />;
+            }}
+            ListEmptyComponent={
+              <View style={styles?.empty}>
+                <Text style={styles?.emptyTitle}>
+                  {`No ${activeTab} Appointments found`}
+                </Text>
+              </View>
+            }
+            contentContainerStyle={styles.listContainer}
+            keyExtractor={(item, index) => index.toString()}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={footerLoading && <ActivityIndicator />}
+            renderItem={({item, index}) => {
+              return (
+                <AppointmentCard
+                  data={item}
+                  key={index}
+                  fullWidth={true}
+                  onPreeCard={(appointmentId: string) =>
+                    navigation.navigate('AppointmentDetail', {
+                      appointmentId,
+                      image: item?.services?.[0]?.subServiceFileNames,
+                    })
+                  }
+                />
+              );
+            }}
+          />
         </View>
         <FilterSheet visible={visible} setVisibility={setVisible} />
       </View>
@@ -248,7 +206,11 @@ const styles = StyleSheet.create({
   searchIcon: tw`w-6.5 h-6.5`,
   mainView: {...tw`w-full h-full flex-1 bg-white`, marginTop: hp(13)},
   topButtons: {...tw`w-full items-center`, paddingHorizontal: wp(25)},
-  buttonWrapper: tw`w-full px-3 h-17 rounded-lg bg-aliceBlue flex-row`,
+  buttonWrapper: {
+    ...tw`w-full px-3 rounded-lg bg-aliceBlue`,
+    flexDirection: 'row',
+    paddingVertical: hp(10),
+  },
   listContainer: tw`py-5`,
   listSeparator: {
     height: hp(25),
@@ -257,10 +219,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: wp(4),
+    flexGrow: 1,
   },
   focuselabel: {
     ...commonFontStyle(fontFamily.semi_bold, 14, Color?.Black),
     lineHeight: hp(17),
+    paddingVertical: hp(10),
   },
   label: {
     ...commonFontStyle(fontFamily.medium, 14, Color?.Black),

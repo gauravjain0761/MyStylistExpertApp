@@ -29,7 +29,6 @@ import {appConfig} from '../../config';
 interface Props {
   fullWidth?: boolean;
   homeScreen?: boolean;
-  status: 'Upcoming' | 'Completed' | 'Cancelled';
   onPreeCard?: (appointmentId: string) => void;
   data: Appointment;
 }

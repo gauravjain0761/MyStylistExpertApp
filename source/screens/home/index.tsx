@@ -51,7 +51,10 @@ import {appConfig, endPoints} from '../../../config';
 import useHome from './hooks';
 import {AppContext} from 'context';
 import {getAllBanner, getUserDetails} from '../../Actions/homeAction';
-import {getUpcomingAppointment} from '../../Actions/appointmentAction';
+import {
+  getAppointments,
+  getUpcomingAppointment,
+} from '../../Actions/appointmentAction';
 import {TopService} from '../../Actions/servicesAction';
 import {io} from 'socket.io-client';
 import {socketConnect} from '../Socket';
@@ -147,7 +150,6 @@ const Home: FC<Props> = ({navigation, route}) => {
         await getAddress(
           response,
           async (res: any) => {
-            console.log('ressss', res);
             // await setAsyncLocation(res?.results?.[0]?.formatted_address);
             await setAsyncLocation('Mohali, Punjab');
             setLocation('Mohali, Punjab');
@@ -211,8 +213,10 @@ const Home: FC<Props> = ({navigation, route}) => {
         expertId: _id,
         limit: 10,
         page: 1,
+        status: 'upcoming',
       },
       onSuccess: (res: any) => {
+        console.log('resss', res);
         setLoading(false);
       },
       onFailure: (Err: any) => {
@@ -220,7 +224,7 @@ const Home: FC<Props> = ({navigation, route}) => {
         NativeToast(Err?.data?.message);
       },
     };
-    dispatch(getUpcomingAppointment(obj));
+    dispatch(getAppointments(obj));
   };
 
   const getUserDetail = () => {
@@ -248,7 +252,6 @@ const Home: FC<Props> = ({navigation, route}) => {
         page: page,
       },
       onSuccess: (res: any) => {
-        console.log('ressss', res);
         setPage(page + 1);
         setLoading(false);
         setFooterLoading(false);
@@ -262,6 +265,7 @@ const Home: FC<Props> = ({navigation, route}) => {
   };
 
   const onEndReached = () => {
+    setFooterLoading(true);
     getTopServices(false);
   };
 
