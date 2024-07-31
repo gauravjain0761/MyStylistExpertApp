@@ -51,7 +51,7 @@ export const endPoints = {
   topService: `appointment/getTopServices`,
   getExpertnewSeubServices: `demo/getAllServiceSubServices`,
   getAllExpertTopReview: `review/getAllExpertTopReview`,
-  uploadSubService: `service/uploadSubServiceImage`,
+  uploadSubService: `demo/uploadAssignService`,
   stylistWorkImage: `stylistWorkImages/getStylistWorkImages`,
   campaignAccept: `campaign/campaignAcceptDecline`,
   getOrders: `appointment/getOfferOrders`,

@@ -138,17 +138,15 @@ const ServiceUpload: FC = () => {
   const uploadImage = () => {
     let Data = new FormData();
 
-    let imageData = selectedMain.map((item, index) => {
-      return {
-        uri: selectedMain[index]?.uri,
-        name: selectedMain[index]?.name,
-        type: selectedMain[index]?.type,
-      };
-    });
-    Data.append('user', _id);
-    Data.append('service', data?.service_id);
-    Data.append('sub_services', data?.sub_service_id);
-    Data.append('userWorkimages', imageData);
+    let fileNameArray = selectedMain.map((item, index) => ({
+      image: selectedMain[index]?.uri,
+      is_featured: index,
+    }));
+
+    Data.append('user_id', _id);
+    Data.append('service_id', data?.service_id);
+    Data.append('sub_service_id', data?.sub_service_id);
+    Data.append('fileName', JSON.stringify(fileNameArray));
 
     let obj = {
       data: Data,
@@ -165,7 +163,7 @@ const ServiceUpload: FC = () => {
     if (!selectedImage.length) {
       NativeToast('No Images Selected');
     } else {
-      setLoading(true);
+      // setLoading(true);
       dispatch(uploadSubService(obj));
     }
   };

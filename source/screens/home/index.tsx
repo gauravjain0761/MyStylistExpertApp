@@ -92,6 +92,7 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {notificationsList} = useAppSelector(state => state?.notification);
   const [footerLoading, setFooterLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const [serviceScrolling, setServiceScrolling] = useState(true);
 
   const [user, setUser] = useState(userinfo);
 
@@ -104,7 +105,6 @@ const Home: FC<Props> = ({navigation, route}) => {
     useContext(AppContext);
   const {IMG_URL} = appConfig;
   const {_id} = userDetails;
-  const {appointments} = appointment || [];
 
   useEffect(() => {
     GetStatus();
@@ -265,8 +265,12 @@ const Home: FC<Props> = ({navigation, route}) => {
   };
 
   const onEndReached = () => {
-    setFooterLoading(true);
-    getTopServices(false);
+    console.log('ookokoko');
+    if (serviceScrolling == false) {
+      setFooterLoading(true);
+      getTopServices(false);
+      setServiceScrolling(true);
+    }
   };
 
   return (
@@ -386,7 +390,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                 <RNText
                   style={
                     styles?.ViewTitle
-                  }>{`Upcoming Appointment(${appointments?.length})`}</RNText>
+                  }>{`Upcoming Appointment(${appointment?.length})`}</RNText>
                 <RNText
                   style={styles.viewAll}
                   onPress={() => navigation.navigate('Appointments')}>
@@ -395,7 +399,7 @@ const Home: FC<Props> = ({navigation, route}) => {
               </View>
               <FlatList
                 horizontal={true}
-                data={appointments}
+                data={appointment}
                 ListHeaderComponent={<View style={styles.listcontainer}></View>}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.horizontalList}
@@ -442,6 +446,7 @@ const Home: FC<Props> = ({navigation, route}) => {
                 ListFooterComponent={footerLoading && <ActivityIndicator />}
                 onEndReached={onEndReached}
                 onEndReachedThreshold={0.5}
+                onMomentumScrollBegin={() => setServiceScrolling(false)}
                 ListHeaderComponent={<View style={styles.seprator}></View>}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => {

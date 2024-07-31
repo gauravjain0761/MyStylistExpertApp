@@ -13,7 +13,7 @@ const useAppointment = () => {
 
   const getAllAppointments = async () => {
     setLoading(true);
-    const endpoint = `${}`;
+    const endpoint = '';
     try {
       const response: any = await APICaller.post(endpoint);
       console.log('response of gettig appointments', response);

@@ -9,11 +9,16 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 import {Header, Image, AppointmentCard, Container, Button} from 'components';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '..';
-import {RouteProp, useFocusEffect} from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useIsFocused,
+} from '@react-navigation/native';
 import useAppointment from './hooks';
 import {
   commonFontStyle,
@@ -59,52 +64,51 @@ const Appointments: FC<Props> = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [upcommingPage, setUpcomingPage] = useState(1);
   const [footerLoading, setFooterLoading] = useState(false);
+  const [serviceScrolling, setServiceScrolling] = useState(true);
 
   const dispatch = useAppDispatch();
   const {setLoading, userDetails} = useContext(AppContext);
   const {_id} = userDetails;
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getAllAppointments(true);
-  }, []);
+    isFocused && getAllAppointments(true);
+  }, [isFocused]);
 
   const onPressFilter = () => {
     setVisible(!visible);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getAllAppointments(false);
-    }, []),
-  );
-
-  const getAllAppointments = useCallback(
-    (isLogin: boolean, status = 'upcoming') => {
-      setLoading(isLogin);
-      let obj = {
-        data: {
-          expertId: _id,
-          limit: 10,
-          page: upcommingPage,
-          status: status?.toLowerCase(),
-        },
-        onSuccess: (res: any) => {
-          setUpcomingPage(upcommingPage + 1);
-          setLoading(false);
-        },
-        onFailure: (Err: any) => {
-          setLoading(false);
-          NativeToast(Err?.data?.message);
-        },
-      };
-      dispatch(getAppointments(obj));
-    },
-    [activeTab],
-  );
+  const getAllAppointments = (isLogin: boolean, status = 'upcoming') => {
+    setLoading(isLogin);
+    let obj = {
+      data: {
+        expertId: _id,
+        limit: 10,
+        page: upcommingPage,
+        status: status?.toLowerCase(),
+      },
+      onSuccess: (res: any) => {
+        console.log('ressssss', res);
+        setUpcomingPage(upcommingPage + 1);
+        setLoading(false);
+        setFooterLoading(false);
+      },
+      onFailure: (Err: any) => {
+        setLoading(false);
+        NativeToast(Err?.data?.message);
+        setFooterLoading(false);
+      },
+    };
+    dispatch(getAppointments(obj));
+  };
 
   const onEndReached = () => {
-    setFooterLoading(true);
-    getAllAppointments(false, activeTab);
+    if (serviceScrolling == false) {
+      setFooterLoading(true);
+      getAllAppointments(false, activeTab);
+      setServiceScrolling(true);
+    }
   };
 
   return (
@@ -138,6 +142,7 @@ const Appointments: FC<Props> = ({navigation}) => {
                 return (
                   <Pressable
                     onPress={() => {
+                      setUpcomingPage(1);
                       setActiveTab(item?.title);
                       getAllAppointments(true, item?.title);
                     }}
@@ -176,9 +181,11 @@ const Appointments: FC<Props> = ({navigation}) => {
             keyExtractor={(item, index) => index.toString()}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => setServiceScrolling(false)}
+            bounces={false}
             ListFooterComponent={footerLoading && <ActivityIndicator />}
             renderItem={({item, index}) => {
-              return (
+              return item?.status == activeTab?.toLowerCase() ? (
                 <AppointmentCard
                   data={item}
                   key={index}
@@ -190,7 +197,7 @@ const Appointments: FC<Props> = ({navigation}) => {
                     })
                   }
                 />
-              );
+              ) : null;
             }}
           />
         </View>
