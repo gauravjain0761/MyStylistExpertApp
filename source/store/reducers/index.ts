@@ -10,6 +10,7 @@ import reviewReducers from './reviewReducers';
 import walletReducers from './walletReducers';
 import campaignReducers from './campaignReducers';
 import notificationReducers from './notificationReducers';
+import availablilityReducers from './availablilityReducers';
 
 const rootReducer = combineReducers({
   user: user,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   wallet: walletReducers,
   campaign: campaignReducers,
   notification: notificationReducers,
+  availability: availablilityReducers,
 });
 
 export default rootReducer;

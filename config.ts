@@ -60,6 +60,8 @@ export const endPoints = {
   messagesReads: `chat/messagesRead`,
   notification: `notification/getAllNotifications`,
   verifyAppointment: `appointment/verifyAppointment`,
+  getworkingHours: `user/getWorkingHours`,
+  updateWorkingHours: `user/updateWorkingHours`,
 };
 
 export const POST = 'POST';

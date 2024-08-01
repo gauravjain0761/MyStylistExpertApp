@@ -21,7 +21,8 @@ const AppointmentCard: FC<Props> = ({
   fullWidth = false,
   homeScreen = false,
   data,
-  onPreeCard,
+  onPreeCard = () => {},
+  status,
 }) => {
   const {
     bookingNumber,
@@ -29,7 +30,6 @@ const AppointmentCard: FC<Props> = ({
     services,
     timeSlot,
     totalAmount,
-    status,
     expertDetails,
   } = data || {};
 
@@ -38,20 +38,20 @@ const AppointmentCard: FC<Props> = ({
   const {sector} = address || {};
   const {district_name} = district?.[0];
 
-  const date = moment(timeSlot?.[0]?.availableDate).format(
-    'DD MMMM YYYY, hh:mm',
-  );
+  const date =
+    moment(timeSlot?.[0]?.availableDate).format('DD MMMM YYYY') || '';
+  const time = timeSlot?.[0]?.availableTime || '';
   const service = services.map(service => service?.service_name);
+
   return (
     <Pressable
+      onPress={() => onPreeCard(data?._id)}
       style={[styles.upcomingItemContainer, fullWidth && styles.cardFullWidth]}>
       <View style={[styles.upcomingItemHeader, !homeScreen && styles[status]]}>
         <RNText style={styles.bookingId}>
           {`Booking ID: #${bookingNumber}`}
         </RNText>
-        <RNText style={styles.bookingId}>
-          {status === 'booked' ? 'Upcoming' : status}
-        </RNText>
+        <RNText style={styles.bookingId}>{status}</RNText>
       </View>
       <View style={styles.upcomingItemName}>
         <RNText style={styles.customerName}>{customerName}</RNText>
@@ -76,7 +76,9 @@ const AppointmentCard: FC<Props> = ({
           style={styles.locationIcon}
           source={images.CalendarIcon}
         />
-        <RNText style={styles.label}>{date}</RNText>
+        <RNText style={styles.label}>
+          {date} {time}
+        </RNText>
       </View>
       <View style={styles.dotWrap}>
         <RNText numberOfLines={1} ellipsizeMode="clip" style={styles.desed}>
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
   upcomingItemName: tw`flex-row w-full justify-between items-center px-4 mt-3`,
   upcomingDetails: {
     ...tw`flex-row w-full pt-1 pb-1 px-3`,
-    alignItems: 'center',
+    alignItems: 'flex-end',
   },
   locationIcon: {
     ...tw`w-4 h-4`,

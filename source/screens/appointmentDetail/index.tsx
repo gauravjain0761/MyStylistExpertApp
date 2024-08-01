@@ -86,7 +86,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
   }, []);
   const {availableDate, availableTime} = timeSlot?.[0] || [];
   const {image} = userId?.user_profile_images?.[0] || [];
-  const address = userId?.addresses?.[0];
+  const address = userId?.addresses?.[0] || {};
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {
     return (
@@ -117,8 +117,6 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     dispatch(verifyAppointment(obj));
   };
 
-  console.log(address?.address?.houseNumber);
-
   return (
     <Container>
       <View style={[globalStyle.container, {backgroundColor: '#f2f2f2'}]}>
@@ -145,13 +143,9 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                   userImg={image}
                   name={customerName}
                   phoneNumber={userId?.phone}
-                  location={
-                    address?.address?.houseNumber +
-                    ',' +
-                    address?.address?.sector +
-                    ',' +
-                    address?.address?.landmark
-                  }
+                  location={`${address?.address?.houseNumber || ''}, ${
+                    address?.address?.sector || ''
+                  }, ${address?.address?.landmark || ''}`}
                   date={moment(availableDate).format('DD MMM,YYYY')}
                   time={availableTime}
                   onPressChat={() => {}}

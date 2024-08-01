@@ -39,8 +39,16 @@ const AppointmentCard: FC<Props> = ({
   data,
   onPreeCard,
 }) => {
-  const {customerName, services, timeSlot, totalAmount, bookingNumber} =
-    data || {};
+  const {
+    customerName,
+    services,
+    timeSlot,
+    totalAmount,
+    bookingNumber,
+    expertDetails,
+  } = data || {};
+
+  const {user_profile_images} = expertDetails || {};
   const service = services.map(service => service?.service_name).join(', ');
   const {IMG_URL} = appConfig;
   const {availableDate, availableTime} = timeSlot?.[0] || [];
@@ -60,7 +68,9 @@ const AppointmentCard: FC<Props> = ({
           <RnImage
             resizeMode="contain"
             style={styles.cardProfile}
-            source={{uri: `${IMG_URL}/${services[0]?.subServiceFileNames}`}}
+            source={{
+              uri: `${IMG_URL}/${user_profile_images[0]?.image}`,
+            }}
           />
           <View style={styles.nameView}>
             <RNText style={styles.title}>{customerName}</RNText>

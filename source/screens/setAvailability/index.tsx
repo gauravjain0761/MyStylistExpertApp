@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import globalStyle from 'globalStyles';
@@ -18,6 +18,12 @@ import {RootStackParamList} from '..';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import Color from '../../../assets/color';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
+import {AppContext} from 'context';
+import {useAppDispatch} from 'store';
+import {
+  getWorkingHours,
+  updateWorkingHours,
+} from '../../Actions/availabilityAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'SetAvailability'>;
@@ -26,15 +32,43 @@ type Props = {
 
 const SetAvailability: FC<Props> = ({navigation}) => {
   const {params} = useRoute();
-  const {time} = params || {};
+  const dispatch = useAppDispatch();
+  const {time, day} = params || {};
   const [fromTime, setFromTime] = useState<any>(
-    moment(time?.startat, 'hh:mma')?.toISOString(),
+    moment(time?.from, 'hh:mma')?.toISOString(),
   );
   const [toTime, setToTime] = useState<any>(
-    moment(time?.endat, 'hh:mma')?.toISOString(),
+    moment(time?.to, 'hh:mma')?.toISOString(),
   );
   const [fromTimePicker, setFromTimePicker] = useState<boolean>(false);
   const [toTimePicker, setToTimePicker] = useState<boolean>(false);
+
+  const {userDetails, setLoading} = useContext(AppContext);
+  const updateTimeSlot = async () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        userId: userDetails?._id,
+        updateFields: {
+          [day]: {
+            open: 'true',
+            from: moment(fromTime)?.format('HH:MM'),
+            to: moment(toTime)?.format('HH:MM'),
+          },
+        },
+      },
+      onSuccess: (res: any) => {
+        navigation.goBack();
+        setLoading(false);
+      },
+      onFailure: (err: any) => {
+        setLoading(false);
+
+        console.log('errr', err);
+      },
+    };
+    dispatch(updateWorkingHours(obj));
+  };
 
   return (
     <Container>
@@ -78,7 +112,7 @@ const SetAvailability: FC<Props> = ({navigation}) => {
           <DatePicker
             mode="time"
             modal={true}
-            minimumDate={new Date()}
+            // minimumDate={moment(time?.from, 'HH:MM')?.toISOString()}
             date={new Date()}
             open={fromTimePicker}
             onConfirm={date => {
@@ -92,7 +126,7 @@ const SetAvailability: FC<Props> = ({navigation}) => {
           <DatePicker
             mode="time"
             modal={true}
-            minimumDate={new Date()}
+            // minimumDate={new Date(time?.to)}
             date={new Date()}
             open={toTimePicker}
             onConfirm={date => {
@@ -107,7 +141,7 @@ const SetAvailability: FC<Props> = ({navigation}) => {
         <View style={[styles.bottomButtonView, globalStyle.bothContentCenter]}>
           <PrimaryButton
             onPress={() => {
-              navigation.goBack();
+              updateTimeSlot();
             }}
             label="Save Changes"
             containerLabelStyle={styles.btntitle}

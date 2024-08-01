@@ -75,18 +75,22 @@ const Appointments: FC<Props> = ({navigation}) => {
     isFocused && getAllAppointments(true);
   }, [isFocused]);
 
+  useEffect(() => {
+    getAllAppointments(true);
+  }, [activeTab]);
+
   const onPressFilter = () => {
     setVisible(!visible);
   };
 
-  const getAllAppointments = (isLogin: boolean, status = 'upcoming') => {
+  const getAllAppointments = (isLogin: boolean) => {
     setLoading(isLogin);
     let obj = {
       data: {
         expertId: _id,
         limit: 10,
         page: upcommingPage,
-        status: status?.toLowerCase(),
+        status: activeTab?.toLowerCase(),
       },
       onSuccess: (res: any) => {
         console.log('ressssss', res);
@@ -106,7 +110,7 @@ const Appointments: FC<Props> = ({navigation}) => {
   const onEndReached = () => {
     if (serviceScrolling == false) {
       setFooterLoading(true);
-      getAllAppointments(false, activeTab);
+      getAllAppointments(false);
       setServiceScrolling(true);
     }
   };
@@ -144,7 +148,6 @@ const Appointments: FC<Props> = ({navigation}) => {
                     onPress={() => {
                       setUpcomingPage(1);
                       setActiveTab(item?.title);
-                      getAllAppointments(true, item?.title);
                     }}
                     style={{
                       ...styles.buttoncontainer,
@@ -179,7 +182,7 @@ const Appointments: FC<Props> = ({navigation}) => {
             }
             contentContainerStyle={styles.listContainer}
             keyExtractor={(item, index) => index.toString()}
-            onEndReached={onEndReached}
+            onEndReached={() => onEndReached()}
             onEndReachedThreshold={0.5}
             onMomentumScrollBegin={() => setServiceScrolling(false)}
             bounces={false}

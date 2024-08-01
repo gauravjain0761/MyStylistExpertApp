@@ -8,90 +8,84 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import Container from '../../components/container';
 import Header from '../../components/header';
 import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
 import images from 'images';
 import Color from '../../../assets/color';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import moment from 'moment';
-
-const timeData = [
-  {
-    id: 1,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Monday',
-  },
-  {
-    id: 2,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Tuesday',
-  },
-  {
-    id: 3,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Wednesday',
-  },
-  {
-    id: 4,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Thursday',
-  },
-  {
-    id: 5,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Friday',
-  },
-  {
-    id: 6,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Saturday',
-  },
-  {
-    id: 7,
-    startat: '09:30am',
-    endat: '10:30am',
-    day: 'Saturday',
-  },
-];
+import {useAppDispatch, useAppSelector} from 'store';
+import {getWorkingHours} from '../../Actions/availabilityAction';
+import {AppContext} from 'context';
 
 const Availability: FC = () => {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const {working_hours} = useAppSelector(state => state?.availability);
+
+  useFocusEffect(
+    useCallback(() => {
+      getAvailability();
+    }, []),
+  );
+
+  const {userDetails, setLoading} = useContext(AppContext);
+  const getAvailability = async () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        userId: userDetails?._id,
+      },
+      onSuccess: (res: any) => {
+        setLoading(false);
+      },
+      onFailure: (err: any) => {
+        console.log('errr', err);
+        setLoading(false);
+      },
+    };
+    dispatch(getWorkingHours(obj));
+  };
+
+  console.log(working_hours);
+
   return (
     <Container>
       <SafeAreaView>
         <Header title="Availability" />
         <View style={styles.topcontainer}>
           <FlatList
-            data={timeData}
+            data={working_hours?.length ? Object?.keys(working_hours?.[0]) : []}
             ItemSeparatorComponent={() => (
               <View style={styles.itemseprator}></View>
             )}
             renderItem={({item, index}) => {
-              return (
+              return item !== '_id' ? (
                 <TouchableOpacity
                   onPress={() =>
-                    navigation.navigate('SetAvailability', {time: item})
+                    navigation.navigate('SetAvailability', {
+                      time: working_hours[0][item],
+                      day: item,
+                    })
                   }
                   style={styles.listcontainer}>
-                  <Text style={styles.day}>{item?.day}</Text>
+                  <Text style={styles.day}>{item}</Text>
                   <View style={styles?.rightcontainer}>
                     <View style={styles.timecontainer}>
-                      <Text style={styles.timetitle}>{item?.startat}</Text>
+                      <Text style={styles.timetitle}>
+                        {working_hours[0][item]?.from}
+                      </Text>
                       <Text style={styles.timetitle}>{' - '}</Text>
-                      <Text style={styles.timetitle}>{item?.endat}</Text>
+                      <Text style={styles.timetitle}>
+                        {working_hours[0][item]?.to}
+                      </Text>
                     </View>
                     <Image style={styles.righticon} source={images?.lefticon} />
                   </View>
                 </TouchableOpacity>
-              );
+              ) : null;
             }}
           />
           <Pressable
