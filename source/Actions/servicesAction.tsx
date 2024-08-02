@@ -6,12 +6,7 @@ import {AppContext} from 'context';
 import {makeAPIRequest} from '../utils/apiGlobal';
 import {GET, POST, endPoints} from '../../config';
 import DataAccess from '../dataAccess';
-import {
-  GET_SERVICES,
-  PAST_APPOINTMENTS,
-  TOPSERVICESOLD,
-  UPCOMING_APPOINTMENTS,
-} from '../store/types';
+import {GET_SERVICES, PAST_APPOINTMENTS, TOPSERVICESOLD} from '../store/types';
 
 const {getAsyncToken} = DataAccess();
 

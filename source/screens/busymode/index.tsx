@@ -94,7 +94,6 @@ function BusyMode() {
   }, [selected]);
 
   const getAllDates = () => {
-    console.log('selectedselectedselectedselected', selected);
     const method = 'POST';
     const endpoint = `${getAllDatesOFUser}`;
     const body = {

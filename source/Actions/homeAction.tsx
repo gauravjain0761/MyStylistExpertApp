@@ -10,7 +10,6 @@ import {
   BANNER_IMAGE,
   GET_EXPERTS_MEDIA,
   PAST_APPOINTMENTS,
-  UPCOMING_APPOINTMENTS,
   USER_INFO,
 } from '../store/types';
 

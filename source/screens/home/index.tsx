@@ -265,7 +265,6 @@ const Home: FC<Props> = ({navigation, route}) => {
   };
 
   const onEndReached = () => {
-    console.log('ookokoko');
     if (serviceScrolling == false) {
       setFooterLoading(true);
       getTopServices(false);

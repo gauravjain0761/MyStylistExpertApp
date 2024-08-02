@@ -11,7 +11,6 @@ import {
   GET_OFFERS,
   GET_OFFER_ORDER,
   PAST_APPOINTMENTS,
-  UPCOMING_APPOINTMENTS,
 } from '../store/types';
 
 const {getAsyncToken} = DataAccess();

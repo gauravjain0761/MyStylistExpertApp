@@ -40,6 +40,7 @@ import {appConfig} from '../../../config';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
 import AppointmentDetailCard from '../../components/AppointmentDetailCard';
+import {GET_APPOINTMENTS} from '../../store/types';
 
 type Props = {
   navigation: NativeStackNavigationProp<
@@ -106,6 +107,8 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
       },
       onSuccess: (res: any) => {
         setLoading(false);
+        setValue('');
+        navigation?.goBack();
         NativeToast(res?.message);
       },
       onFailure: (Err: any) => {

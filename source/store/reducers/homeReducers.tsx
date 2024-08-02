@@ -16,7 +16,7 @@ export default function (state = initialState, action: any) {
     }
     case GET_APPOINTMENTS: {
       if (action?.payload?.page == 1) {
-        return {...state, appointment: [...action?.payload?.appointments]};
+        return {...state, appointment: action?.payload?.appointments};
       } else {
         return {
           ...state,

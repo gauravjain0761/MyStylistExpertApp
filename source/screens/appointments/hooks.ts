@@ -3,7 +3,6 @@ import {useContext, useState} from 'react';
 import {Appointment} from 'types';
 import {endPoints} from '../../../config';
 import APICaller from '../../service/apiCaller';
-const {getUserDetails} = endPoints;
 
 const useAppointment = () => {
   const {userDetails, setLoading} = useContext(AppContext);

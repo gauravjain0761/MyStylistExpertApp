@@ -19,7 +19,6 @@ import {
   useFocusEffect,
   useIsFocused,
 } from '@react-navigation/native';
-import useAppointment from './hooks';
 import {
   commonFontStyle,
   fontFamily,
@@ -33,6 +32,7 @@ import {useAppDispatch, useAppSelector} from 'store';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
 import {getAppointments} from '../../Actions/appointmentAction';
+import {GET_APPOINTMENTS} from '../../store/types';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Appointments'>;
@@ -72,7 +72,7 @@ const Appointments: FC<Props> = ({navigation}) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    isFocused && getAllAppointments(true);
+    isFocused && getAllAppointments(true, 1);
   }, [isFocused]);
 
   useEffect(() => {
@@ -83,13 +83,13 @@ const Appointments: FC<Props> = ({navigation}) => {
     setVisible(!visible);
   };
 
-  const getAllAppointments = (isLogin: boolean) => {
+  const getAllAppointments = (isLogin: boolean, page?: number) => {
     setLoading(isLogin);
     let obj = {
       data: {
         expertId: _id,
         limit: 10,
-        page: upcommingPage,
+        page: page ? page : upcommingPage,
         status: activeTab?.toLowerCase(),
       },
       onSuccess: (res: any) => {
@@ -183,6 +183,7 @@ const Appointments: FC<Props> = ({navigation}) => {
             contentContainerStyle={styles.listContainer}
             keyExtractor={(item, index) => index.toString()}
             onEndReached={() => onEndReached()}
+            style={{flex: 1}}
             onEndReachedThreshold={0.5}
             onMomentumScrollBegin={() => setServiceScrolling(false)}
             bounces={false}
@@ -193,12 +194,12 @@ const Appointments: FC<Props> = ({navigation}) => {
                   data={item}
                   key={index}
                   fullWidth={true}
-                  onPreeCard={(appointmentId: string) =>
+                  onPreeCard={(appointmentId: string) => {
                     navigation.navigate('AppointmentDetail', {
                       appointmentId,
                       image: item?.services?.[0]?.subServiceFileNames,
-                    })
-                  }
+                    });
+                  }}
                 />
               ) : null;
             }}
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: hp(10),
   },
-  listContainer: tw`py-5`,
+  listContainer: {...tw`py-5`, flexGrow: 1},
   listSeparator: {
     height: hp(25),
   },

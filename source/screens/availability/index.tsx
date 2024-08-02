@@ -49,8 +49,6 @@ const Availability: FC = () => {
     dispatch(getWorkingHours(obj));
   };
 
-  console.log(working_hours);
-
   return (
     <Container>
       <SafeAreaView>
@@ -74,13 +72,22 @@ const Availability: FC = () => {
                   <Text style={styles.day}>{item}</Text>
                   <View style={styles?.rightcontainer}>
                     <View style={styles.timecontainer}>
-                      <Text style={styles.timetitle}>
-                        {working_hours[0][item]?.from}
-                      </Text>
+                      {working_hours[0][item]?.from?.length ? (
+                        <Text style={styles.timetitle}>
+                          {moment(
+                            working_hours[0][item]?.from,
+                            'hh:mm',
+                          )?.format('hh:mm')}
+                        </Text>
+                      ) : null}
                       <Text style={styles.timetitle}>{' - '}</Text>
-                      <Text style={styles.timetitle}>
-                        {working_hours[0][item]?.to}
-                      </Text>
+                      {working_hours[0][item]?.to?.length ? (
+                        <Text style={styles.timetitle}>
+                          {moment(working_hours[0][item]?.to, 'hh:mm')?.format(
+                            'hh:mm',
+                          )}
+                        </Text>
+                      ) : null}
                     </View>
                     <Image style={styles.righticon} source={images?.lefticon} />
                   </View>
