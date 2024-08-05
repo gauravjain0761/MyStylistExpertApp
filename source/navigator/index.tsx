@@ -4,7 +4,11 @@ import {AuthNavigator} from '../screens';
 import AppNavigator from './drawer';
 import DataAccess, {getAsyncLocation} from '../dataAccess';
 import RNBootSplash from 'react-native-bootsplash';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {
+  createNavigationContainerRef,
+  NavigationContainer,
+  useNavigation,
+} from '@react-navigation/native';
 
 const Navigator: FC = () => {
   const {isLogin, setUserDetails, setIsLogin, setActiveRoute, setLocation} =

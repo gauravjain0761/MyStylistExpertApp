@@ -162,6 +162,7 @@ const ServiceUpload: FC = () => {
       data: Data,
       onSuccess: (res: any) => {
         setLoading(false);
+        NativeToast('Image Upload Successfully');
         goBack();
       },
       onFailure: (Err: any) => {

@@ -12,15 +12,24 @@ import {
   View,
   Image as RNImage,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import tw from 'rn-tailwind';
-import {commonFontStyle, fontFamily, hp, wp} from '../../utils/dimentions';
+import {
+  commonFontStyle,
+  dispatchNavigation,
+  fontFamily,
+  hp,
+  wp,
+} from '../../utils/dimentions';
 import Color from '../../../assets/color';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
-import DataAccess from '../../dataAccess';
+import DataAccess, {clearAsync} from '../../dataAccess';
 import {useAppSelector} from 'store';
 import {appConfig} from '../../../config';
+import {NativeToast} from 'utils';
+import {navigationRef} from 'navigator';
 
 interface Props {
   props: DrawerContentComponentProps;
@@ -76,6 +85,26 @@ const DrawerMenu: FC<Props> = ({props}) => {
   const {IMG_URL} = appConfig;
   const {address} = addresses?.[0] || {};
   const {district_name} = district?.[0] || {};
+  const {activeRoute} = useContext(AppContext);
+
+  const onPressLogOut = async () => {
+    Alert.alert('Log out', 'Are you sure you want to log out ?', [
+      {
+        text: 'Yes',
+        onPress: async () => {
+          if (navigationRef.isReady()) {
+            // dispatchNavigation('Login');
+          }
+        },
+        style: 'destructive',
+      },
+      {
+        text: 'No',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+    ]);
+  };
 
   return (
     <Container>
@@ -116,7 +145,7 @@ const DrawerMenu: FC<Props> = ({props}) => {
           renderItem={({item, index}) => {
             return (
               <TouchableOpacity
-                onPress={() => navigation.navigate(item?.route)}
+                onPress={() => onPressLogOut()}
                 style={styles.list}>
                 <View style={styles.leftcontainer}>
                   <RNImage style={styles.listicon} source={item?.icon} />

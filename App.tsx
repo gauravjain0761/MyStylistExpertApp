@@ -11,7 +11,9 @@ import {useDeviceContext} from 'twrnc';
 import {AppContext} from './source/context';
 import DataAccess from './source/dataAccess';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {createNavigationContainerRef} from '@react-navigation/native';
 
+export const navigationRef = createNavigationContainerRef();
 const App: FC = () => {
   useDeviceContext(tw);
 

@@ -1,3 +1,5 @@
+import {CommonActions} from '@react-navigation/native';
+import {navigationRef} from 'navigator';
 import {
   Dimensions,
   PixelRatio,
@@ -20,6 +22,15 @@ const h = (heightPercent: any) => {
   const screenHeight = Dimensions.get('window').height;
   const elemHeight = parseFloat(heightPercent);
   return PixelRatio.roundToNearestPixel((screenHeight * elemHeight) / 100);
+};
+
+export const dispatchNavigation = (name: string, params?: any) => {
+  navigationRef.current.dispatch(
+    CommonActions.reset({
+      index: 1,
+      routes: [{name: name, params: params}],
+    }),
+  );
 };
 
 const f = scale => {

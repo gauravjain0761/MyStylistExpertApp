@@ -58,6 +58,17 @@ const DataAccess = () => {
   };
 };
 
+export const clearAsync = async () => {
+  await AsyncStorage.multiRemove([
+    asyncKeys.token,
+    asyncKeys.user_info,
+    asyncKeys.location,
+    asyncKeys.device_token,
+    IS_LOGIN,
+    USER_DETAILS,
+  ]);
+};
+
 export const setAsyncLocation = async (location: any) => {
   await AsyncStorage.setItem(asyncKeys.location, JSON.stringify(location));
 };

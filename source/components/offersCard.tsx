@@ -30,6 +30,8 @@ const OffersCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
     availed,
     totalBookings,
   } = data;
+
+  console.log('data data', data);
   const expiryDate = moment(end_date).format('DD MMM, YYYY');
 
   return (
