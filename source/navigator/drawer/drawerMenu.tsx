@@ -92,9 +92,8 @@ const DrawerMenu: FC<Props> = ({props}) => {
       {
         text: 'Yes',
         onPress: async () => {
-          if (navigationRef.isReady()) {
-            // dispatchNavigation('Login');
-          }
+          setIsLogin('false');
+          await clearAsync();
         },
         style: 'destructive',
       },
