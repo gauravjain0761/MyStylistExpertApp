@@ -69,7 +69,7 @@ export const getPackageOrders =
     };
 
     return makeAPIRequest({
-      url: endPoints?.getOrders,
+      url: endPoints?.getAllExpertOrders,
       method: POST,
       headers: headers,
       data: request?.data,

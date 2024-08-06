@@ -24,14 +24,14 @@ export default function (state = initialState, action: any) {
       if (action?.payload?.page == 1) {
         return {
           ...state,
-          getpackageorder: action?.payload?.appointments,
+          getpackageorder: action?.payload?.expertAppointments,
         };
       } else {
         return {
           ...state,
           getpackageorder: [
             ...state?.getpackageorder,
-            ...action?.payload?.appointments,
+            ...action?.payload?.expertAppointments,
           ],
         };
       }

@@ -2,7 +2,7 @@ import React, {FC, useContext, useEffect, useState} from 'react';
 import tw from 'rn-tailwind';
 import images from 'images';
 import globalStyle from 'globalStyles';
-import {w} from '../../utils/dimentions';
+import {commonFontStyle, fontFamily, hp, w, wp} from '../../utils/dimentions';
 import {TabView, TabBar, Route} from 'react-native-tab-view';
 import {
   Container,
@@ -19,6 +19,8 @@ import {
   Pressable,
   Image as RnImage,
   ActivityIndicator,
+  StyleSheet,
+  Text as RNText,
 } from 'react-native';
 import useOfferDetals from './hooks';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -28,6 +30,8 @@ import moment from 'moment';
 import {useAppDispatch, useAppSelector} from 'store';
 import {getOfferOrders} from '../../Actions/offersAction';
 import {AppContext} from 'context';
+import {appConfig} from '../../../config';
+import Color from '../../../assets/color';
 
 const initialLayout = {
   height: 0,
@@ -43,6 +47,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
   const {offerDetails, getOfferDetail} = useOfferDetals();
   const [footerLoading, setFooterLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const {offerId} = route.params;
   const {
     service_name,
     number_of_offers = 0,
@@ -51,16 +56,20 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
     end_date,
     additional_information,
     sub_services,
-  } = offerDetails;
+    user_profile_images,
+    featured_image,
+    offer_name,
+    discount,
+  } = offerDetails || {};
 
   const startDate = moment(start_date).format('MMM DD, YYYY');
   const endDate = moment(end_date).format('MMM DD, YYYY');
   const {getofferorder} = useAppSelector(state => state?.offers);
-  const {appointments} = getofferorder || {};
+  const {expertAppointments} = getofferorder || {};
+  const {IMG_URL} = appConfig;
 
   const [orders, setOrders] = useState([]);
 
-  const {offerId} = route.params;
   const [index, setIndex] = useState<number>(0);
   const [routes, setRoutes] = useState<Array<Route>>([
     {key: 'Details', title: 'Details'},
@@ -68,7 +77,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
   ]);
 
   const {userDetails} = useContext(AppContext);
-  const {_id} = userDetails;
+  const {_id} = userDetails || {};
 
   useEffect(() => {
     getOrder();
@@ -76,7 +85,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
-    setOrders(appointments);
+    setOrders(expertAppointments);
   }, [getofferorder]);
 
   const dispatch = useAppDispatch();
@@ -85,13 +94,12 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
     let obj = {
       data: {
         expertId: _id,
-        serviceType: 'Offer',
-        offerId: offerId,
         page: page,
         limit: 10,
       },
       page: page,
       onSuccess: (res: any) => {
+        console.log('offfer resss', res);
         setPage(page + 1);
         setFooterLoading(false);
       },
@@ -118,6 +126,14 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
             <ScrollView
               contentContainerStyle={styles.scrollView}
               showsVerticalScrollIndicator={false}>
+              <View style={styles.imageview}>
+                <RnImage
+                  resizeMode="cover"
+                  style={styles.mainImage}
+                  source={{uri: `${IMG_URL}/${featured_image}`}}
+                />
+              </View>
+              <RNText style={styles.offerName}>{offer_name}</RNText>
               <View style={styles.dateView}>
                 <View
                   style={[styles.startDateView, globalStyle.bothContentCenter]}>
@@ -148,9 +164,9 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
               </Text>
               <View style={styles.servicesView}>
                 <View key={index} style={styles.serviceItem}>
-                  <Text size="sm" fontWeight="700" color="text-black">
+                  <RNText style={styles.serviceTitle}>
                     {sub_services?.sub_service_id?.sub_service_name}
-                  </Text>
+                  </RNText>
                 </View>
               </View>
               <Text
@@ -158,109 +174,34 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                 color="text-darkGrey"
                 margin="mt-5"
                 fontWeight="700">
-                {'About this Offer'}
+                {'Additional Information'}
               </Text>
               <Text size="sm" margin="mt-2" fontWeight="600">
                 {additional_information}
               </Text>
-              <Text size="sm" margin="mt-5" fontWeight="600">
-                {'Maximum Limit Orders: '}
-                <Text size="sm" margin="mt-2" fontWeight="800">
-                  {'200'}
-                </Text>
-              </Text>
-              <View style={styles.detailView}>
-                <View style={styles.detailViewSub}>
-                  <Text
-                    size="sm"
-                    fontWeight="600"
-                    margin="mt-0.5"
-                    color="text-darkGrey">
-                    {'Package price'}
-                  </Text>
-                  <Text size="base" fontWeight="800">
-                    {'₹'}
-                    {sub_services?.price}
-                  </Text>
-                </View>
-                <View style={styles.detailViewSub}>
-                  <Text
-                    size="sm"
-                    margin="mt-0.5"
-                    fontWeight="600"
-                    color="text-darkGrey">
-                    {'Bookings'}
-                  </Text>
-                  <Text size="base" margin="mt-0.5" fontWeight="800">
-                    {`${number_of_offers}`}
-                  </Text>
-                </View>
-                <View style={styles.detailViewSub}>
-                  <Text
-                    size="sm"
-                    margin="mt-0.5"
-                    fontWeight="600"
-                    color="text-darkGrey">
-                    {'Availed'}
-                  </Text>
-                  <Text size="base" fontWeight="800">
-                    {`${number_of_offers}`}
-                  </Text>
-                </View>
-              </View>
               <View style={styles.ordersBoxView}>
                 <View style={styles.ordersBox}>
                   <View style={styles.boxCountView}>
                     <Text size="lg" fontWeight="800">
-                      96
+                      {discount || 0}
+                      {'%'}
                     </Text>
                     <Text size="sm" fontWeight="700" color="text-darkGrey">
-                      No. Orders
+                      {'Discount'}
                     </Text>
-                  </View>
-                  <View style={styles.boxPercentView}>
-                    <View style={styles.percentageView}>
-                      <RnImage
-                        tintColor={'#666666'}
-                        resizeMode="contain"
-                        source={images.UpArrow}
-                        style={styles.upArrow}
-                      />
-                      <Text size="xs" color="text-darkGrey">
-                        {' 2.34%'}
-                      </Text>
-                    </View>
                   </View>
                 </View>
                 <View style={styles.revenueBox}>
                   <View style={styles.boxCountView}>
                     <Text size="lg" fontWeight="800">
-                      $23,456
+                      {number_of_offers || 0}
                     </Text>
                     <Text size="sm" fontWeight="700" color="text-darkGrey">
-                      Revenue
+                      {'Purchase Limit'}
                     </Text>
-                  </View>
-                  <View style={styles.boxPercentView}>
-                    <View style={styles.percentageView}>
-                      <RnImage
-                        tintColor={'#666666'}
-                        resizeMode="contain"
-                        source={images.UpArrow}
-                        style={styles.upArrow}
-                      />
-                      <Text size="xs" color="text-darkGrey">
-                        {' 2.34%'}
-                      </Text>
-                    </View>
                   </View>
                 </View>
               </View>
-              <BarChart
-                showDate={true}
-                graphTitle="Campaigns Clicks"
-                graphContainerStyle={styles.graphContainer}
-              />
             </ScrollView>
           </View>
         );
@@ -276,13 +217,10 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
               style={{flex: 1}}
               onEndReached={onEndReached}
               onEndReachedThreshold={0.5}
-              ListHeaderComponent={
-                <View style={styles.listHeader}>
-                  <Text fontWeight="800" size="base">
-                    {orders?.length} Bookings
-                  </Text>
-                </View>
-              }
+              ListHeaderComponent={<View style={styles.listHeader}></View>}
+              ListFooterComponent={() => (
+                <View style={{marginBottom: hp(20)}}></View>
+              )}
               ItemSeparatorComponent={() => (
                 <View style={styles.itemSeparator} />
               )}
@@ -345,6 +283,9 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
                         focused && styles.focusedLabel,
                       ]}>
                       {route.title}
+                      {route.title == 'Orders' && orders?.length
+                        ? ` (${orders?.length})`
+                        : null}
                     </Text>
                   )}
                   {...props}
@@ -371,7 +312,7 @@ const OfferDetail: FC<Props> = ({navigation, route}) => {
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   mainView: tw`flex-1 w-full h-full`,
   headerRight: tw`flex-1 w-full h-full flex-row items-center justify-end`,
   headerButton: tw`w-10 h-full items-end justify-center`,
@@ -385,14 +326,22 @@ const styles = {
   focusedLabel: tw`text-base text-black font-bold mx-3`,
   tabLabel: tw`text-base text-darkGrey font-bold mx-3`,
   pageView: tw`flex-1 h-full w-full bg-cultured px-4`,
-  devider: tw`w-1 h-5 bg-slate-300`,
+  devider: {
+    height: hp(18),
+    width: wp(2),
+    backgroundColor: Color.GreyD9,
+    borderRadius: 100,
+  },
   nameView: tw`flex-1 w-full pl-3`,
   dateView: tw`mt-5 items-center w-full h-16 rounded-lg border bg-borderDarkGrey border-stone-300 flex-row `,
   startDateView: tw`flex-1`,
   detailView: tw`flex-row h-17`,
   detailViewSub: tw`h-full justify-center mr-10`,
   ordersBoxView: tw`flex-row h-20 mt-3 w-full gap-5`,
-  ordersBox: tw`flex-1 flex-row bg-isabelline rounded-lg`,
+  ordersBox: {
+    ...tw`flex-1 flex-row bg-isabelline rounded-lg`,
+    backgroundColor: Color.creamFA,
+  },
   revenueBox: tw`flex-1 flex-row bg-bubbles rounded-lg`,
   boxCountView: tw`flex-6 w-full h-full pt-3.5 pl-4`,
   boxPercentView: tw`flex-4 pt-5 pr-4 h-full w-full`,
@@ -401,8 +350,32 @@ const styles = {
   graphContainer: tw`w-full h-80 bg-white ml-0 mt-5`,
   scrollView: tw`w-full pb-6`,
   itemSeparator: tw`w-full h-5`,
-  listHeader: tw`w-full h-14 justify-center`,
-  servicesView: tw`flex-row w-full flex-wrap`,
-  serviceItem: tw`h-11 px-4 justify-center bg-borderDarkGrey rounded-full mt-2 mr-3`,
-};
+  listHeader: tw`w-full h-8 justify-center`,
+  servicesView: {...tw`flex-row w-full flex-wrap`, marginTop: hp(12)},
+  serviceItem: {
+    borderRadius: 50,
+    backgroundColor: Color.InputGrey,
+    borderWidth: 1,
+    borderColor: Color.GreyEB,
+  },
+  mainImage: {
+    width: '100%',
+    height: hp(277),
+    borderRadius: wp(8),
+  },
+  imageview: {
+    borderRadius: wp(8),
+    overflow: 'hidden',
+    marginTop: hp(16),
+  },
+  offerName: {
+    ...commonFontStyle(fontFamily.medium, 20, Color?.Black),
+    marginTop: hp(35),
+  },
+  serviceTitle: {
+    paddingHorizontal: wp(20),
+    paddingVertical: hp(10),
+    ...commonFontStyle(fontFamily.medium, 15, Color?.Black),
+  },
+});
 export default OfferDetail;

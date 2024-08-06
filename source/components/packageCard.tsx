@@ -54,12 +54,6 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
               {totalBookings}/{number_of_package}
             </Text>
           </View>
-          <View style={styles.priceView}>
-            <RNText style={styles?.pricelable}>Availed</RNText>
-            <Text size="lg" fontWeight={'700'} color="text-black">
-              {availed}/{availed}
-            </Text>
-          </View>
         </View>
       </View>
       <View style={styles.ellipseView}>
@@ -77,7 +71,7 @@ const PackageCard: FC<Props> = ({onPressCard, cardColor = '#F7F5EB', data}) => {
 
 const styles = StyleSheet.create({
   cardContainer: tw`w-full rounded-lg`,
-  cardDetail: tw`flex-row`,
+  cardDetail: {...tw`flex-row`, justifyContent: 'space-between'},
   priceView: {...tw`w-27`},
   dots: tw`flex-1 w-full border-dashed border`,
   leftEllipse: {...tw`h-5 w-5 bg-cultured rounded-full left--2.5`},

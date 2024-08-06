@@ -3,7 +3,7 @@ import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
-import {w} from '../../utils/dimentions';
+import {commonFontStyle, fontFamily, hp, w, wp} from '../../utils/dimentions';
 import {RouteProp} from '@react-navigation/native';
 import {TabView, TabBar, Route} from 'react-native-tab-view';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -22,12 +22,16 @@ import {
   ScrollView,
   Image as RnImage,
   ActivityIndicator,
+  StyleSheet,
+  Text as RNText,
 } from 'react-native';
 import usePackageDetail from './hooks';
 import moment from 'moment';
 import {AppContext} from 'context';
 import {useAppDispatch, useAppSelector} from 'store';
 import {getPackageOrders} from '../../Actions/packageAction';
+import {appConfig} from '../../../config';
+import Color from '../../../assets/color';
 
 const initialLayout = {
   height: 0,
@@ -53,6 +57,8 @@ const PackageDetail: FC<Props> = ({route}) => {
     additional_information,
     number_of_package = 0,
     sub_services,
+    featured_image,
+    discount,
   } = packageDetails?.packageData || {};
   const {packageId} = route.params;
   const [index, setIndex] = useState<number>(0);
@@ -65,6 +71,7 @@ const PackageDetail: FC<Props> = ({route}) => {
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
   const dispatch = useAppDispatch();
+  const {IMG_URL} = appConfig;
 
   useEffect(() => {
     getPackageDetail(packageId);
@@ -75,8 +82,6 @@ const PackageDetail: FC<Props> = ({route}) => {
     let obj = {
       data: {
         expertId: _id,
-        serviceType: 'Package',
-        offerId: packageId,
         page: page,
         limit: 10,
       },
@@ -84,11 +89,9 @@ const PackageDetail: FC<Props> = ({route}) => {
       onSuccess: (res: any) => {
         setFooterLoading(false);
         setPage(page + 1);
-        console.log('resssss', res);
       },
       onFailure: (Err: any) => {
         setFooterLoading(false);
-
         console.log('Errr', Err?.data?.message);
       },
     };
@@ -110,6 +113,14 @@ const PackageDetail: FC<Props> = ({route}) => {
             <ScrollView
               contentContainerStyle={styles.scrollView}
               showsVerticalScrollIndicator={false}>
+              <View style={styles.imageview}>
+                <RnImage
+                  resizeMode="cover"
+                  style={styles.mainImage}
+                  source={{uri: `${IMG_URL}/${featured_image}`}}
+                />
+              </View>
+              <RNText style={styles.packageName}>{package_name}</RNText>
               <View style={styles.dateView}>
                 <View
                   style={[styles.startDateView, globalStyle.bothContentCenter]}>
@@ -142,9 +153,9 @@ const PackageDetail: FC<Props> = ({route}) => {
                 {service_name?.map((data, index) => {
                   return (
                     <View key={index} style={styles.serviceItem}>
-                      <Text size="sm" fontWeight="800">
-                        {data.service_name}
-                      </Text>
+                      <RNText style={styles.serviceTitle}>
+                        {data?.service_name}
+                      </RNText>
                     </View>
                   );
                 })}
@@ -154,108 +165,33 @@ const PackageDetail: FC<Props> = ({route}) => {
                 color="text-darkGrey"
                 margin="mt-4"
                 fontWeight="700">
-                {'About this campaign'}
+                {'Additional Information'}
               </Text>
               <Text size="sm" margin="mt-2" fontWeight="600">
                 {additional_information}
               </Text>
-              <Text size="sm" margin="mt-5" fontWeight="600">
-                {'Maximum Limit Orders: '}
-                <Text size="sm" margin="mt-2" fontWeight="800">
-                  {'200'}
-                </Text>
-              </Text>
-              <View style={styles.detailView}>
-                <View style={styles.detailViewSub}>
-                  <Text
-                    size="sm"
-                    fontWeight="600"
-                    margin="mt-0.5"
-                    color="text-darkGrey">
-                    {'Package price'}
-                  </Text>
-                  <Text size="base" fontWeight="800">
-                    ₹{rate}
-                  </Text>
-                </View>
-                <View style={styles.detailViewSub}>
-                  <Text
-                    size="sm"
-                    margin="mt-0.5"
-                    fontWeight="600"
-                    color="text-darkGrey">
-                    {'Bookings'}
-                  </Text>
-                  <Text size="base" margin="mt-0.5" fontWeight="800">
-                    {number_of_package}
-                  </Text>
-                </View>
-                <View style={styles.detailViewSub}>
-                  <Text
-                    size="sm"
-                    margin="mt-0.5"
-                    fontWeight="600"
-                    color="text-darkGrey">
-                    {'Availed'}
-                  </Text>
-                  <Text size="base" fontWeight="800">
-                    {number_of_package}
-                  </Text>
-                </View>
-              </View>
               <View style={styles.ordersBoxView}>
                 <View style={styles.ordersBox}>
                   <View style={styles.boxCountView}>
                     <Text size="lg" fontWeight="800">
-                      96
+                      {discount || 0} {'%'}
                     </Text>
                     <Text size="sm" fontWeight="700" color="text-darkGrey">
-                      No. Orders
+                      {'Discount'}
                     </Text>
-                  </View>
-                  <View style={styles.boxPercentView}>
-                    <View style={styles.percentageView}>
-                      <RnImage
-                        tintColor={'#666666'}
-                        resizeMode="contain"
-                        source={images.UpArrow}
-                        style={styles.upArrow}
-                      />
-                      <Text size="xs" color="text-darkGrey">
-                        {' 2.34%'}
-                      </Text>
-                    </View>
                   </View>
                 </View>
                 <View style={styles.revenueBox}>
                   <View style={styles.boxCountView}>
                     <Text size="lg" fontWeight="800">
-                      $23,456
+                      {number_of_package}
                     </Text>
                     <Text size="sm" fontWeight="700" color="text-darkGrey">
-                      Revenue
+                      {'Purchase Limit'}
                     </Text>
-                  </View>
-                  <View style={styles.boxPercentView}>
-                    <View style={styles.percentageView}>
-                      <RnImage
-                        tintColor={'#666666'}
-                        resizeMode="contain"
-                        source={images.UpArrow}
-                        style={styles.upArrow}
-                      />
-                      <Text size="xs" color="text-darkGrey">
-                        {' 2.34%'}
-                      </Text>
-                    </View>
                   </View>
                 </View>
               </View>
-              <BarChart
-                showDate={true}
-                graphTitle="Campaigns Clicks"
-                graphContainerStyle={styles.graphContainer}
-              />
             </ScrollView>
           </View>
         );
@@ -272,13 +208,7 @@ const PackageDetail: FC<Props> = ({route}) => {
               showsVerticalScrollIndicator={false}
               onEndReached={onEndReached}
               onEndReachedThreshold={0.5}
-              ListHeaderComponent={
-                <View style={styles.listHeader}>
-                  <Text fontWeight="800" size="base">
-                    {getpackageorder?.length} Bookings
-                  </Text>
-                </View>
-              }
+              ListHeaderComponent={<View style={styles.listHeader}></View>}
               ItemSeparatorComponent={() => (
                 <View style={styles.itemSeparator} />
               )}
@@ -341,6 +271,9 @@ const PackageDetail: FC<Props> = ({route}) => {
                         focused && styles.focusedLabel,
                       ]}>
                       {route.title}
+                      {route.title == 'Orders' && getpackageorder?.length
+                        ? ` (${getpackageorder?.length})`
+                        : null}
                     </Text>
                   )}
                   {...props}
@@ -367,7 +300,7 @@ const PackageDetail: FC<Props> = ({route}) => {
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   mainView: tw`flex-1 w-full h-full`,
   headerRight: tw`flex-1 w-full h-full flex-row items-center justify-end`,
   headerButton: tw`w-10 h-full items-end justify-center`,
@@ -381,7 +314,11 @@ const styles = {
   focusedLabel: tw`text-base text-black font-bold mx-3`,
   tabLabel: tw`text-base text-darkGrey font-bold mx-3`,
   pageView: tw`flex-1 h-full w-full bg-cultured px-4`,
-  devider: tw`w-1 h-5 bg-slate-300`,
+  devider: {
+    height: hp(18),
+    width: wp(2),
+    backgroundColor: Color.GreyD9,
+  },
   dateView: tw`mt-5 items-center w-full h-16 rounded-lg border bg-borderDarkGrey border-stone-300 flex-row `,
   startDateView: tw`flex-1`,
   detailView: tw`flex-row h-17`,
@@ -396,8 +333,34 @@ const styles = {
   graphContainer: tw`w-full h-80 bg-white ml-0 mt-5`,
   scrollView: tw`w-full pb-6`,
   itemSeparator: tw`w-full h-5`,
-  listHeader: tw`w-full h-14 justify-center`,
-  servicesView: tw`w-full flex-row flex-wrap`,
-  serviceItem: tw`h-9 px-3 justify-center rounded-full mr-3`,
-};
+  listHeader: tw`w-full h-10 justify-center`,
+  servicesView: {...tw`w-full flex-row flex-wrap`, marginTop: hp(12)},
+  serviceItem: {
+    borderRadius: 50,
+    backgroundColor: Color.InputGrey,
+    borderWidth: 1,
+    borderColor: Color.GreyEB,
+    marginRight: wp(5),
+    marginBottom: hp(10),
+  },
+  mainImage: {
+    width: '100%',
+    height: hp(277),
+    borderRadius: wp(8),
+  },
+  imageview: {
+    borderRadius: wp(8),
+    overflow: 'hidden',
+    marginTop: hp(16),
+  },
+  packageName: {
+    ...commonFontStyle(fontFamily.medium, 20, Color?.Black),
+    marginTop: hp(35),
+  },
+  serviceTitle: {
+    paddingHorizontal: wp(20),
+    paddingVertical: hp(10),
+    ...commonFontStyle(fontFamily.medium, 15, Color?.Black),
+  },
+});
 export default PackageDetail;

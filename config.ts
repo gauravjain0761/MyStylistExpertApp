@@ -62,7 +62,8 @@ export const endPoints = {
   verifyAppointment: `appointment/verifyAppointment`,
   getworkingHours: `user/getWorkingHours`,
   updateWorkingHours: `user/updateWorkingHours`,
-  refreshToken: "user/updateMobileToken",
+  refreshToken: 'user/updateMobileToken',
+  getAllExpertOrders: `appointment/getAllExpertOrders`,
 };
 
 export const POST = 'POST';

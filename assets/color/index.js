@@ -7,6 +7,7 @@ export default class Color {
   static InputGrey = '#FAFAFA';
   static Blue = '#e2f4fc';
   static LightYellow = '#FAF5E9';
+  static creamFA = '#F7F5EB';
 
   static DefaultDark = '#4E4E4E';
   static PrimaryColor = '#2d6eab';
