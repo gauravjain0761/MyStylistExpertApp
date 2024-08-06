@@ -36,11 +36,12 @@ import {
 } from 'react-native-confirmation-code-field';
 import {useAppDispatch} from 'store';
 import {verifyAppointment} from '../../Actions/appointmentAction';
-import {appConfig} from '../../../config';
+import {appConfig, endPoints} from '../../../config';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
 import AppointmentDetailCard from '../../components/AppointmentDetailCard';
 import {GET_APPOINTMENTS} from '../../store/types';
+import APICaller from '../../service/apiCaller';
 
 type Props = {
   navigation: NativeStackNavigationProp<
@@ -81,6 +82,11 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     tax,
     paymentType,
   } = appointmentDetails || {};
+  const {createRoom, messagesReads} = endPoints;
+  const {userDetails} = useContext(AppContext);
+  const {_id} = userDetails;
+
+  console.log('appointmentDetails', appointmentDetails);
 
   useEffect(() => {
     getAppointmentDetail(appointmentId);
@@ -120,6 +126,35 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     dispatch(verifyAppointment(obj));
   };
 
+  console.log('image', image);
+
+  const onPressChat = async () => {
+    try {
+      const url = createRoom;
+      const body = {
+        participants: [appointmentDetails?.userId?._id, _id],
+      };
+      const response = await APICaller.post(url, body);
+      const {data}: any = response;
+      if (data) {
+        let roomId: any = data?.roomId;
+        let receiver: any = data?.participants?.filter(
+          (item: any) => item._id !== _id,
+        )?.[0];
+        // @ts-ignore
+        navigation.navigate('ChatDetail', {
+          roomId: roomId,
+          receiverId: receiver?._id,
+          receiverImage: [{image: image, is_featured: '1'}],
+          device_token: receiver?.device_token,
+          receiverName: receiver?.name,
+        });
+      }
+    } catch (error) {
+      console.log('error of create room', error);
+    }
+  };
+
   return (
     <Container>
       <View style={[globalStyle.container, {backgroundColor: '#f2f2f2'}]}>
@@ -151,7 +186,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                   }, ${address?.address?.landmark || ''}`}
                   date={moment(availableDate).format('DD MMM,YYYY')}
                   time={availableTime}
-                  onPressChat={() => {}}
+                  onPressChat={onPressChat}
                   bookingID={bookingNumber}
                 />
               </View>

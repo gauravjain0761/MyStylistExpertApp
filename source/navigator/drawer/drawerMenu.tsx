@@ -29,7 +29,6 @@ import DataAccess, {clearAsync} from '../../dataAccess';
 import {useAppSelector} from 'store';
 import {appConfig} from '../../../config';
 import {NativeToast} from 'utils';
-import {navigationRef} from 'navigator';
 
 interface Props {
   props: DrawerContentComponentProps;

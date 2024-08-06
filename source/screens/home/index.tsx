@@ -63,8 +63,10 @@ import {
   getAddress,
   requestLocationPermission,
 } from '../../utils/locationHandler';
-import {setAsyncLocation} from '../../dataAccess';
+import {setAsyncDevice_token, setAsyncLocation} from '../../dataAccess';
 import {getAllNotification} from '../../Actions/notificationAction';
+import messaging from '@react-native-firebase/messaging';
+import {getrefreshToken} from '../../Actions/authAction';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -104,7 +106,7 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {setLoading, userDetails, location, setLocation} =
     useContext(AppContext);
   const {IMG_URL} = appConfig;
-  const {_id} = userDetails;
+  const {_id} = userDetails || {};
 
   useEffect(() => {
     GetStatus();
@@ -120,6 +122,33 @@ const Home: FC<Props> = ({navigation, route}) => {
       clearInterval(clean);
     };
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onTokenRefresh(newToken => {
+      console.log('FCM Token refreshed:', newToken);
+      if (newToken) {
+        let obj = {
+          userId: _id,
+          deviceToken: newToken,
+        };
+        getRefreshToken(obj);
+      }
+      // Save or use the new token as needed
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const getRefreshToken = async (data: any) => {
+    let obj = {
+      data: data,
+      onSuccess: async (response: any) => {
+        await setAsyncDevice_token(response?.data?.device_token.toString());
+      },
+      onFailure: (Err: any) => {},
+    };
+    dispatch(getrefreshToken(obj));
+  };
 
   const getNotification = async (segment: string) => {
     setLoading(true);

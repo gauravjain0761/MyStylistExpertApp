@@ -31,3 +31,25 @@ export const expertLogin =
         if (request.onFailure) request.onFailure(error.response);
       });
   };
+
+export const getrefreshToken =
+  (request: any): ThunkAction<void, RootState, unknown, AnyAction> =>
+  dispatch => {
+    let headers = {
+      'Content-Type': 'application/json',
+    };
+    return makeAPIRequest({
+      method: POST,
+      url: endPoints.refreshToken,
+      headers: headers,
+      data: request.data,
+    })
+      .then(async (response: any) => {
+        if (response.status === 200) {
+          if (request.onSuccess) request.onSuccess(response.data);
+        }
+      })
+      .catch(error => {
+        if (request.onFailure) request.onFailure(error.response);
+      });
+  };
