@@ -7,7 +7,7 @@ import {makeAPIRequest} from '../utils/apiGlobal';
 import {GET, POST, endPoints} from '../../config';
 import {RootState} from 'store';
 
-const {setAsyncToken} = DataAccess();
+const {setAsyncToken, setAsyncRefreshToken} = DataAccess();
 
 export const expertLogin =
   (request?: any): ThunkAction<void, RootState, unknown, AnyAction> =>
@@ -23,7 +23,8 @@ export const expertLogin =
     })
       .then(async (response: any) => {
         if (response.status === 200) {
-          await setAsyncToken(response?.data?.token);
+          await setAsyncToken(response?.data?.accessToken);
+          await setAsyncRefreshToken(response?.data?.refreshToken);
           if (request.onSuccess) request.onSuccess(response.data);
         }
       })

@@ -47,14 +47,11 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
   const [messageList, setMessageList] = useState([]);
 
   const {mainDomain, IMG_URL} = appConfig;
-  const dispatch = useAppDispatch();
 
   const socket = io(mainDomain);
 
   const {userDetails} = useContext(AppContext);
   const {_id, user_profile_images, name} = userDetails;
-
-  console.log('receiverImage', receiverImage);
 
   const flatListRef = useRef<any>(null);
 

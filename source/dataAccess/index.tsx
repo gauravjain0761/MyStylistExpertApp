@@ -7,6 +7,7 @@ const USER_DETAILS = 'USER_DETAILS';
 export const asyncKeys = {
   // clear in logout time
   token: '@token',
+  refreshToken: '@refreshToken',
   user_info: '@user_info',
   location: '@location',
   Coord: '@coord',
@@ -48,6 +49,17 @@ const DataAccess = () => {
     }
   };
 
+  const setAsyncRefreshToken = async (token: string) => {
+    await AsyncStorage.setItem(asyncKeys.refreshToken, JSON.stringify(token));
+  };
+
+  const getAsyncRefreshToken = async () => {
+    const token = await AsyncStorage.getItem(asyncKeys.refreshToken);
+    if (token) {
+      return JSON.parse(token);
+    }
+  };
+
   return {
     getUserLogin,
     getUserDetails,
@@ -55,6 +67,8 @@ const DataAccess = () => {
     setUserDetailsToStorage,
     setAsyncToken,
     getAsyncToken,
+    setAsyncRefreshToken,
+    getAsyncRefreshToken,
   };
 };
 
@@ -64,6 +78,7 @@ export const clearAsync = async () => {
     asyncKeys.user_info,
     asyncKeys.location,
     asyncKeys.device_token,
+    asyncKeys.refreshToken,
     IS_LOGIN,
     USER_DETAILS,
   ]);

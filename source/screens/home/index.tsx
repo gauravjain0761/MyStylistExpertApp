@@ -51,12 +51,8 @@ import {appConfig, endPoints} from '../../../config';
 import useHome from './hooks';
 import {AppContext} from 'context';
 import {getAllBanner, getUserDetails} from '../../Actions/homeAction';
-import {
-  getAppointments,
-  getUpcomingAppointment,
-} from '../../Actions/appointmentAction';
+import {getAppointments} from '../../Actions/appointmentAction';
 import {TopService} from '../../Actions/servicesAction';
-import {io} from 'socket.io-client';
 import {socketConnect} from '../Socket';
 
 import {
@@ -109,7 +105,7 @@ const Home: FC<Props> = ({navigation, route}) => {
   const {_id} = userDetails || {};
 
   useEffect(() => {
-    GetStatus();
+    getCurrentLocation();
     socketConnect(dispatch);
     let clean = setTimeout(() => {
       getUserDetail();
@@ -168,11 +164,6 @@ const Home: FC<Props> = ({navigation, route}) => {
     dispatch(getAllNotification(obj));
   };
 
-  const GetStatus = () => {
-    location ? setVisible(false) : setVisible(true);
-    // setVisible(false);
-  };
-
   const getCurrentLocation = async () => {
     await requestLocationPermission(
       async response => {
@@ -183,7 +174,6 @@ const Home: FC<Props> = ({navigation, route}) => {
             await setAsyncLocation('Mohali, Punjab');
             setLocation('Mohali, Punjab');
             // setLocation(res?.results?.[0]?.formatted_address);
-            setVisible(false);
           },
           async (Err: any) => {
             console.log('Home screen Get Address', Err);
@@ -499,11 +489,11 @@ const Home: FC<Props> = ({navigation, route}) => {
             </View>
           </ScrollView>
           <BottomTab />
-          <Locationmodal
+          {/* <Locationmodal
             onPress={getCurrentLocation}
             visible={visible}
             setVisible={setVisible}
-          />
+          /> */}
         </View>
       </>
     </Container>

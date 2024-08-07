@@ -64,6 +64,8 @@ export const endPoints = {
   updateWorkingHours: `user/updateWorkingHours`,
   refreshToken: 'user/updateMobileToken',
   getAllExpertOrders: `appointment/getAllExpertOrders`,
+  auth_refresh_token: "user/refresh-token",
+
 };
 
 export const POST = 'POST';

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {appConfig} from '../../config';
 import {NativeToast} from './toast';
+import axiosInterceptors from './axiosInterceptors';
 
 interface makeAPIRequestProps {
   method?: any;
@@ -26,7 +27,7 @@ export const makeAPIRequest = ({
       headers,
       params,
     };
-    axios(option)
+    axiosInterceptors(option)
       .then(response => {
         // console.log('response-->', response);
         if (response?.status === 200 || response?.status === 201) {
