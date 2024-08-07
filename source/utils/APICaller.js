@@ -25,7 +25,7 @@ const APICaller = (endpoint, method, body, contentType) =>
     .catch(error => {
       console.log(`Error from ${mainDomain}/${endpoint}>> ${error}`);
 
-      throw error.response;
+      throw error?.response;
     });
 
 export const DynamicCallerForImage = (
@@ -58,7 +58,7 @@ export const DynamicCallerForImage = (
     })
     .catch(error => {
       console.log(`Error from ${endpoint}>> ${error}`);
-      throw error.response;
+      throw error?.response;
     });
 
 export const DynamicCaller = (
@@ -92,7 +92,7 @@ export const DynamicCaller = (
     })
     .catch(error => {
       console.log(`Error from ${mainDomain}${endpoint}>> ${error}`);
-      throw error.response;
+      throw error?.response;
     });
 
 export default APICaller;

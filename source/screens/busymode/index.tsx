@@ -10,6 +10,7 @@ import {
   ScrollView,
   // Switch,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -40,27 +41,29 @@ const {getAllDatesOFUser, markAsBusy, markAsUnBusy} = endPoints;
 
 function OfferItems(props: any) {
   const {index, data, selectedValuee, setkeyword} = props;
-  const {time, color, status, _id} = data || {};
-
+  const {time, color, status, _id, isPast} = data || {};
   return (
     <View style={styles.itemContainer}>
       <Pressable
         onPress={() => {
-          setkeyword(index, time, _id);
+          setkeyword(index, time, _id, status);
         }}
+        disabled={isPast == true ? true : false}
         style={{
           backgroundColor:
-            status === 'unavailable' && selectedValuee?.includes(_id)
+            status === 'unavailable' &&
+            selectedValuee?.some(item => item?.timeSlot_id == _id)
               ? Color.Blue
               : status === 'unavailable'
               ? 'red'
-              : selectedValuee?.includes(_id)
+              : selectedValuee?.some(item => item?.timeSlot_id == _id)
               ? Color.Green
               : Color.DimGrey,
           padding: w(2),
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 20,
+          opacity: isPast == true ? 0.5 : 1,
         }}>
         <Text style={{color: Color.Black}}>{time}</Text>
       </Pressable>
@@ -74,23 +77,20 @@ function BusyMode() {
   const [getEveningDates, setEveningDates] = useState([]);
   const [getAfternoonDates, setAfternoonDates] = useState([]);
   const [selected, setSelected] = useState(moment().format('YYYY-MM-DD'));
-  const [selectedTime, setSelectedTime] = useState('');
+  const [selectedTime, setSelectedTime] = useState([]);
   const [selectedId, setSelectedId] = useState('');
   const [selectedValue, setSelectedValue] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
+  const [allTime, setAllTime] = useState([]);
+  const [containerLoading, setContainerLoading] = useState(false);
 
-  const [markedDates, setMarkedDates] = useState({});
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const {userDetails} = useContext(AppContext);
+  const {userDetails, setLoading} = useContext(AppContext);
   const {_id} = userDetails;
 
   const minDate = moment().format('YYYY-MM-DD');
-  const maxDate = moment().format('YYYY-MM-DD');
   useEffect(() => {
     getAllDates();
+    setContainerLoading(!containerLoading);
   }, [selected]);
 
   const getAllDates = () => {
@@ -99,13 +99,22 @@ function BusyMode() {
     const body = {
       expertId: _id,
       startDate: selected,
+      endDate: selected,
+      timeSlotDuration: 60,
     };
+    setContainerLoading(true);
     DynamicCaller(endpoint, method, body, '')
       .then(response => {
         console.log('reposnse of get all Dates', response);
         const {data, status} = response;
-        const {response: calData} = data;
-        if (status == 200 && data && calData?.[selected]['evening'].length) {
+        const {response: calData} = data || {};
+        if (
+          (status == 200 || status == 201) &&
+          data &&
+          calData?.[selected]['evening'].length
+        ) {
+          setContainerLoading(false);
+
           const {afternoon, evening, morning} = calData?.[selected];
           setAfternoonDates(afternoon);
           setEveningDates(evening);
@@ -113,45 +122,51 @@ function BusyMode() {
         }
       })
       .catch(error => {
+        setContainerLoading(false);
+
         console.log('error of get all Dates', error);
       });
   };
 
-  const markBusy = () => {
+  const markBusy = (item: any) => {
     const method = 'POST';
     const endpoint = `${markAsBusy}`;
     const body = {
-      expert: _id,
-      unavailableTimeSlot: selectedValue,
-      unavailableDate: selected,
-      reason: 'urgent work',
-      color: '#0000000',
-      timeSlot_id: selectedId,
+      timeSlots: item?.length ? item : selectedTime,
     };
+    setContainerLoading(true);
+
     DynamicCaller(endpoint, method, body, '')
       .then(response => {
+        setContainerLoading(false);
+
         console.log('reposnse of get mark Busy', response);
         const {data, status} = response;
         const {message} = data;
         if (status == 200 && data) {
           NativeToast('Mark busy successfully');
           getAllDates();
-          setSelectedValue('');
+          setSelectedValue([]);
           setSelectedId('');
-          setSelectedTime('');
+          setSelectedTime([]);
         }
       })
       .catch(error => {
+        setContainerLoading(false);
+
         console.log('error of get mark Busy', error);
       });
   };
-  const markUnBusy = () => {
+  const markUnBusy = (item: any) => {
     const method = 'POST';
     const endpoint = `${markAsUnBusy}`;
     const body = {
       userId: _id,
-      unavailabilityId: selectedId,
+      unavailabilityIds: item?.length
+        ? item
+        : selectedTime?.map(item => item?.timeSlot_id),
     };
+    setContainerLoading(true);
 
     DynamicCaller(endpoint, method, body, '')
       .then(response => {
@@ -159,89 +174,64 @@ function BusyMode() {
         const {data, status} = response;
         const {message} = data;
         if (status == 200 && data) {
+          setContainerLoading(false);
+
           NativeToast('Mark un-busy successfully');
           getAllDates();
           setSelectedValue('');
           setSelectedId('');
-          setSelectedTime('');
+          setSelectedTime([]);
         }
       })
       .catch(error => {
+        setContainerLoading(false);
+
         console.log('error of get mark unBusy', error);
       });
   };
 
-  const onDayPress = day => {
-    if (!startDate) {
-      setStartDate(day.dateString);
-      setEndDate(null);
-      setMarkedDates({
-        [day.dateString]: {
-          startingDay: true,
-          color: '#89E3DC',
-          textColor: 'black',
-          borderRadius: 100,
-        },
-      });
-    } else if (!endDate) {
-      if (moment(day.dateString).isBefore(startDate)) {
-        setStartDate(day.dateString);
-        setMarkedDates({
-          [day.dateString]: {
-            startingDay: true,
-            color: '#89E3DC',
-            textColor: 'black',
-            customStyles: {
-              container: {
-                borderRadius: 100,
-              },
-            },
-          },
-        });
-      } else {
-        setEndDate(day.dateString);
-        const range = getDateRange(startDate, day.dateString);
-        const rangeMarkedDates = range.reduce((acc, date) => {
-          acc[date] = {
-            color: '#E8F9F7',
-            textColor: 'black',
-          };
-          return acc;
-        }, {});
-        rangeMarkedDates[startDate] = {
-          startingDay: true,
-          color: '#89E3DC',
-          textColor: 'black',
-        };
-        rangeMarkedDates[day.dateString] = {
-          endingDay: true,
-          color: '#89E3DC',
-          textColor: 'black',
-        };
-        setMarkedDates(rangeMarkedDates);
-      }
+  const onDayPress = (day: any) => {
+    setSelected(day.dateString);
+  };
+
+  const markasAllDayBusy = (e: any) => {
+    if (e) {
+      let selectedTimes = [
+        ...getMorningDates,
+        ...getAfternoonDates,
+        ...getEveningDates,
+      ]
+        ?.map(item => {
+          if (!item?.isPast) {
+            return {
+              timeSlot_id: item?._id,
+              unavailableTimeSlot: item?.time,
+              expert: _id,
+              unavailableDate: selected,
+              reason: 'urgent work',
+              color: '#000000',
+            };
+          }
+        })
+        ?.filter(item => item);
+      setSelectedTime(selectedTimes);
+      markBusy(selectedTime);
     } else {
-      setStartDate(day.dateString);
-      setEndDate(null);
-      setMarkedDates({
-        [day.dateString]: {
-          startingDay: true,
-          color: '#89E3DC',
-          textColor: 'black',
-        },
-      });
+      let unbusy = [
+        ...getMorningDates,
+        ...getAfternoonDates,
+        ...getEveningDates,
+      ]
+        ?.map(item => {
+          if (item?.status == 'unavailable') {
+            return item?._id;
+          }
+        })
+        ?.filter(item => item);
+      markUnBusy(unbusy);
     }
   };
 
-  const getDateRange = (start, end) => {
-    const range = [];
-    let currentDate = moment(start).add(1, 'day');
-    while (currentDate.isBefore(end)) {
-      range.push(currentDate.format('YYYY-MM-DD'));
-      currentDate = currentDate.add(1, 'day');
-    }
-    return range;
-  };
   return (
     <Container>
       <View style={globalStyle.container}>
@@ -275,8 +265,14 @@ function BusyMode() {
                   )
                 }
                 onDayPress={onDayPress}
-                markingType={'period'}
-                markedDates={markedDates}
+                markingType={'custom'}
+                markedDates={{
+                  [selected]: {
+                    selected: true,
+                    selectedColor: '#89E3DC',
+                    textColor: 'black',
+                  },
+                }}
                 theme={{
                   'stylesheet.calendar.header': {
                     week: {
@@ -310,6 +306,7 @@ function BusyMode() {
                   dayTextColor: 'black',
                   selectedDayTextColor: 'black',
                   todayTextColor: '#2F7973',
+                  selectedColor: '#89E3DC',
                 }}
                 style={{
                   paddingLeft: 0,
@@ -327,167 +324,226 @@ function BusyMode() {
                 paddingRight: wp(8),
                 paddingVertical: hp(20),
               }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: Color.Black,
-                    fontWeight: '700',
-                    fontSize: f(1.6),
-                  }}>
-                  Select available Time
-                </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: wp(7),
-                  }}>
-                  <Text
-                    style={{
-                      ...commonFontStyle(fontFamily.regular, 13, Color?.Black),
-                    }}>
-                    All Day
-                  </Text>
-                  <ToggleSwitch onValueChange={toggleSwitch} active={true} />
-                </View>
-              </View>
-              {getMorningDates && getMorningDates.length ? (
-                <View style={{width: '100%', marginTop: h(2)}}>
-                  <Text
-                    style={{
-                      ...commonFontStyle(fontFamily.medium, 16, Color?.Black),
-                    }}>
-                    Morning
-                  </Text>
-                </View>
-              ) : null}
-
-              <View style={{width: '100%', backgroundColor: Color.White}}>
-                <FlatList
-                  data={getMorningDates}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  ItemSeparatorComponent={() => (
-                    <View style={{width: wp(12)}} />
-                  )}
-                  renderItem={({item, index}) => {
-                    return (
-                      <OfferItems
-                        data={item}
-                        index={index}
-                        key={index.toString()}
-                        setkeyword={(index, value, id) => {
-                          setSelectedTime((previousData: any) => {
-                            return previousData.includes(id)
-                              ? previousData.filter((item: any) => item !== id)
-                              : [...previousData, id];
-                          });
-                          setSelectedValue(value);
-                          setSelectedId((previousData: any) => {
-                            return previousData.includes(id)
-                              ? previousData.filter((item: any) => item !== id)
-                              : [...previousData, id];
-                          });
-                        }}
-                        selectedValuee={selectedTime}
-                      />
-                    );
-                  }}
+              {containerLoading ? (
+                <ActivityIndicator
+                  size={'large'}
+                  color={Color?.Green}
+                  animating={containerLoading}
                 />
-              </View>
-              {getAfternoonDates && getAfternoonDates.length ? (
-                <View style={{width: '100%', marginTop: 10}}>
-                  <Text
+              ) : (
+                <>
+                  <View
                     style={{
-                      color: Color.Black,
-                      fontFamily: 'Font-Bold',
-                      fontSize: f(1.4),
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}>
-                    Afternoon
-                  </Text>
-                </View>
-              ) : null}
-
-              <View style={{width: '100%'}}>
-                <FlatList
-                  data={getAfternoonDates}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  ItemSeparatorComponent={() => (
-                    <View style={{width: wp(12)}} />
-                  )}
-                  renderItem={({item, index}) => {
-                    return (
-                      <OfferItems
-                        data={item}
-                        index={index}
-                        key={index.toString()}
-                        setkeyword={(index, value, id) => {
-                          setSelectedTime((previousData: any) => {
-                            return previousData.includes(id)
-                              ? previousData.filter((item: any) => item !== id)
-                              : [...previousData, id];
-                          });
-                          setSelectedValue(value);
-                          setSelectedId(id);
+                    <Text
+                      style={{
+                        color: Color.Black,
+                        fontWeight: '700',
+                        fontSize: f(1.6),
+                      }}>
+                      Select available Time
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: wp(7),
+                      }}>
+                      <Text
+                        style={{
+                          ...commonFontStyle(
+                            fontFamily.regular,
+                            13,
+                            Color?.Black,
+                          ),
+                        }}>
+                        All Day
+                      </Text>
+                      <ToggleSwitch
+                        onValueChange={e => {
+                          setIsEnabled(!isEnabled);
+                          markasAllDayBusy(e);
                         }}
-                        selectedValuee={selectedTime}
+                        active={isEnabled}
                       />
-                    );
-                  }}
-                />
-              </View>
-              {getEveningDates && getEveningDates.length ? (
-                <View style={{width: '100%', marginTop: 10}}>
-                  <Text
-                    style={{
-                      color: Color.Black,
-                      fontFamily: 'Font-Bold',
-                      fontSize: f(1.4),
-                    }}>
-                    Evening
-                  </Text>
-                </View>
-              ) : null}
+                    </View>
+                  </View>
+                  {getMorningDates && getMorningDates.length ? (
+                    <View style={{width: '100%', marginTop: h(2)}}>
+                      <Text
+                        style={{
+                          ...commonFontStyle(
+                            fontFamily.medium,
+                            16,
+                            Color?.Black,
+                          ),
+                        }}>
+                        Morning
+                      </Text>
+                    </View>
+                  ) : null}
 
-              <View style={{width: '100%'}}>
-                <FlatList
-                  data={getEveningDates}
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  ItemSeparatorComponent={() => (
-                    <View style={{width: wp(12)}} />
-                  )}
-                  renderItem={({item, index}) => {
-                    return (
-                      <OfferItems
-                        data={item}
-                        index={index}
-                        key={index.toString()}
-                        setkeyword={(index, value, id) => {
-                          setSelectedTime((previousData: any) => {
-                            return previousData.includes(id)
-                              ? previousData.filter((item: any) => item !== id)
-                              : [...previousData, id];
-                          });
-                          setSelectedValue(value);
-                          setSelectedId(id);
-                        }}
-                        selectedValuee={selectedTime}
-                      />
-                    );
-                  }}
-                />
-              </View>
+                  <View style={{width: '100%', backgroundColor: Color.White}}>
+                    <FlatList
+                      data={getMorningDates}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      keyExtractor={(item, index) => index.toString()}
+                      ItemSeparatorComponent={() => (
+                        <View style={{width: wp(12)}} />
+                      )}
+                      renderItem={({item, index}) => {
+                        return (
+                          <OfferItems
+                            data={item}
+                            index={index}
+                            key={index.toString()}
+                            setkeyword={(index, value, id, status) => {
+                              setSelectedValue(value);
+                              setSelectedTime((previousData: any) => {
+                                return previousData?.some(
+                                  item => item?.timeSlot_id == id,
+                                )
+                                  ? previousData?.filter(
+                                      (item: any) => item?.timeSlot_id !== id,
+                                    )
+                                  : [
+                                      ...previousData,
+                                      {
+                                        timeSlot_id: id,
+                                        unavailableTimeSlot: value,
+                                        expert: _id,
+                                        unavailableDate: selected,
+                                        reason: 'urgent work',
+                                        color: '#000000',
+                                      },
+                                    ];
+                              });
+                            }}
+                            selectedValuee={selectedTime}
+                          />
+                        );
+                      }}
+                    />
+                  </View>
+                  {getAfternoonDates && getAfternoonDates.length ? (
+                    <View style={{width: '100%', marginTop: 10}}>
+                      <Text
+                        style={{
+                          color: Color.Black,
+                          fontFamily: 'Font-Bold',
+                          fontSize: f(1.4),
+                        }}>
+                        Afternoon
+                      </Text>
+                    </View>
+                  ) : null}
+
+                  <View style={{width: '100%'}}>
+                    <FlatList
+                      data={getAfternoonDates}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      keyExtractor={(item, index) => index.toString()}
+                      ItemSeparatorComponent={() => (
+                        <View style={{width: wp(12)}} />
+                      )}
+                      renderItem={({item, index}) => {
+                        return (
+                          <OfferItems
+                            data={item}
+                            index={index}
+                            key={index.toString()}
+                            setkeyword={(index, value, id) => {
+                              setSelectedValue(value);
+                              setSelectedTime((previousData: any) => {
+                                return previousData?.some(
+                                  item => item?.timeSlot_id == id,
+                                )
+                                  ? previousData?.filter(
+                                      (item: any) => item?.timeSlot_id !== id,
+                                    )
+                                  : [
+                                      ...previousData,
+                                      {
+                                        timeSlot_id: id,
+                                        unavailableTimeSlot: value,
+                                        expert: _id,
+                                        unavailableDate: selected,
+                                        reason: 'urgent work',
+                                        color: '#000000',
+                                      },
+                                    ];
+                              });
+                            }}
+                            selectedValuee={selectedTime}
+                          />
+                        );
+                      }}
+                    />
+                  </View>
+                  {getEveningDates && getEveningDates.length ? (
+                    <View style={{width: '100%', marginTop: 10}}>
+                      <Text
+                        style={{
+                          color: Color.Black,
+                          fontFamily: 'Font-Bold',
+                          fontSize: f(1.4),
+                        }}>
+                        Evening
+                      </Text>
+                    </View>
+                  ) : null}
+
+                  <View style={{width: '100%'}}>
+                    <FlatList
+                      data={getEveningDates}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      keyExtractor={(item, index) => index.toString()}
+                      ItemSeparatorComponent={() => (
+                        <View style={{width: wp(12)}} />
+                      )}
+                      renderItem={({item, index}) => {
+                        return (
+                          <OfferItems
+                            data={item}
+                            index={index}
+                            key={index.toString()}
+                            setkeyword={(index, value, id) => {
+                              setSelectedTime((previousData: any) => {
+                                return previousData?.some(
+                                  item => item?.timeSlot_id == id,
+                                )
+                                  ? previousData?.filter(
+                                      (item: any) => item?.timeSlot_id !== id,
+                                    )
+                                  : [
+                                      ...previousData,
+                                      {
+                                        timeSlot_id: id,
+                                        unavailableTimeSlot: value,
+                                        expert: _id,
+                                        unavailableDate: selected,
+                                        reason: 'urgent work',
+                                        color: '#000000',
+                                      },
+                                    ];
+                              });
+                              setSelectedValue(value);
+                            }}
+                            selectedValuee={selectedTime}
+                          />
+                        );
+                      }}
+                    />
+                  </View>
+                </>
+              )}
             </View>
           </KeyboardAwareScrollView>
           <View
@@ -499,10 +555,10 @@ function BusyMode() {
             }}>
             <Pressable
               onPress={() => {
-                if (!selectedValue) {
+                if (!selectedTime) {
                   NativeToast('Please select time');
                 } else {
-                  markBusy();
+                  markBusy('');
                 }
               }}
               style={{
@@ -524,10 +580,10 @@ function BusyMode() {
             </Pressable>
             <Pressable
               onPress={() => {
-                if (!selectedValue) {
+                if (!selectedTime) {
                   NativeToast('Please select time');
                 } else {
-                  markUnBusy();
+                  markUnBusy('');
                 }
               }}
               style={{
