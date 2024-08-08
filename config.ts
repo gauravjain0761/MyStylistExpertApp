@@ -66,6 +66,7 @@ export const endPoints = {
   getAllExpertOrders: `appointment/getAllExpertOrders`,
   auth_refresh_token: 'user/refresh-token',
   getExpertAvailability: `expertUnavailability/getExpertAvailability`,
+  update_appointment: "appointment/updateAppointmentStatus"
 };
 
 export const POST = 'POST';

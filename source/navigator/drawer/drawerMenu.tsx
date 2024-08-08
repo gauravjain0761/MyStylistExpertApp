@@ -143,7 +143,13 @@ const DrawerMenu: FC<Props> = ({props}) => {
           renderItem={({item, index}) => {
             return (
               <TouchableOpacity
-                onPress={() => onPressLogOut()}
+                onPress={() => {
+                  if (item.route === 'Logout') {
+                    onPressLogOut();
+                  } else {
+                    navigation.navigate(item.route);
+                  }
+                }}
                 style={styles.list}>
                 <View style={styles.leftcontainer}>
                   <RNImage style={styles.listicon} source={item?.icon} />
@@ -205,12 +211,13 @@ const styles = StyleSheet.create({
   location: {
     ...commonFontStyle(fontFamily.regular, 14, Color?.Grey66),
     marginRight: wp(10),
+    flex: 1,
   },
   locationcontainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: hp(15),
-    flexWrap: 'wrap',
+    marginRight: wp(10),
   },
   saparator: {
     width: wp(4),

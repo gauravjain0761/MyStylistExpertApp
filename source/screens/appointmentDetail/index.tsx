@@ -35,7 +35,10 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import {useAppDispatch} from 'store';
-import {verifyAppointment} from '../../Actions/appointmentAction';
+import {
+  updateAppointment,
+  verifyAppointment,
+} from '../../Actions/appointmentAction';
 import {appConfig, endPoints} from '../../../config';
 import {AppContext} from 'context';
 import {NativeToast} from '../../utils/toast';
@@ -81,10 +84,14 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     totalAmount = 0,
     tax,
     paymentType,
+    expertStatus,
+    status,
   } = appointmentDetails || {};
   const {createRoom, messagesReads} = endPoints;
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
+
+  console.log('appointmentDetails', status);
 
   useEffect(() => {
     getAppointmentDetail(appointmentId);
@@ -151,6 +158,24 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     }
   };
 
+  const onPressEndService = () => {
+    setLoading(true);
+    let obj = {
+      data: {
+        appointmentId: appointmentId,
+        status: 'completed',
+      },
+      onSuccess: () => {
+        setLoading(false);
+        navigation.goBack();
+      },
+      onFailure: () => {
+        setLoading(false);
+      },
+    };
+    dispatch(updateAppointment(obj));
+  };
+
   return (
     <Container>
       <View style={[globalStyle.container, {backgroundColor: '#f2f2f2'}]}>
@@ -186,38 +211,48 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                   bookingID={bookingNumber}
                 />
               </View>
-              <View style={styles.otp_conatiner}>
-                <Text style={styles.otp_title}>
-                  {'OTP to start the service'}
-                </Text>
-                <CodeField
-                  ref={ref}
-                  {...props}
-                  onBlur={() => {}}
-                  value={value}
-                  blurOnSubmit={true}
-                  onChangeText={setValue}
-                  cellCount={CELL_COUNT}
-                  keyboardType="number-pad"
-                  textContentType="oneTimeCode"
-                  renderCell={({index, symbol, isFocused}) => (
-                    <View key={index} style={[styles.cell]}>
-                      <Text
-                        key={index}
-                        style={{
-                          ...commonFontStyle(
-                            fontFamily.medium,
-                            20,
-                            Color?.Green2F,
-                          ),
-                        }}
-                        onLayout={getCellOnLayoutHandler(index)}>
-                        {symbol || (isFocused ? <Cursor /> : '-')}
+              {status === 'upcoming' ? (
+                <>
+                  {expertStatus !== 'in-progress' ? (
+                    <View style={styles.otp_conatiner}>
+                      <Text style={styles.otp_title}>
+                        {'OTP to start the service'}
                       </Text>
+                      <CodeField
+                        ref={ref}
+                        {...props}
+                        onBlur={() => {}}
+                        value={value}
+                        blurOnSubmit={true}
+                        onChangeText={setValue}
+                        cellCount={CELL_COUNT}
+                        keyboardType="number-pad"
+                        textContentType="oneTimeCode"
+                        renderCell={({index, symbol, isFocused}) => (
+                          <View key={index} style={[styles.cell]}>
+                            <Text
+                              key={index}
+                              style={{
+                                ...commonFontStyle(
+                                  fontFamily.medium,
+                                  20,
+                                  Color?.Green2F,
+                                ),
+                              }}
+                              onLayout={getCellOnLayoutHandler(index)}>
+                              {symbol || (isFocused ? <Cursor /> : '-')}
+                            </Text>
+                          </View>
+                        )}
+                      />
                     </View>
+                  ) : (
+                    <View style={{height: hp(10)}} />
                   )}
-                />
-              </View>
+                </>
+              ) : (
+                <View style={{height: hp(10)}} />
+              )}
 
               <View style={{...styles.whiteContainer, marginTop: 0}}>
                 <Text style={styles.titleStyle}>{'Bill Details'}</Text>
@@ -246,13 +281,23 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                 </View>
               </View>
             </ScrollView>
-            <View style={styles.bottompart}>
-              <PrimaryButton
-                containerStyle={styles.primarybutton}
-                label={'Submit'}
-                onPress={() => onPressSubmit()}
-              />
-            </View>
+            {status === 'upcoming' ? (
+              <View style={styles.bottompart}>
+                {expertStatus === 'in-progress' ? (
+                  <PrimaryButton
+                    label={'End Service'}
+                    onPress={onPressEndService}
+                    containerStyle={styles.primarybuttonEnd}
+                  />
+                ) : (
+                  <PrimaryButton
+                    label={'Submit'}
+                    onPress={() => onPressSubmit()}
+                    containerStyle={styles.primarybutton}
+                  />
+                )}
+              </View>
+            ) : null}
           </>
         ) : null}
       </View>
@@ -439,6 +484,10 @@ const styles = StyleSheet.create({
   },
   primarybutton: {
     borderRadius: wp(6),
+  },
+  primarybuttonEnd: {
+    borderRadius: wp(6),
+    backgroundColor: Color.Green,
   },
   cell: {
     width: wp(25),
