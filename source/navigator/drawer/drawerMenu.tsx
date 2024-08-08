@@ -121,7 +121,7 @@ const DrawerMenu: FC<Props> = ({props}) => {
         </Text>
         <View style={styles.locationcontainer}>
           <Image style={styles.locationpin} source={images?.locationicon} />
-          <Text style={styles.location}>
+          <Text numberOfLines={2} style={styles.location}>
             {address?.sector}, {district_name}
           </Text>
           <View style={styles.saparator}></View>
@@ -200,16 +200,17 @@ const styles = StyleSheet.create({
   locationpin: {
     width: wp(16),
     height: wp(16),
+    marginRight: wp(5),
   },
   location: {
     ...commonFontStyle(fontFamily.regular, 14, Color?.Grey66),
     marginRight: wp(10),
-    marginLeft: wp(6),
   },
   locationcontainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: hp(15),
+    flexWrap: 'wrap',
   },
   saparator: {
     width: wp(4),

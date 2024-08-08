@@ -66,7 +66,7 @@ const AppointmentCard: FC<Props> = ({
           style={styles.locationIcon}
           source={images.locationpin}
         />
-        <RNText style={styles.label}>
+        <RNText numberOfLines={2} style={styles.label}>
           {sector}, {district_name}
         </RNText>
       </View>
@@ -116,8 +116,10 @@ const styles = StyleSheet.create({
   },
   upcomingItemName: tw`flex-row w-full justify-between items-center px-4 mt-3`,
   upcomingDetails: {
-    ...tw`flex-row w-full pt-1 pb-1 px-3`,
-    alignItems: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: wp(10),
+    paddingVertical: hp(5),
   },
   locationIcon: {
     ...tw`w-4 h-4`,
@@ -146,6 +148,7 @@ const styles = StyleSheet.create({
   label: {
     ...commonFontStyle(fontFamily.regular, 16, Color?.Grey66),
     lineHeight: hp(16),
+    flex: 1,
   },
   services: {
     ...tw`px-4`,

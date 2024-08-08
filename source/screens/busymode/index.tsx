@@ -78,10 +78,7 @@ function BusyMode() {
   const [getAfternoonDates, setAfternoonDates] = useState([]);
   const [selected, setSelected] = useState(moment().format('YYYY-MM-DD'));
   const [selectedTime, setSelectedTime] = useState([]);
-  const [selectedId, setSelectedId] = useState('');
-  const [selectedValue, setSelectedValue] = useState('');
   const [isEnabled, setIsEnabled] = useState(false);
-  const [allTime, setAllTime] = useState([]);
   const [containerLoading, setContainerLoading] = useState(false);
 
   const {userDetails, setLoading} = useContext(AppContext);
@@ -146,8 +143,6 @@ function BusyMode() {
         if (status == 200 && data) {
           NativeToast('Mark busy successfully');
           getAllDates();
-          setSelectedValue([]);
-          setSelectedId('');
           setSelectedTime([]);
         }
       })
@@ -178,8 +173,6 @@ function BusyMode() {
 
           NativeToast('Mark un-busy successfully');
           getAllDates();
-          setSelectedValue('');
-          setSelectedId('');
           setSelectedTime([]);
         }
       })
@@ -403,7 +396,6 @@ function BusyMode() {
                             index={index}
                             key={index.toString()}
                             setkeyword={(index, value, id, status) => {
-                              setSelectedValue(value);
                               setSelectedTime((previousData: any) => {
                                 return previousData?.some(
                                   item => item?.timeSlot_id == id,
@@ -459,7 +451,6 @@ function BusyMode() {
                             index={index}
                             key={index.toString()}
                             setkeyword={(index, value, id) => {
-                              setSelectedValue(value);
                               setSelectedTime((previousData: any) => {
                                 return previousData?.some(
                                   item => item?.timeSlot_id == id,
@@ -534,7 +525,6 @@ function BusyMode() {
                                       },
                                     ];
                               });
-                              setSelectedValue(value);
                             }}
                             selectedValuee={selectedTime}
                           />
@@ -555,7 +545,7 @@ function BusyMode() {
             }}>
             <Pressable
               onPress={() => {
-                if (!selectedTime) {
+                if (!selectedTime?.length) {
                   NativeToast('Please select time');
                 } else {
                   markBusy('');
@@ -580,7 +570,7 @@ function BusyMode() {
             </Pressable>
             <Pressable
               onPress={() => {
-                if (!selectedTime) {
+                if (!selectedTime?.length) {
                   NativeToast('Please select time');
                 } else {
                   markUnBusy('');

@@ -86,8 +86,6 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
-  console.log('appointmentDetails', appointmentDetails);
-
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
@@ -125,8 +123,6 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     };
     dispatch(verifyAppointment(obj));
   };
-
-  console.log('image', image);
 
   const onPressChat = async () => {
     try {
