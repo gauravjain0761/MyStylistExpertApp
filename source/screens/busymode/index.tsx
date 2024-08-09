@@ -136,11 +136,10 @@ function BusyMode() {
     DynamicCaller(endpoint, method, body, '')
       .then(response => {
         setContainerLoading(false);
-
         console.log('reposnse of get mark Busy', response);
         const {data, status} = response;
         const {message} = data;
-        if (status == 200 && data) {
+        if (status == 200 || (status == 201 && data)) {
           NativeToast('Mark busy successfully');
           getAllDates();
           setSelectedTime([]);
@@ -161,6 +160,7 @@ function BusyMode() {
         ? item
         : selectedTime?.map(item => item?.timeSlot_id),
     };
+
     setContainerLoading(true);
 
     DynamicCaller(endpoint, method, body, '')
@@ -178,7 +178,7 @@ function BusyMode() {
       })
       .catch(error => {
         setContainerLoading(false);
-
+        NativeToast(error?.data?.error);
         console.log('error of get mark unBusy', error);
       });
   };

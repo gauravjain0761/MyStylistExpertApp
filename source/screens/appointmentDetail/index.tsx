@@ -211,7 +211,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                   bookingID={bookingNumber}
                 />
               </View>
-              {status === 'upcoming' ? (
+              {status === 'upcoming' || status === 'reschedule' ? (
                 <>
                   {expertStatus !== 'in-progress' ? (
                     <View style={styles.otp_conatiner}>
@@ -281,7 +281,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
                 </View>
               </View>
             </ScrollView>
-            {status === 'upcoming' ? (
+            {status === 'upcoming' || status === 'reschedule' ? (
               <View style={styles.bottompart}>
                 {expertStatus === 'in-progress' ? (
                   <PrimaryButton
