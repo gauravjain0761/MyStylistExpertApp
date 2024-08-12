@@ -97,7 +97,9 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     getAppointmentDetail(appointmentId);
   }, []);
   const {availableDate, availableTime} = timeSlot?.[0] || [];
-  const {image} = userId?.user_profile_images?.[0] || [];
+  const image =
+    userId?.user_profile_images?.filter(images => images?.is_featured == 1)?.[0]
+      ?.image || [];
   const address = userId?.addresses?.[0] || {};
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {

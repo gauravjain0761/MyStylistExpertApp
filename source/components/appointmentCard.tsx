@@ -69,7 +69,11 @@ const AppointmentCard: FC<Props> = ({
             resizeMode="contain"
             style={styles.cardProfile}
             source={{
-              uri: `${IMG_URL}/${user_profile_images[0]?.image}`,
+              uri: `${IMG_URL}/${
+                user_profile_images?.filter(
+                  images => images?.is_featured == 1,
+                )?.[0]?.image
+              }`,
             }}
           />
           <View style={styles.nameView}>

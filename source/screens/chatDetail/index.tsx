@@ -39,7 +39,8 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
     receiverImage,
     device_token,
     roomId: RoomID,
-  } = route.params;
+  } = route?.params;
+
   const [roomId, setRoomId] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const [userTyping, setUserTyping] = useState<boolean>(false);
@@ -118,7 +119,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
       socket.off('user_typing');
       socket.off('user_stopped_typing');
     };
-  }, [roomId]);
+  }, [roomId, route?.params]);
 
   const sendMessage = async () => {
     if (message !== '') {
@@ -132,14 +133,19 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         content: message,
         time: new Date(),
         device_token: device_token,
-        user_image: user_profile_images?.[0]?.image,
+        user_image: user_profile_images?.filter(
+          images => images?.is_featured == 1,
+        )?.[0]?.image,
         name: name,
       };
+      console.log('messageData', messageData);
       socket.emit('send_message', messageData);
       setMessage('');
       scrollToBottom();
     }
   };
+
+  console.log('receiverImage receiverImage', receiverImage);
 
   const renderChatList = ({item, index}: any) => {
     return (
@@ -148,7 +154,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
         key={index}
         userId={_id}
         receiverName={receiverName}
-        image={receiverImage[0]?.image || {}}
+        image={receiverImage[0]?.image || receiverImage || {}}
       />
     );
   };
@@ -177,7 +183,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
                   style={styles.profileImage}
                   resizeMode="cover"
                   source={{
-                    uri: `${IMG_URL}/${receiverImage[0]?.image}`,
+                    uri: `${IMG_URL}/${
+                      receiverImage[0]?.image || receiverImage
+                    }`,
                   }}
                 />
                 <View

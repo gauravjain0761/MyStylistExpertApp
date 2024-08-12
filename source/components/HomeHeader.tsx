@@ -45,7 +45,9 @@ const HomeHeader: FC<HomeProps> = ({
 
   useEffect(() => {
     if (Object.values(userinfo)?.length > 0) {
-      const {image} = userinfo?.user?.user_profile_images[0];
+      const image = userinfo?.user?.user_profile_images?.filter(
+        images => images?.is_featured == 1,
+      )?.[0]?.image;
       setProfileImage(image);
     }
   }, [userinfo]);

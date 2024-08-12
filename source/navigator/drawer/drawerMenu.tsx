@@ -80,12 +80,14 @@ const DrawerMenu: FC<Props> = ({props}) => {
 
   const {name, totalReviews, averageRating, addresses, district} =
     userinfo?.user || {};
-  const {image} = userinfo?.user?.user_profile_images[0] || {};
+  const image =
+    userinfo?.user?.user_profile_images?.filter(
+      images => images?.is_featured == 1,
+    )?.[0]?.image || {};
   const {IMG_URL} = appConfig;
   const {address} = addresses?.[0] || {};
   const {district_name} = district?.[0] || {};
   const {activeRoute} = useContext(AppContext);
-
   const onPressLogOut = async () => {
     Alert.alert('Log out', 'Are you sure you want to log out ?', [
       {

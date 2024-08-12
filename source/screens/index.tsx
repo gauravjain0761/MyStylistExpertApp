@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Login from './login';
 import Home from './home';
 import OtpVeirfy from './otpVerify';
@@ -38,6 +38,8 @@ import ServiceUpload from './uploadService';
 import Loading from './Loading';
 import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './terms';
+import messaging from '@react-native-firebase/messaging';
+import {useNavigation} from '@react-navigation/native';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -105,6 +107,45 @@ function AuthNavigator() {
 }
 
 function AppStackNavigator() {
+  useEffect(() => {
+    getNotification();
+  }, []);
+
+  const navigation = useNavigation();
+
+  const getNotification = async () => {
+    await messaging()
+      .getInitialNotification()
+      .then(async remoteMessage => {
+        if (remoteMessage) {
+          CheckNotification(remoteMessage);
+        }
+      });
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage) {
+        CheckNotification(remoteMessage);
+      }
+    });
+  };
+
+  const CheckNotification = (remoteMessage: any) => {
+    let type = remoteMessage?.data?.action;
+    if (type == 'CHAT_DETAILS') {
+      navigation?.navigate('ChatDetail', {
+        roomId: remoteMessage?.data?.value,
+        receiverId: remoteMessage?.data?.user_id,
+        receiverImage: remoteMessage?.data?.user_image,
+        device_token: remoteMessage?.data?.device_token,
+        receiverName: remoteMessage?.data?.name,
+      });
+    }
+    if (type == 'appointment_notification') {
+      navigation?.navigate('AppointmentDetail', {
+        appointmentId: remoteMessage?.data?.value,
+      });
+    }
+  };
+
   return (
     <Stack.Navigator initialRouteName={'Home'} screenOptions={screenOptions}>
       <Stack.Screen name="Home" component={Home} />

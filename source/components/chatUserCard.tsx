@@ -23,7 +23,10 @@ const ChatUserCard: FC<Props> = ({
   unreadMessageCount = 0,
 }) => {
   const {lastMessage, name, time, user_profile_images} = data || {};
-  const {image} = user_profile_images.length ? user_profile_images[0] : {};
+  const image = user_profile_images.length
+    ? user_profile_images?.filter(images => images?.is_featured == 1)?.[0]
+        ?.image
+    : {};
   const {IMG_URL} = appConfig;
   const messageTime = time ? moment(time).format('hh:mm') : '';
   return (

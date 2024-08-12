@@ -54,7 +54,9 @@ const BubbleOther: FC<BubbleProps> = ({message, receiverName, time, image}) => {
 
 const BubbleMine: FC<BubbleProps> = ({message, receiverName, time}) => {
   const {userDetails} = useContext(AppContext);
-  const {image} = userDetails?.user_profile_images[0];
+  const image = userDetails?.user_profile_images?.filter(
+    images => images?.is_featured == 1,
+  )?.[0]?.image;
   const {IMG_URL} = appConfig;
   return (
     <View style={styles.chatBubble}>

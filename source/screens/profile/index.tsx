@@ -89,7 +89,9 @@ const Profile: FC<Props> = ({navigation}) => {
   const {user} = profileData || {};
   const addresses = user?.addresses?.[0] || {};
   const {sector} = addresses?.address || {};
-  const {image} = user?.user_profile_images?.[0] || {};
+  const image =
+    user?.user_profile_images?.filter(images => images?.is_featured == 1)?.[0]
+      ?.image || [];
   const ExpertData = media?.expertusers || [];
   const {user_work_images} = ExpertData?.[0] || {};
   const {user_information} = user || {};

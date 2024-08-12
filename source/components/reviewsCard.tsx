@@ -16,7 +16,9 @@ interface Props {
 }
 
 const ReviewCard: FC<Props> = ({fullWidth, style = '', data}) => {
-  let image = data?.userId?.user_profile_images[0]?.image;
+  let image = data?.userId?.user_profile_images?.filter(
+    images => images?.is_featured == 1,
+  )?.[0]?.image;
   const {IMG_URL} = appConfig;
 
   return (

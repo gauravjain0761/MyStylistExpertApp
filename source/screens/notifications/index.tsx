@@ -35,7 +35,9 @@ const Notifications: FC = () => {
   const {IMG_URL} = appConfig;
   const navigation = useNavigation();
 
-  const {image} = user_profile_images?.[0] || [];
+  const image =
+    user_profile_images?.filter(images => images?.is_featured == 1)?.[0]
+      ?.image || [];
 
   useEffect(() => {
     getNotification('');

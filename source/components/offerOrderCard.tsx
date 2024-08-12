@@ -36,7 +36,9 @@ const OfferOrderCard: FC<Props> = ({
   const time = timeSlot?.[0]?.availableTime || {};
   const {address} = expertDetails?.addresses?.[0] || {};
   const {district, user_profile_images} = expertDetails || {};
-  const {image} = user_profile_images?.[0] || [];
+  const image =
+    user_profile_images?.filter(images => images?.is_featured == 1)?.[0]
+      ?.image || [];
   const {IMG_URL} = appConfig;
 
   return (

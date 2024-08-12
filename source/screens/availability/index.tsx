@@ -24,14 +24,14 @@ const Availability: FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const {working_hours} = useAppSelector(state => state?.availability);
+  const {userDetails, setLoading} = useContext(AppContext);
 
   useFocusEffect(
     useCallback(() => {
       getAvailability();
-    }, []),
+    }, [userDetails]),
   );
 
-  const {userDetails, setLoading} = useContext(AppContext);
   const getAvailability = async () => {
     setLoading(true);
     let obj = {
