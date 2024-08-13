@@ -54,6 +54,8 @@ const Notifications: FC = () => {
         notification_type: segment == 'all' ? '' : segment,
       },
       onSuccess: (res: any) => {
+        console.log('ressssssressssss', res);
+
         setLoading(false);
       },
       onFailure: (Err: any) => {

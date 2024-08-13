@@ -119,10 +119,24 @@ function AppStackNavigator() {
       .then(async remoteMessage => {
         if (remoteMessage) {
           CheckNotification(remoteMessage);
+          console.log('CHAT_DETAILS CHAT_DETAILS', {
+            roomId: remoteMessage?.data?.value,
+            receiverId: remoteMessage?.data?.user_id,
+            receiverImage: remoteMessage?.data?.user_image,
+            device_token: remoteMessage?.data?.device_token,
+            receiverName: remoteMessage?.data?.name,
+          });
         }
       });
     messaging().onNotificationOpenedApp(remoteMessage => {
       if (remoteMessage) {
+        console.log('CHAT_DETAILS CHAT_DETAILS', {
+          roomId: remoteMessage?.data?.value,
+          receiverId: remoteMessage?.data?.user_id,
+          receiverImage: remoteMessage?.data?.user_image,
+          device_token: remoteMessage?.data?.device_token,
+          receiverName: remoteMessage?.data?.name,
+        });
         CheckNotification(remoteMessage);
       }
     });

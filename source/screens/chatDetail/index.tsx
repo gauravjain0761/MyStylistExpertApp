@@ -97,6 +97,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
           senderId: item.sender._id,
           content: item.content,
           time: item.timestamp,
+          image: item?.sender?.user_profile_images?.filter(
+            images => images?.is_featured == 1,
+          )?.[0]?.image,
         };
         return messageData;
       });
@@ -137,6 +140,7 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
           images => images?.is_featured == 1,
         )?.[0]?.image,
         name: name,
+        receiverId: receiverId,
       };
       console.log('messageData', messageData);
       socket.emit('send_message', messageData);
@@ -144,8 +148,6 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
       scrollToBottom();
     }
   };
-
-  console.log('receiverImage receiverImage', receiverImage);
 
   const renderChatList = ({item, index}: any) => {
     return (
