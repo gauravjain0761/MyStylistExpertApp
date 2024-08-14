@@ -4,10 +4,11 @@ import {endPoints} from '../../../config';
 import APICaller from '../../service/apiCaller';
 import {ChatUser} from 'types';
 
-const {getUsersList} = endPoints;
+const {getUsersList, unreadlist} = endPoints;
 
 const useChat = () => {
   const [chatUsers, setChatUsers] = useState<Array<ChatUser>>([]);
+  const [unRead, setUnread] = useState<[]>([]);
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
@@ -26,9 +27,27 @@ const useChat = () => {
     }
   };
 
+  const getUnreadList = async () => {
+    try {
+      const url = `${unreadlist}`;
+      let body = {currentUserId: _id};
+      const response = await APICaller.post(url, body);
+      const {data} = response;
+      const {status, users} = data;
+      if (status === 200 && users) {
+        setUnread(users);
+      }
+      console.log('response of UnreadList', response);
+    } catch (error) {
+      console.log('error of UnreadList', error);
+    }
+  };
+
   return {
     chatUsers,
     getAllUserList,
+    unRead,
+    getUnreadList,
   };
 };
 

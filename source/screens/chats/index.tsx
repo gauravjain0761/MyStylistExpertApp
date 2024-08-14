@@ -27,17 +27,18 @@ type Props = {
 };
 
 const Chats: FC<Props> = ({navigation}) => {
-  const {chatUsers, getAllUserList} = useChat();
+  const {chatUsers, getAllUserList, getUnreadList, unRead} = useChat();
 
   const [activeTab, setActiveTab] = useState<string>('All');
   const {createRoom, messagesReads} = endPoints;
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
-  const count = chatUsers.filter(user => user?.isRead == false);
+  const count = unRead.filter(user => user?.isRead == false);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getAllUserList();
+      getUnreadList();
     });
     return unsubscribe;
   }, []);
@@ -52,7 +53,6 @@ const Chats: FC<Props> = ({navigation}) => {
       const {data} = response;
       const {roomId} = data;
       if (data && roomId) {
-        console.log('room id', data);
         messagesRead(roomId);
         navigation.navigate('ChatDetail', {
           roomId: roomId,
@@ -125,7 +125,7 @@ const Chats: FC<Props> = ({navigation}) => {
                   ]}>
                   Unread Messages
                 </RNText>
-                {count.length > 0 && (
+                {count?.length > 0 && (
                   <View
                     style={[
                       styles.messageCount,
@@ -175,7 +175,7 @@ const Chats: FC<Props> = ({navigation}) => {
               />
             ) : (
               <FlatList
-                data={chatUsers}
+                data={unRead}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={(item, index) => index.toString()}
                 ItemSeparatorComponent={item =>
@@ -185,17 +185,14 @@ const Chats: FC<Props> = ({navigation}) => {
                 }
                 renderItem={({item, index}) => {
                   return (
-                    !item?.isRead && (
-                      <ChatUserCard
-                        data={item}
-                        index={index}
-                        onPressCard={() => onPressCart(item)}
-                        unreadMessageCount={item?.unreadMessageCount}
-                      />
-                    )
+                    <ChatUserCard
+                      data={item}
+                      index={index}
+                      onPressCard={() => onPressCart(item)}
+                      unreadMessageCount={item?.unreadMessageCount}
+                    />
                   );
                 }}
-                rende
               />
             )}
           </View>

@@ -91,6 +91,9 @@ const ChatDetail: FC<Props> = ({route, navigation}) => {
       });
     });
     socket.on('past_messages', (data: any) => {
+      data?.messages.forEach((item, index) => {
+        console.log('datatatatatatat', item);
+      });
       const messages = data?.messages.map((item: any) => {
         const messageData = {
           chatId: item.chat,
