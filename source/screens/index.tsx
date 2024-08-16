@@ -40,6 +40,8 @@ import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './terms';
 import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
+import {APICaller} from 'service';
+import {endPoints} from '../../config';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -111,6 +113,8 @@ function AppStackNavigator() {
     getNotification();
   }, []);
 
+  const {messagesReads} = endPoints;
+
   const navigation = useNavigation();
 
   const getNotification = async () => {
@@ -119,24 +123,10 @@ function AppStackNavigator() {
       .then(async remoteMessage => {
         if (remoteMessage) {
           CheckNotification(remoteMessage);
-          console.log('CHAT_DETAILS CHAT_DETAILS', {
-            roomId: remoteMessage?.data?.value,
-            receiverId: remoteMessage?.data?.user_id,
-            receiverImage: remoteMessage?.data?.user_image,
-            device_token: remoteMessage?.data?.device_token,
-            receiverName: remoteMessage?.data?.name,
-          });
         }
       });
     messaging().onNotificationOpenedApp(remoteMessage => {
       if (remoteMessage) {
-        console.log('CHAT_DETAILS CHAT_DETAILS', {
-          roomId: remoteMessage?.data?.value,
-          receiverId: remoteMessage?.data?.user_id,
-          receiverImage: remoteMessage?.data?.user_image,
-          device_token: remoteMessage?.data?.device_token,
-          receiverName: remoteMessage?.data?.name,
-        });
         CheckNotification(remoteMessage);
       }
     });
@@ -145,6 +135,7 @@ function AppStackNavigator() {
   const CheckNotification = (remoteMessage: any) => {
     let type = remoteMessage?.data?.action;
     if (type == 'CHAT_DETAILS') {
+      messagesRead(remoteMessage?.data?.value);
       navigation?.navigate('ChatDetail', {
         roomId: remoteMessage?.data?.value,
         receiverId: remoteMessage?.data?.user_id,
@@ -157,6 +148,19 @@ function AppStackNavigator() {
       navigation?.navigate('AppointmentDetail', {
         appointmentId: remoteMessage?.data?.value,
       });
+    }
+  };
+
+  const messagesRead = async (item: string) => {
+    try {
+      const url = `${messagesReads}`;
+      const body = {
+        messageId: item,
+      };
+      const response = await APICaller.post(url, body);
+      const {data} = response;
+    } catch (error) {
+      console.log('error of room', error);
     }
   };
 

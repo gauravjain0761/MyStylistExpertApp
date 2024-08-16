@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: hp(15),
     marginRight: wp(10),
+    justifyContent: 'flex-start',
   },
   saparator: {
     width: wp(4),
