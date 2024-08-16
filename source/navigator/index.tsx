@@ -11,9 +11,16 @@ import {
 } from '@react-navigation/native';
 
 const Navigator: FC = () => {
-  const {isLogin, setUserDetails, setIsLogin, setActiveRoute, setLocation} =
-    useContext(AppContext);
+  const {
+    isLogin,
+    setUserDetails,
+    setIsLogin,
+    setActiveRoute,
+    setLocation,
+    activeRoute,
+  } = useContext(AppContext);
   const {getUserLogin, getUserDetails} = DataAccess();
+  const navigationRef = createNavigationContainerRef();
 
   const getUserDetailsFromStorage = async () => {
     const userDetails = await getUserDetails();
@@ -34,6 +41,7 @@ const Navigator: FC = () => {
   return (
     <NavigationContainer
       onReady={() => {}}
+      ref={navigationRef}
       onStateChange={state => {
         const routes = state?.routes[0]?.state?.routes;
         const lengthRoute = routes?.length;

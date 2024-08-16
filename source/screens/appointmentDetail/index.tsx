@@ -3,7 +3,7 @@ import tw from 'rn-tailwind';
 import images from 'images';
 import {RootStackParamList} from '..';
 import globalStyle from 'globalStyles';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {Header, Container, Image, PrimaryButton} from 'components';
 import {
   Pressable,
@@ -61,7 +61,7 @@ type RowItemValueProps = {
 
 const CELL_COUNT = 6;
 
-const AppointmentDetail: FC<Props> = ({navigation, route}) => {
+const AppointmentDetail: FC<Props> = ({navigation}) => {
   const {getAppointmentDetail, appointmentDetails} = useAppointmentDetails();
   const [value, setValue] = useState<string>('');
   const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
@@ -69,9 +69,10 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
     value,
     setValue,
   });
+  const {params} = useRoute();
   const {setLoading, loading} = useContext(AppContext);
   const dispatch = useAppDispatch();
-  const {appointmentId} = route.params;
+  const {appointmentId} = params || {};
   const {IMG_URL} = appConfig;
   const {
     createdAt,
@@ -91,15 +92,13 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
   const {userDetails} = useContext(AppContext);
   const {_id} = userDetails;
 
-  console.log('appointmentDetails', status);
-
   useEffect(() => {
     getAppointmentDetail(appointmentId);
   }, []);
   const {availableDate, availableTime} = timeSlot?.[0] || [];
   const image =
     userId?.user_profile_images?.filter(images => images?.is_featured == 1)?.[0]
-      ?.image || [];
+      ?.image || '';
   const address = userId?.addresses?.[0] || {};
 
   const RowItemValue = ({title, value}: RowItemValueProps) => {
@@ -201,7 +200,7 @@ const AppointmentDetail: FC<Props> = ({navigation, route}) => {
               <View style={styles.card_container}>
                 <AppointmentDetailCard
                   imgBaseURL={IMG_URL}
-                  userImg={image}
+                  userImg={image || ''}
                   name={customerName}
                   phoneNumber={userId?.phone}
                   location={`${address?.address?.houseNumber || ''}, ${
